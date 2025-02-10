@@ -1,16 +1,14 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Albert_Sans } from "next/font/google";
 import "./globals.css";
-import TopBar from "@/components/userMenu";
+import UserMenu from "@/components/userMenu";
 import SiteMenu from "@/components/siteMenu";
 import LogoMenu from "@/components/logoMenu";
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
+import { Mail, Linkedin } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const albertSans = Albert_Sans({
+  variable: "--font-albert-sans",
   subsets: ["latin"],
 });
 
@@ -27,14 +25,46 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${albertSans.variable} antialiased bg-gradient-to-b from-violet-500 to-fuchsia-500 min-h-screen flex flex-col`}
       >
-        <div className="flex items-center justify-between p-4 border-b border-slate-900">
-          <LogoMenu />
-          <SiteMenu />
-          <TopBar />
+        <div className="sticky top-0 z-10 grid grid-cols-3 items-center p-4 backdrop-blur-xl">
+          <div className="flex justify-start">
+            <LogoMenu />
+          </div>
+          <div className="flex justify-center">
+            <SiteMenu />
+          </div>
+          <div className="flex justify-end">
+            <UserMenu />
+          </div>
         </div>
-        {children}
+        <div className="mx-auto max-w-screen-lg flex-grow">
+          {children}
+        </div>
+        <footer className="w-full bg-black/30 backdrop-blur-xl mt-auto">
+          <div className="max-w-screen-lg mx-auto p-4 text-white text-center">
+            <div className="flex items-center justify-center gap-4">
+              <Button variant="ghost" size="icon" asChild>
+                <a
+                  href="https://www.linkedin.com/company/neoecotex_01"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-violet-300 transition-colors"
+                >
+                  <Linkedin className="h-5 w-5" />
+                </a>
+              </Button>
+              <Button variant="ghost" size="icon" asChild>
+                <a
+                  href="mailto:neoecotex@gmail.com"
+                  className="hover:text-violet-300 transition-colors"
+                >
+                  <Mail className="h-5 w-5" />
+                </a>
+              </Button>
+            </div>
+          </div>
+        </footer>
       </body>
     </html>
   );

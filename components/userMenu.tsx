@@ -16,7 +16,7 @@ export default async function UserMenu() {
   const user = await getLoggedInUser();
   if (!user) {
     return (
-      <Button asChild variant="ghost">
+      <Button asChild variant="ghost" className="text-white bg-transparent hover:bg-fuchsia-500 hover:text-white">
         <Link href="/login">Log in</Link>
       </Button>
     )
@@ -32,7 +32,7 @@ export default async function UserMenu() {
           </Avatar>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-56" align="end" forceMount>
+      <DropdownMenuContent align="end" forceMount>
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col space-y-1">
             <p className="text-sm font-medium leading-none">{user.name}</p>

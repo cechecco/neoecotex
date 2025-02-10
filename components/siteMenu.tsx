@@ -12,7 +12,6 @@ import {
 } from "@/components/ui/navigation-menu"
 
 const menuItems = [
-  { label: "How it works", href: "/how-it-works" },
   {
     label: "Services",
     type: "dropdown",
@@ -35,16 +34,18 @@ const menuItems = [
     ],
   },
   { label: "Pricing", href: "/pricing" },
+  { label: "About us", href: "/about" },
 ]
 
 export default function SiteMenu() {
   return (
-    <NavigationMenu>
-      <NavigationMenuList>
+    <div>
+    <NavigationMenu className="flex flex-row justify-around">
+      <NavigationMenuList className="flex flex-row justify-around">
         {menuItems.map((item) =>
           item.type === "dropdown" ? (
             <NavigationMenuItem key={item.label}>
-              <NavigationMenuTrigger>{item.label.toUpperCase()}</NavigationMenuTrigger>
+              <NavigationMenuTrigger className={cn(navigationMenuTriggerStyle(), "text-white bg-transparent hover:bg-fuchsia-500 hover:text-white data-[state=open]:bg-fuchsia-500 data-[state=open]:text-white")}>{item.label.toUpperCase()}</NavigationMenuTrigger>
               <NavigationMenuContent>
                 <ul className="grid gap-3 p-6 md:w-[400px] lg:w-[500px] lg:grid-cols-[.75fr_1fr]">
                   {item.items.map((subItem) => (
@@ -58,13 +59,14 @@ export default function SiteMenu() {
           ) : (
             <NavigationMenuItem key={item.label}>
               <Link href={item.href ?? ""} legacyBehavior passHref>
-                <NavigationMenuLink className={navigationMenuTriggerStyle()}>{item.label.toUpperCase()}</NavigationMenuLink>
+                <NavigationMenuLink className={cn(navigationMenuTriggerStyle(), "text-white bg-transparent hover:bg-fuchsia-500 hover:text-white data-[state=open]:bg-fuchsia-500 data-[state=open]:text-white")}>{item.label.toUpperCase()}</NavigationMenuLink>
               </Link>
             </NavigationMenuItem>
           ),
         )}
       </NavigationMenuList>
     </NavigationMenu>
+    </div>
   )
 }
 
