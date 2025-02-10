@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-
+import TopBar from "@/components/userMenu";
+import SiteMenu from "@/components/siteMenu";
+import LogoMenu from "@/components/logoMenu";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -27,6 +29,11 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        <div className="flex items-center justify-between p-4 border-b border-slate-900">
+          <LogoMenu />
+          <SiteMenu />
+          <TopBar />
+        </div>
         {children}
       </body>
     </html>

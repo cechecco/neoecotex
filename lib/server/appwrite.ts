@@ -6,13 +6,13 @@ const APPWRITE_ENDPOINT = process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT!;
 const APPWRITE_PROJECT = process.env.NEXT_PUBLIC_APPWRITE_PROJECT!;
 const APPWRITE_KEY = process.env.NEXT_APPWRITE_KEY!;
 
-// function validateEnvironmentVariables() {
-//   if (!APPWRITE_ENDPOINT || !APPWRITE_PROJECT || !APPWRITE_KEY) {
-//     throw new Error("Missing required Appwrite environment variables");
-//   }
-// }
+function validateEnvironmentVariables() {
+  if (!APPWRITE_ENDPOINT || !APPWRITE_PROJECT || !APPWRITE_KEY) {
+    throw new Error("Missing required Appwrite environment variables");
+  }
+}
 
-// validateEnvironmentVariables();
+validateEnvironmentVariables();
 
 export async function createSessionClient() {
   const client = new Client()
@@ -21,7 +21,7 @@ export async function createSessionClient() {
 
   console.log("cookies", (await cookies()).getAll());
 
-  const session = (await cookies()).get("my-custom-session");
+  const session = (await cookies()).get("user-session");
 
   if (!session || !session.value) {
     throw new Error("No session");
@@ -49,11 +49,3 @@ export async function createAdminClient() {
   };
 }
 
-export async function getLoggedInUser() {  
-  try {
-    const { account } = await createSessionClient();
-    return await account.get();
-  } catch (error) {
-    return null;
-  }
-}

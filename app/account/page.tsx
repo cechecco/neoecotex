@@ -1,20 +1,5 @@
-import {
-    createSessionClient,
-    getLoggedInUser,
-  } from "@/lib/server/appwrite";
   import { redirect } from "next/navigation";
-  import { cookies } from "next/headers";
-  
-async function signOut() {
-    "use server";
-  
-    const { account } = await createSessionClient();
-  
-    (await cookies()).delete("my-custom-session");
-    await account.deleteSession("current");
-  
-    redirect("/signup");
-  }
+  import { signOut, getLoggedInUser } from "@/app/actions";
   
   export default async function HomePage() {
     const user = await getLoggedInUser();
@@ -33,10 +18,6 @@ async function signOut() {
             <strong>ID: </strong> {user?.$id}
           </li>
         </ul>
-  
-        <form action={signOut}>
-          <button type="submit">Sign out</button>
-        </form>
       </>
     );
   }
