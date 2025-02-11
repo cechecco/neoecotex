@@ -48,64 +48,17 @@ export async function createAdminClient() {
   };
 }
 
-export async function createInnovationRequest(innovationRequest: InnovationRequest) {
+export async function createDatabaseAdminClient() {
   const client = new Client()
-  .setEndpoint(APPWRITE_ENDPOINT)
-  .setProject(APPWRITE_PROJECT)
-  .setKey(APPWRITE_KEY);
-
-  const databases = new Databases(client);
-  const promise = databases.createDocument(
-    '67aa7414000f83ae7018',
-    '67aa745800179944f652',
-    ID.unique(),
-    innovationRequest
-  );
-
-  promise.then(function (response) {
-    return response;
-  }, function (error) {
-    return { error: true, message: error };
-  });
-}
-
-export async function getInnovationRequests() {
-  const client = new Client()
-  .setEndpoint(APPWRITE_ENDPOINT)
-  .setProject(APPWRITE_PROJECT)
-  .setKey(APPWRITE_KEY);
-
+    .setEndpoint(APPWRITE_ENDPOINT)
+    .setProject(APPWRITE_PROJECT)
+    .setKey(APPWRITE_KEY);
+    
   const databases = new Databases(client);
 
-  const promise = databases.listDocuments(
-    "67aa7414000f83ae7018",
-    "67aa745800179944f652"
-  );
-
-  return promise.then(function (response) {
-    return response;
-  }, function (error) {
-    return { error: true, message: error };
-  });
-}
-
-export async function getInnovationRequest(id: string) {
-  const client = new Client()
-  .setEndpoint(APPWRITE_ENDPOINT)
-  .setProject(APPWRITE_PROJECT)
-  .setKey(APPWRITE_KEY);
-
-  const databases = new Databases(client);
-
-  const promise = databases.getDocument(
-    "67aa7414000f83ae7018",
-    "67aa745800179944f652",
-    id
-  );
-
-  return promise.then(function (response) {
-    return response;
-  }, function (error) {
-    return { error: true, message: error };
-  });
+  return {
+    get databases() {
+      return databases;
+    },
+  };
 }

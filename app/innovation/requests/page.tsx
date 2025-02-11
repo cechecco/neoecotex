@@ -1,4 +1,4 @@
-import { getInnovationRequests } from "@/lib/server/appwrite";
+import { getInnovationRequests } from "@/app/actions";
 import { InnovationRequest } from "@/lib/types";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { formatDistance } from "date-fns";

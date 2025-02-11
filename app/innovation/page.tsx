@@ -22,7 +22,7 @@ import {
 } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { createInnovationRequest } from "@/lib/server/appwrite";
+import { createInnovationRequest } from "@/app/actions";
 import { AlertCircle } from "lucide-react";
 import {
   Tooltip,
