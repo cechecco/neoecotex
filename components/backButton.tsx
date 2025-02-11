@@ -16,7 +16,7 @@ export default function BackButton() {
     };
 
     return (
-        <Button variant="ghost" onClick={handleBack} className="text-white hover:text-white hover:bg-white/20 text-xs">
+        <Button variant="link" onClick={handleBack} className="absolute top-0 left-0 p-0 m-0 text-white text-xs">
             <ChevronLeft /> Innovation Hub
         </Button>
     );

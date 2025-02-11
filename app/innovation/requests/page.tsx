@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { formatDistance } from "date-fns";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { CheckCircleIcon } from "lucide-react";
+import { CheckCircleIcon, LayoutDashboardIcon } from "lucide-react";
 import { notFound } from "next/navigation";
 export const dynamic = 'force-dynamic';
 
@@ -21,6 +21,12 @@ export default async function InnovationRequestsPage() {
         <main className="py-8 w-full flex flex-col gap-8">
             <div className="flex justify-between items-center">
             <h1 className="text-5xl font-bold text-white">Innovation Hub</h1>
+            <Link href="/innovation/requests/dashboard">
+                <Button variant="outline">
+                    <LayoutDashboardIcon className="w-4 h-4" />
+                    Dashboard
+                </Button>
+            </Link>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full">
                 {requests?.map((request, index) => (

@@ -69,7 +69,7 @@ export async function createInnovationRequest(innovationRequest: InnovationReque
 	  innovationRequest
 	);
   
-	promise.then(function (response) {
+	return promise.then(function (response) {
 	  return response;
 	}, function (error) {
 	  return { error: true, message: error };

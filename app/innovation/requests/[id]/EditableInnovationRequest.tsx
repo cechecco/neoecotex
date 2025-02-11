@@ -101,7 +101,7 @@ function ViewInnovationRequest({ request }: { request: InnovationRequest }) {
                                     <p className="text-sm text-muted-foreground">Created At</p>
                                 </div>
                                 <p className="font-semibold">
-                                    {formatDistance(new Date(request.$createdAt!), new Date(), { addSuffix: true })}
+                                    {request.$createdAt ? formatDistance(new Date(request.$createdAt), new Date(), { addSuffix: true }) : ''}
                                 </p>
                             </div>
 
@@ -110,7 +110,7 @@ function ViewInnovationRequest({ request }: { request: InnovationRequest }) {
                                     <p className="text-sm text-muted-foreground">Last Update</p>
                                 </div>
                                 <p className="font-semibold">
-                                    {formatDistance(new Date(request.$updatedAt!), new Date(), { addSuffix: true })}
+                                    {request.$updatedAt ? formatDistance(new Date(request.$updatedAt), new Date(), { addSuffix: true }) : ''}
                                 </p>
                             </div>
                         </div>

@@ -1,7 +1,6 @@
 "use server";
-import { Client, Account, Databases, ID } from "node-appwrite";
+import { Client, Account, Databases } from "node-appwrite";
 import { cookies } from "next/headers";
-import { InnovationRequest } from "../types";
 
 const APPWRITE_ENDPOINT = process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT!;
 const APPWRITE_PROJECT = process.env.NEXT_PUBLIC_APPWRITE_PROJECT!;

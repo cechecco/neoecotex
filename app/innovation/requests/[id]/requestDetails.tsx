@@ -6,8 +6,8 @@ import { InnovationRequest } from "@/lib/types";
 import { CheckCircleIcon } from "lucide-react";
 import EditableInnovationRequest from "./EditableInnovationRequest";
 import BackButton from "@/components/backButton";
-import { updateInnovationRequest } from "@/app/actions";
-import { notFound } from "next/navigation";
+import { createInnovationRequest, updateInnovationRequest } from "@/app/actions";
+import { notFound, redirect } from "next/navigation";
 
 interface Props {
     initialRequest: InnovationRequest;
@@ -15,12 +15,13 @@ interface Props {
 
 export default function EditControls({ initialRequest }: Props) {
 
-    const [isEditing, setIsEditing] = useState(false);
+    const [isEditing, setIsEditing] = useState(initialRequest.$id ? false : true);
     const [request, setRequest] = useState(initialRequest);
     return (
         <div className="flex flex-col gap-4">
             <div className="flex items-center justify-between gap-4">
                 <BackButton />
+                <h1 className="text-5xl font-bold text-white">Innovation Request</h1>
                 <div className="flex items-center gap-4 justify-end">
                     <p className="text-muted-foreground text-white flex items-center gap-2">
                         Solution submitted
@@ -54,6 +55,13 @@ export default function EditControls({ initialRequest }: Props) {
                         } else {
                             setRequest(req as unknown as InnovationRequest);
                             setIsEditing(false);
+                        }
+                    } else {
+                        const req = await createInnovationRequest(updatedRequest);
+                        if ('error' in req) {
+                            notFound();
+                        } else {
+                            redirect(`/innovation/requests/${req.$id}`);
                         }
                     }
                 }}

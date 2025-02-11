@@ -13,16 +13,33 @@ interface Props {
 
 export default async function InnovationRequestDetailPage(props: Props) {
     const params = await props.params;
-    const res = await getInnovationRequest(params.id);
 
-    if ('error' in res) {
-        return notFound();
+    let request: InnovationRequest | null = {
+        title: '',
+        company: '',
+        briefDescription: '',
+        detailedDescription: '',
+        expectedExpertise: '',
+        expectedTimeline: '',
+        budget: 0,
+        concept: '',
+        field: '',
+        marketingConsent: false,
+        ecologyConsent: false,
+    };
+
+    if (params.id !== 'new') {
+        const res = await getInnovationRequest(params.id);
+
+        if ('error' in res) {
+            return notFound();
+        }
+
+        request = res as unknown as InnovationRequest;
     }
 
-    const request = res as unknown as InnovationRequest;
-
     return (
-        <main className="py-8 w-full flex flex-col gap-8">
+        <main className="relative py-8 w-full flex flex-col gap-8">
             <RequestDetails initialRequest={request} />
         </main>
     );
