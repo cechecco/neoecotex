@@ -22,8 +22,8 @@ const menuItems = [
         description: "Read our latest articles and updates",
       },
       {
-        label: "Innovation Requests",
-        href: "/innovation",
+        label: "Innovation Hub",
+        href: "/innovation/requests",
         description: "Submit and track your innovation ideas",
       },
       {

@@ -1,6 +1,7 @@
 "use server";
-import { Client, Account } from "node-appwrite";
+import { Client, Account, Databases, ID } from "node-appwrite";
 import { cookies } from "next/headers";
+import { InnovationRequest } from "../types";
 
 const APPWRITE_ENDPOINT = process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT!;
 const APPWRITE_PROJECT = process.env.NEXT_PUBLIC_APPWRITE_PROJECT!;
@@ -18,8 +19,6 @@ export async function createSessionClient() {
   const client = new Client()
     .setEndpoint(APPWRITE_ENDPOINT)
     .setProject(APPWRITE_PROJECT);
-
-  console.log("cookies", (await cookies()).getAll());
 
   const session = (await cookies()).get("user-session");
 
@@ -49,3 +48,64 @@ export async function createAdminClient() {
   };
 }
 
+export async function createInnovationRequest(innovationRequest: InnovationRequest) {
+  const client = new Client()
+  .setEndpoint(APPWRITE_ENDPOINT)
+  .setProject(APPWRITE_PROJECT)
+  .setKey(APPWRITE_KEY);
+
+  const databases = new Databases(client);
+  const promise = databases.createDocument(
+    '67aa7414000f83ae7018',
+    '67aa745800179944f652',
+    ID.unique(),
+    innovationRequest
+  );
+
+  promise.then(function (response) {
+    return response;
+  }, function (error) {
+    return { error: true, message: error };
+  });
+}
+
+export async function getInnovationRequests() {
+  const client = new Client()
+  .setEndpoint(APPWRITE_ENDPOINT)
+  .setProject(APPWRITE_PROJECT)
+  .setKey(APPWRITE_KEY);
+
+  const databases = new Databases(client);
+
+  const promise = databases.listDocuments(
+    "67aa7414000f83ae7018",
+    "67aa745800179944f652"
+  );
+
+  return promise.then(function (response) {
+    return response;
+  }, function (error) {
+    return { error: true, message: error };
+  });
+}
+
+export async function getInnovationRequest(id: string) {
+  const client = new Client()
+  .setEndpoint(APPWRITE_ENDPOINT)
+  .setProject(APPWRITE_PROJECT)
+  .setKey(APPWRITE_KEY);
+
+  const databases = new Databases(client);
+
+  const promise = databases.getDocument(
+    "67aa7414000f83ae7018",
+    "67aa745800179944f652",
+    id
+  );
+
+  return promise.then(function (response) {
+    return response;
+  }, function (error) {
+    return { error: true, message: error };
+  });
+}

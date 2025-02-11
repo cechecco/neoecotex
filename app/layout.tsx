@@ -38,7 +38,7 @@ export default function RootLayout({
             <UserMenu />
           </div>
         </div>
-        <div className="mx-auto max-w-screen-lg flex-grow">
+        <div className="min-h-screen">
           {children}
         </div>
         <footer className="w-full bg-black/30 backdrop-blur-xl mt-auto">

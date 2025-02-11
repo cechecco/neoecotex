@@ -9,7 +9,7 @@ export default async function SignUpPage() {
   if (user) redirect("/account");
 
   return (
-    <div className="flex items-start mt-12 justify-center min-h-screen">
+    <div className="flex items-start mt-8 justify-center min-h-screen">
       <Card className="w-full max-w-md p-6">
         <CardHeader className="space-y-1">
           <h2 className="text-2xl font-semibold text-center">Create an account</h2>
