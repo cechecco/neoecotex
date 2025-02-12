@@ -84,10 +84,10 @@ export default function EditControls({ initialRequest }: Props) {
 
     const handleDelete = async (id: string) => {
         const req = await deleteInnovationRequest(id);
-        redirect('/innovation/requests');
         if ('error' in req) {
             notFound();
         }
+        redirect('/innovation/requests');
     };
     return (
         <div className="flex flex-col gap-4">

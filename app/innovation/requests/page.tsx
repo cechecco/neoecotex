@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { CheckCircleIcon, LayoutDashboardIcon } from "lucide-react";
 import { notFound } from "next/navigation";
+import { Suspense } from "react";
 export const dynamic = 'force-dynamic';
 
 export default async function InnovationRequestsPage() {
@@ -28,6 +29,7 @@ export default async function InnovationRequestsPage() {
                 </Button>
             </Link>
             </div>
+            <Suspense fallback={<div>Loading...</div>}>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full">
                 {requests?.map((request, index) => (
                     <Card key={request.$id} className="hover:shadow-lg transition-shadow flex flex-col justify-between">
@@ -59,6 +61,7 @@ export default async function InnovationRequestsPage() {
                     </Card>
                 ))}
             </div>
+            </Suspense>
         </main>
     );
 } 
