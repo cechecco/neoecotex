@@ -7,6 +7,7 @@ import { OAuthProvider } from "node-appwrite";
 import { cookies } from "next/headers";
 import { ID } from "node-appwrite";
 import { InnovationRequest } from "@/lib/types";
+import { revalidatePath } from "next/cache";
 
 export async function signUpWithGoogle() {
 	const { account } = await createAdminClient();
@@ -70,6 +71,7 @@ export async function createInnovationRequest(innovationRequest: InnovationReque
 	);
   
 	return promise.then(function (response) {
+		revalidatePath(`/innovation/requests`)
 	  return response;
 	}, function (error) {
 	  return { error: true, message: error };
@@ -118,9 +120,26 @@ export async function createInnovationRequest(innovationRequest: InnovationReque
 	);
   
 	return promise.then(function (response) {
+		revalidatePath(`/innovation/requests`)
 	  return response;
 	}, function (error) {
 	  return { error: true, message: error };
 	});
   }
   
+  export async function deleteInnovationRequest(id: string) {
+	const { databases } = await createDatabaseAdminClient();
+  
+	const promise = databases.deleteDocument(
+	  "67aa7414000f83ae7018",
+	  "67aa745800179944f652",
+	  id
+	);
+  
+	return promise.then(function (response) {
+		revalidatePath(`/innovation/requests`)
+	  return response;
+	}, function (error) {
+	  return { error: true, message: error };
+	});
+  }

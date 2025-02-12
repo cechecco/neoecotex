@@ -14,3 +14,10 @@ export interface InnovationRequest {
   $createdAt?: string;
   $updatedAt?: string;
 } 
+
+export interface EditableInnovationRequestProps {
+  request: InnovationRequest;
+  isEditing: boolean;
+  onSave: (request: InnovationRequest) => Promise<void>;
+  onCancel: () => void;
+}

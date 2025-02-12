@@ -1,6 +1,6 @@
 import { getInnovationRequests } from "@/app/actions";
 import { InnovationRequest } from "@/lib/types";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { formatDistance } from "date-fns";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
@@ -30,9 +30,9 @@ export default async function InnovationRequestsPage() {
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full">
                 {requests?.map((request, index) => (
-                    <Card key={request.$id} className="hover:shadow-lg transition-shadow">
-                        <CardHeader className="relative">
-                            <CardTitle className="text-xl">{request.title}</CardTitle>
+                    <Card key={request.$id} className="hover:shadow-lg transition-shadow flex flex-col justify-between">
+                        <CardHeader className="relative flex flex-col justify-between">
+                            <CardTitle className="text-xl line-clamp-1">{request.title}</CardTitle>
                             <div className="flex items-center gap-2 absolute top-2 right-4 text-xs">                    
                                 {/* TODO */}
                                 {index === 0 && <>
@@ -45,20 +45,17 @@ export default async function InnovationRequestsPage() {
                             </div>
                                       
                         </CardHeader>
-                        <CardContent>
-                            <div className="space-y-4">
-                                
-                                <p className="text-muted-foreground">{request.briefDescription}</p>
-                                <div className="flex justify-between items-center">
+                        <CardContent className="grow">
+                                <p className="text-muted-foreground line-clamp-3">{request.briefDescription}</p>
+                        </CardContent>
+                        <CardFooter className="flex justify-between items-center">
                                     <div className="flex flex-col gap-1">
                                         <p className="text-xs text-muted-foreground">Posted {formatDistance(new Date(request.$createdAt!), new Date(), { addSuffix: true })}</p>
                                     </div>
                                     <Link href={`/innovation/requests/${request.$id}`}>
                                         <Button variant="outline" size="sm">View details</Button>
                                     </Link>
-                                </div>
-                            </div>
-                        </CardContent>
+                        </CardFooter>
                     </Card>
                 ))}
             </div>
