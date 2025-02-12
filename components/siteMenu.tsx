@@ -23,7 +23,7 @@ const menuItems = [
       },
       {
         label: "Innovation Hub",
-        href: "/innovation/requests",
+        href: "/innovations/requests",
         description: "Submit and track your innovation ideas",
       },
       {

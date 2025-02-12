@@ -71,7 +71,7 @@ export async function createInnovationRequest(innovationRequest: InnovationReque
 	);
   
 	return promise.then(function (response) {
-		revalidatePath(`/innovation/requests`)
+		revalidatePath(`/innovations/requests`)
 	  return response;
 	}, function (error) {
 	  return { error: true, message: error };
@@ -85,6 +85,8 @@ export async function createInnovationRequest(innovationRequest: InnovationReque
 	  "67aa7414000f83ae7018",
 	  "67aa745800179944f652"
 	);
+
+	await new Promise(resolve => setTimeout(resolve, 3000));
   
 	return promise.then(function (response) {
 	  return response;
@@ -120,7 +122,7 @@ export async function createInnovationRequest(innovationRequest: InnovationReque
 	);
   
 	return promise.then(function (response) {
-		revalidatePath(`/innovation/requests`)
+		revalidatePath(`/innovations/requests`)
 	  return response;
 	}, function (error) {
 	  return { error: true, message: error };
@@ -137,7 +139,7 @@ export async function createInnovationRequest(innovationRequest: InnovationReque
 	);
   
 	return promise.then(function (response) {
-		revalidatePath(`/innovation/requests`)
+		revalidatePath(`/innovations/requests`)
 	  return response;
 	}, function (error) {
 	  return { error: true, message: error };
