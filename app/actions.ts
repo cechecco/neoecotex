@@ -9,6 +9,11 @@ import { ID } from "node-appwrite";
 import { InnovationRequest } from "@/lib/types";
 import { revalidatePath } from "next/cache";
 
+interface Error {
+	error: boolean;
+	message: string;
+  }
+
 export async function signUpWithGoogle() {
 	const { account } = await createAdminClient();
 
@@ -74,7 +79,7 @@ export async function createInnovationRequest(innovationRequest: InnovationReque
 		revalidatePath(`/innovations/requests`)
 	  return response;
 	}, function (error) {
-	  return { error: true, message: error };
+	  return { error: true, message: error.toString() as string };
 	});
   }
   
@@ -85,13 +90,11 @@ export async function createInnovationRequest(innovationRequest: InnovationReque
 	  "67aa7414000f83ae7018",
 	  "67aa745800179944f652"
 	);
-
-	await new Promise(resolve => setTimeout(resolve, 3000));
   
 	return promise.then(function (response) {
 	  return response;
 	}, function (error) {
-	  return { error: true, message: error };
+	  return { error: true, message: error.toString() as string };
 	});
   }
   
@@ -105,27 +108,54 @@ export async function createInnovationRequest(innovationRequest: InnovationReque
 	);
   
 	return promise.then(function (response) {
-	  return response;
+	  return response
 	}, function (error) {
-	  return { error: true, message: error };
+	  return { error: true, message: error.toString() as string };
 	});
   }
   
-  export async function updateInnovationRequest(id: string, innovationRequest: InnovationRequest) {
+  export async function updateInnovationRequest(previousState: InnovationRequest | Error, formData: FormData) {
+	const request = {
+		title: formData.get("title") as string,
+		briefDescription: formData.get("briefDescription") as string,
+		detailedDescription: formData.get("detailedDescription") as string,
+		expectedExpertise: formData.get("expectedExpertise") as string,
+		expectedTimeline: formData.get("expectedTimeline") as string,
+		budget: parseInt(formData.get("budget") as string) || 0,
+		company: formData.get("company") as string,
+		concept: formData.get("concept") as string,
+		field: formData.get("field") as string,
+		marketingConsent: !!(formData.get("marketingConsent") as string),
+		ecologyConsent: !!(formData.get("ecologyConsent") as string),
+	}
+  
 	const { databases } = await createDatabaseAdminClient();
-  
-	const promise = databases.updateDocument(
-	  "67aa7414000f83ae7018",
-	  "67aa745800179944f652",
-	  id,
-	  innovationRequest
-	);
-  
+
+	let promise: Promise<unknown>;
+
+	if ('$id' in previousState && previousState.$id) {
+		promise = databases.updateDocument(
+			"67aa7414000f83ae7018",
+			"67aa745800179944f652",
+			previousState.$id,
+			request
+		  );
+	} else {
+		promise = databases.createDocument(
+			"67aa7414000f83ae7018",
+			"67aa745800179944f652",
+			ID.unique(),
+			request
+		  );
+	}
+
+
 	return promise.then(function (response) {
-		revalidatePath(`/innovations/requests`)
-	  return response;
+		// revalidatePath(`/innovations/requests`)
+		// revalidatePath(`/innovations/requests/${previousState.$id}`)
+	  return response as unknown as InnovationRequest;
 	}, function (error) {
-	  return { error: true, message: error };
+	  return { error: true, message: error.toString() as string };
 	});
   }
   
@@ -139,9 +169,8 @@ export async function createInnovationRequest(innovationRequest: InnovationReque
 	);
   
 	return promise.then(function (response) {
-		revalidatePath(`/innovations/requests`)
-	  return response;
+		redirect(`/innovations/requests`);
 	}, function (error) {
-	  return { error: true, message: error };
+	  return { error: true, message: error.toString() as string };
 	});
   }

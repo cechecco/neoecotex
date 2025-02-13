@@ -1,5 +1,5 @@
 import RequestSkeleton from "@/components/innovations/requestSkeleton"
-import { RequestView } from "@/components/innovations/requestServer"
+import { RequestForm } from "@/components/innovations/requestServer";
 import { Suspense } from "react"
 
 interface Props {
@@ -12,7 +12,7 @@ export default async function InnovationRequestPage(props: Props) {
     const params = await props.params;
     return <main>
             <Suspense fallback={<RequestSkeleton />}>
-                <RequestView id={params.id} />
+                <RequestForm id={params.id} />
             </Suspense>
         </main>
 }

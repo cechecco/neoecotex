@@ -70,6 +70,6 @@ body {
     @apply bg-background text-foreground;
   }
   .main, main {
-    @apply max-w-7xl mx-auto;
+    @apply max-w-7xl mx-auto pb-4;
   }
 }
