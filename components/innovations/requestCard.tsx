@@ -1,4 +1,4 @@
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '../ui/card'
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '../ui/card'
 import { Separator } from '../ui/separator'
 import { formatDistance } from 'date-fns'
 import Link from 'next/link'
@@ -17,7 +17,7 @@ export default function InnovationRequestCard({ request }: { request: Innovation
           </CardTitle>
         </CardHeader>
         <CardContent>
-            <p className='line-clamp-2'>{request.briefDescription}</p>
+          <p className='line-clamp-2'>{request.briefDescription}</p>
         </CardContent>
         <CardFooter className='w-full flex flex-col gap-2 mt-auto'>
           <Separator className='my-2' />

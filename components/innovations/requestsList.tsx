@@ -1,5 +1,6 @@
-import { getInnovationRequests } from '@/app/actions'
+import { getInnovationRequests } from '@/app/innovations/actions/requests/actions'
 import RequestCard from './requestCard'
+import { InnovationRequest } from '@/lib/types'
 
 export default async function RequestsList() {
   const innovationRequests = await getInnovationRequests()
@@ -16,7 +17,7 @@ export default async function RequestsList() {
           {innovationRequests.documents.map((request) => (
             <RequestCard
               key={request.$id}
-              request={request}
+              request={request as unknown as InnovationRequest}
             />
           ))}
         </div>

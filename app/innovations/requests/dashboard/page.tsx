@@ -1,7 +1,7 @@
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 import { Plus } from 'lucide-react'
-export default async function InnovationRequestDashboardPage() {
+export default function InnovationRequestDashboardPage() {
   return (
     <main>
       <div className='flex justify-between items-center mb-4'>

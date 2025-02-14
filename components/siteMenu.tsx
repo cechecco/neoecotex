@@ -37,9 +37,7 @@ export default function SiteMenu() {
           {menuItems.map((item) =>
             item.type === 'dropdown' ? (
               <NavigationMenuItem key={item.label}>
-                <NavigationMenuTrigger
-                  className={cn(navigationMenuTriggerStyle(), 'bg-transparent hover:bg-fuchsia-500 data-[state=open]:bg-fuchsia-500')}
-                >
+                <NavigationMenuTrigger className={cn(navigationMenuTriggerStyle(), 'bg-transparent hover:bg-fuchsia-500 data-[state=open]:bg-fuchsia-500')}>
                   {item.label.toUpperCase()}
                 </NavigationMenuTrigger>
                 <NavigationMenuContent>
@@ -63,9 +61,7 @@ export default function SiteMenu() {
                   legacyBehavior
                   passHref
                 >
-                  <NavigationMenuLink
-                    className={cn(navigationMenuTriggerStyle(), 'bg-transparent hover:bg-fuchsia-500 data-[state=open]:bg-fuchsia-500')}
-                  >
+                  <NavigationMenuLink className={cn(navigationMenuTriggerStyle(), 'bg-transparent hover:bg-fuchsia-500 data-[state=open]:bg-fuchsia-500')}>
                     {item.label.toUpperCase()}
                   </NavigationMenuLink>
                 </Link>

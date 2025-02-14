@@ -2,7 +2,7 @@
 
 import { Card, CardFooter, CardHeader, CardTitle } from '../ui/card'
 import { useInnovationRequest } from '@/contexts/InnovationRequestContext'
-import { deleteInnovationRequest, updateInnovationRequest } from '@/app/actions'
+import { deleteInnovationRequest, updateInnovationRequest } from '@/app/innovations/actions/requests/actions'
 import { Button } from '../ui/button'
 import Link from 'next/link'
 import { useActionState, useEffect, useState } from 'react'
@@ -21,7 +21,7 @@ export default function RequestFormClient() {
   // @ts-expect-error https://nextjs.org/docs/app/building-your-application/data-fetching/server-actions-and-mutations#server-side-form-validation
   const [state, formAction, pending] = useActionState(updateInnovationRequest, request)
   const [fetchError, setFetchError] = useState<string | false>(false)
-  const [validationError, setValidationError] = useState<Record<keyof InnovationRequest, string[]> | false>(false)
+  const [validationError, setValidationError] = useState<Partial<Record<keyof InnovationRequest, string[]>> | false>(false)
 
   useEffect(() => {
     if (!pending) {
@@ -52,7 +52,7 @@ export default function RequestFormClient() {
         <Card>
           <CardHeader>
             <CardTitle>
-            <div className='flex items-center justify-between gap-2 w-full border border-primary bg-primary/10 p-4 rounded-md'>
+              <div className='flex items-center justify-between gap-2 w-full border border-primary bg-primary/10 p-4 rounded-md'>
                 <p className='flex items-center gap-2 font-bold'>Apply changes</p>
                 <div className='flex items-center gap-2'>
                   <Link href={`/innovations/requests/${request.$id}`}>

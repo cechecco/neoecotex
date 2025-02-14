@@ -1,6 +1,6 @@
-import { getInnovationRequest } from '@/app/actions'
+import { getInnovationRequest } from '@/app/innovations/actions/requests/actions'
 import RequestFormClient from './requestFormClient'
-import { RequestViewClient } from './requestClient'
+import { RequestViewClient } from './requestViewClient'
 import { notFound } from 'next/navigation'
 import { InnovationRequest } from '@/lib/types'
 import { InnovationRequestProvider } from '@/contexts/InnovationRequestContext'

@@ -26,11 +26,13 @@ export default function InnovationHubHeader() {
         </Button>
       </Link>
 
-      {id && !dashboard ? <p className='text-primary'><ChevronRight /></p> : null}
       {id && !dashboard ? (
-        <Link
-          href={`/innovations/requests/${id}`}
-        >
+        <p className='text-primary'>
+          <ChevronRight />
+        </p>
+      ) : null}
+      {id && !dashboard ? (
+        <Link href={`/innovations/requests/${id}`}>
           <Button
             variant='link'
             size='sm'
@@ -39,7 +41,11 @@ export default function InnovationHubHeader() {
           </Button>
         </Link>
       ) : null}
-      {dashboard ? <p><ChevronRight /></p> : null}
+      {dashboard ? (
+        <p>
+          <ChevronRight />
+        </p>
+      ) : null}
       {dashboard ? (
         <Button
           variant='ghost'
