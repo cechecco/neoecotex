@@ -1,12 +1,12 @@
 'use client'
 
-import { DropdownMenuItem } from "@/components/ui/dropdown-menu"
-import { signOut } from "@/app/actions"
+import { DropdownMenuItem } from '@/components/ui/dropdown-menu'
+import { signOut } from '@/app/actions'
 
 export function LogoutMenuItem() {
   return (
     <DropdownMenuItem
-      className="cursor-pointer"
+      className='cursor-pointer'
       onSelect={async (event) => {
         event.preventDefault()
         await signOut()
@@ -15,4 +15,4 @@ export function LogoutMenuItem() {
       Logout
     </DropdownMenuItem>
   )
-} 
+}

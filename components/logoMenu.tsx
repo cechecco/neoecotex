@@ -4,7 +4,7 @@ import Link from 'next/link'
 const LogoMenu = () => {
   return (
     <Link href={'/'}>
-      <div className="cursor-pointer hover:opacity-80 transition-opacity">
+      <div className='cursor-pointer hover:opacity-80 transition-opacity'>
         <Image
           src={'/logo.svg'}
           alt={'logo'}
