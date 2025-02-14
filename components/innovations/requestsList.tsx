@@ -7,12 +7,13 @@ export default async function RequestsList() {
         return <div>
             <h1>Error {innovationRequests.message}</h1>
         </div>
-    }
-    return <div>
-        <div className="grid grid-cols-3 gap-4">
-            {innovationRequests.documents.map((request) => (
-                <RequestCard key={request.title} request={request} />
-            ))}
+    } else {
+        return <div>
+            <div className="grid grid-cols-3 gap-4">
+                {innovationRequests.documents.map((request) => (
+                    <RequestCard key={request.$id} request={request} />
+                ))}
+            </div>
         </div>
-    </div>
+    }
 }

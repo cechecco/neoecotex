@@ -1,7 +1,9 @@
 import { getInnovationRequest } from "@/app/actions";
-import { RequestFormClient, RequestViewClient } from "./requestClient";
+import RequestFormClient from "./requestFormClient";
+import { RequestViewClient } from "./requestClient";
 import { notFound } from "next/navigation";
 import { InnovationRequest } from "@/lib/types";
+import { InnovationRequestProvider } from "@/contexts/InnovationRequestContext";
 
 interface Props {
     id: string;
@@ -13,7 +15,9 @@ export async function RequestView({ id }: Props) {
         return notFound();
     }
     return <div>
-        <RequestViewClient request={request as unknown as InnovationRequest} />
+        <InnovationRequestProvider initialRequest={request as unknown as InnovationRequest}>
+            <RequestViewClient />
+        </InnovationRequestProvider>
     </div>
 }
 
@@ -25,6 +29,8 @@ export async function RequestForm({ id }: Props) {
         </div>
     }
     return <div>
-        <RequestFormClient request={request as unknown as InnovationRequest} />
+        <InnovationRequestProvider initialRequest={request as unknown as InnovationRequest}>
+            <RequestFormClient />
+        </InnovationRequestProvider>
     </div>
 }
