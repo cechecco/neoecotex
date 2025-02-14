@@ -12,7 +12,7 @@ export default async function UserMenu() {
       <Button
         asChild
         variant='ghost'
-        className='text-white bg-transparent hover:bg-fuchsia-500 hover:text-white'
+        className='bg-transparent hover:bg-fuchsia-500'
       >
         <Link href='/login'>Log in</Link>
       </Button>

@@ -1,6 +1,6 @@
 'use client'
 
-import { Card, CardFooter, CardHeader } from '../ui/card'
+import { Card, CardFooter, CardHeader, CardTitle } from '../ui/card'
 import { useInnovationRequest } from '@/contexts/InnovationRequestContext'
 import { deleteInnovationRequest, updateInnovationRequest } from '@/app/actions'
 import { Button } from '../ui/button'
@@ -51,9 +51,9 @@ export default function RequestFormClient() {
       >
         <Card>
           <CardHeader>
-            <div className='flex flex-col gap-4'>
-              <div className='flex items-center justify-between gap-2 w-full border border-violet-500 bg-violet-500/10 p-4 rounded-md'>
-                <p className='flex items-center gap-2 text-violet-500 font-bold'>Apply changes</p>
+            <CardTitle>
+            <div className='flex items-center justify-between gap-2 w-full border border-primary bg-primary/10 p-4 rounded-md'>
+                <p className='flex items-center gap-2 font-bold'>Apply changes</p>
                 <div className='flex items-center gap-2'>
                   <Link href={`/innovations/requests/${request.$id}`}>
                     <Button
@@ -66,6 +66,8 @@ export default function RequestFormClient() {
                   <SaveButton />
                 </div>
               </div>
+            </CardTitle>
+            <div className='flex flex-col gap-4'>
               <div className='grid w-full items-center gap-1.5'>
                 <Label
                   htmlFor='title'

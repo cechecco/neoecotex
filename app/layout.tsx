@@ -38,7 +38,7 @@ export default function RootLayout({
         </div>
         <div className='min-h-screen'>{children}</div>
         <footer className='w-full bg-black/30 backdrop-blur-xl mt-auto'>
-          <div className='max-w-screen-lg mx-auto p-4 text-white text-center'>
+          <div className='max-w-screen-lg mx-auto p-4 text-center'>
             <div className='flex items-center justify-center gap-4'>
               <Button
                 variant='ghost'

@@ -172,7 +172,7 @@ export async function updateInnovationRequest(previousState: InnovationRequest, 
 
       return (await promise) as unknown as InnovationRequest
     } else {
-      promise = databases.createDocument('67aa7414000f83ae7018', '67aa745800179944f652', id, request)
+      await databases.createDocument('67aa7414000f83ae7018', '67aa745800179944f652', id, request)
     }
   } catch (error) {
     return { error: true, message: (error as object).toString() }

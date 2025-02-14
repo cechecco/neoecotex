@@ -1,7 +1,7 @@
 'use client'
 
 import { Button } from '@/components/ui/button'
-import { House } from 'lucide-react'
+import { ChevronRight, House } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 
@@ -20,34 +20,30 @@ export default function InnovationHubHeader() {
         <Button
           variant='link'
           size='sm'
-          className='text-white'
         >
           <House className='w-4 h-4' />
           Innovation Hub
         </Button>
       </Link>
 
-      {id && !dashboard ? <p className='text-white'>/</p> : null}
+      {id && !dashboard ? <p className='text-primary'><ChevronRight /></p> : null}
       {id && !dashboard ? (
         <Link
           href={`/innovations/requests/${id}`}
-          className='text-white'
         >
           <Button
             variant='link'
             size='sm'
-            className='text-white'
           >
             request {id.slice(0, 6)}
           </Button>
         </Link>
       ) : null}
-      {dashboard ? <p className='text-white'>/</p> : null}
+      {dashboard ? <p><ChevronRight /></p> : null}
       {dashboard ? (
         <Button
-          variant='link'
+          variant='ghost'
           size='sm'
-          className='text-white'
         >
           Dashboard
         </Button>

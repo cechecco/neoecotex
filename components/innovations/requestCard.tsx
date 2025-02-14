@@ -17,9 +17,7 @@ export default function InnovationRequestCard({ request }: { request: Innovation
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <CardDescription>
             <p className='line-clamp-2'>{request.briefDescription}</p>
-          </CardDescription>
         </CardContent>
         <CardFooter className='w-full flex flex-col gap-2 mt-auto'>
           <Separator className='my-2' />

@@ -31,7 +31,7 @@ export default async function InnovationRequestForm() {
 
   return (
     <main className='flex flex-col gap-4'>
-      <div className='flex justify-center items-center py-12 text-white'>
+      <div className='flex justify-center items-center py-12'>
         <div className='flex gap-4 flex-col text-center w-full justify-center items-center'>
           <Image
             src='/logo.svg'
@@ -44,7 +44,7 @@ export default async function InnovationRequestForm() {
             {features.map((feature, index) => (
               <Card key={index}>
                 <CardHeader>
-                  <CardTitle className='text-lg text-fuchsia-700'>{feature.text}</CardTitle>
+                  <CardTitle className='text-lg'>{feature.text}</CardTitle>
                   <CardDescription>{feature.description}</CardDescription>
                 </CardHeader>
               </Card>
@@ -61,8 +61,8 @@ export default async function InnovationRequestForm() {
             className='border border-fuchsia-700 w-1/2 bg-fuchsia-200 p-4 h-48 backdrop-blur-xl shadow-lg flex flex-col gap-4 justify-center items-center align-middle backdrop-blur-sm w-full hover:shadow-lg hover:translate-y-[-10px] hover:bg-white transition-all duration-300'
           >
             <div className='flex flex-col gap-0 justify-center items-end'>
-              <p className='text-xs text-center text-fuchsia-900'>Register as</p>
-              <p className='text-2xl font-bold text-fuchsia-700'>{text.text}</p>
+              <p className='text-xs text-center'>Register as</p>
+              <p className='text-2xl font-bold'>{text.text}</p>
             </div>
             <div className='text-sm text-center'>
               {text.description.map((description, index) => (
