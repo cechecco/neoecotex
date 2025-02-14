@@ -3,8 +3,8 @@ import Link from 'next/link'
 
 const LogoMenu = () => {
   return (
-    <Link href={'/'}>
-      <div className='cursor-pointer hover:opacity-80 transition-opacity'>
+    <div className='cursor-pointer hover:opacity-80 transition-opacity'>
+      <Link href={'/'}>
         <Image
           src={'/logo.svg'}
           alt={'logo'}
@@ -12,8 +12,8 @@ const LogoMenu = () => {
           height={50}
           priority
         />
-      </div>
-    </Link>
+      </Link>
+    </div>
   )
 }
 

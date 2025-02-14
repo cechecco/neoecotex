@@ -55,14 +55,17 @@ export default function RequestFormClient() {
               <div className='flex items-center justify-between gap-2 w-full border border-primary bg-primary/10 p-4 rounded-md'>
                 <p className='flex items-center gap-2 font-bold'>Apply changes</p>
                 <div className='flex items-center gap-2'>
-                  <Link href={`/innovations/requests/${request.$id}`}>
-                    <Button
-                      variant='outline'
-                      disabled={pending}
+                  <Button
+                    variant='outline'
+                    disabled={pending || !request.$id}
+                  >
+                    <Link
+                      href={`/innovations/requests/${request.$id ? request.$id : 'dashboard'}`}
+                      prefetch={false}
                     >
-                      Discard changes
-                    </Button>
-                  </Link>
+                      Discard
+                    </Link>
+                  </Button>
                   <SaveButton />
                 </div>
               </div>

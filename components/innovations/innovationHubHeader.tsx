@@ -32,14 +32,12 @@ export default function InnovationHubHeader() {
         </p>
       ) : null}
       {id && !dashboard ? (
-        <Link href={`/innovations/requests/${id}`}>
-          <Button
-            variant='link'
-            size='sm'
-          >
-            request {id.slice(0, 6)}
-          </Button>
-        </Link>
+        <Button
+          variant='link'
+          size='sm'
+        >
+          <Link href={`/innovations/requests/${id}`}>request {id.slice(0, 6)}</Link>
+        </Button>
       ) : null}
       {dashboard ? (
         <p>

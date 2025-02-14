@@ -11,12 +11,13 @@ export default function InnovationsPage() {
     <main>
       <div className='flex justify-between items-center mb-4'>
         <h1 className='text-3xl font-bold'>Innovation Requests</h1>
-        <Link href='/innovations/requests/dashboard'>
-          <Button size='sm'>
+
+        <Button size='sm'>
+          <Link href='/innovations/requests/dashboard'>
             <LayoutDashboard />
             Dashboard
-          </Button>
-        </Link>
+          </Link>
+        </Button>
       </div>
       <Suspense fallback={<RequestsListSkeleton />}>
         <RequestsList />
