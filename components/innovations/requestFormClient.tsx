@@ -18,7 +18,7 @@ import { InnovationRequest } from "@/lib/types";
 
 export default function RequestFormClient() {
     const { request, setRequest } = useInnovationRequest();
-    // @ts-expect-error
+    // @ts-expect-error https://nextjs.org/docs/app/building-your-application/data-fetching/server-actions-and-mutations#server-side-form-validation
     const [state, formAction, pending] = useActionState(updateInnovationRequest, request)
     const [fetchError, setFetchError] = useState<string | false>(false)
     const [validationError, setValidationError] = useState<Record<keyof InnovationRequest, string[]> | false>(false)
