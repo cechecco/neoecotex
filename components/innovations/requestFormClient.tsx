@@ -57,7 +57,7 @@ export default function RequestFormClient() {
                 <div className='flex items-center gap-2'>
                   <Button
                     variant='outline'
-                    disabled={pending || !request.$id}
+                    disabled={pending || !!(request.$id && JSON.stringify(request) === JSON.stringify(state))}
                   >
                     <Link
                       href={`/innovations/requests/${request.$id ? request.$id : 'dashboard'}`}
