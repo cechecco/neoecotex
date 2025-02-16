@@ -1,4 +1,4 @@
-import { getLoggedInUser } from '../app/actions/auth'
+import { getLoggedInUser } from '@/app/actions/auth'
 import MenuClient from '@/components/menuClient'
 
 export default async function MenuServer() {

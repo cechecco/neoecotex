@@ -8,10 +8,22 @@ import LogoMenu from '@/components/logoMenu'
 import { useMediaQuery } from 'react-responsive'
 import { Models } from 'node-appwrite'
 import UserMenu from './userMenu'
-export default function ClientMenu({ user }: { user: Models.User<Models.Preferences> | null }) {
+import React from 'react'
+
+export default function MenuClient({ user }: { user: Models.User<Models.Preferences> | null }) {
   const isMobileOrTablet = useMediaQuery({ maxWidth: 768 })
+  const [isMounted, setIsMounted] = React.useState(false)
+
+  React.useEffect(() => {
+    setIsMounted(true)
+  }, [])
+
+  if (!isMounted) {
+    return null
+  }
+
   return (
-    <>
+    <div>
       {!isMobileOrTablet ? (
         <div className='sticky top-0 z-10 grid grid-cols-3 items-center p-4 backdrop-blur-xl'>
           <div className='flex justify-start'>
@@ -36,7 +48,9 @@ export default function ClientMenu({ user }: { user: Models.User<Models.Preferen
               </Button>
             </SheetTrigger>
             <SheetContent side='left'>
-              <SheetTitle>Navigation Menu</SheetTitle>
+              <SheetTitle>
+                <LogoMenu />
+              </SheetTitle>
               <div className='flex flex-col gap-4 mt-8'>
                 <SiteMenu />
               </div>
@@ -45,6 +59,6 @@ export default function ClientMenu({ user }: { user: Models.User<Models.Preferen
           </Sheet>
         </div>
       )}
-    </>
+    </div>
   )
 }
