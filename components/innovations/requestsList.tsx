@@ -14,10 +14,10 @@ export default async function RequestsList() {
     return (
       <div>
         <div className='grid md:grid-cols-2 lg:grid-cols-3 gap-4'>
-          {innovationRequests.documents.map((request) => (
+          {innovationRequests.documents.map((request: unknown, index: number) => (
             <RequestCard
-              key={request.$id}
-              request={request as unknown as InnovationRequest}
+              key={index}
+              request={request as InnovationRequest}
             />
           ))}
         </div>

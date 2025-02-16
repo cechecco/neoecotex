@@ -1,12 +1,11 @@
 'use server'
 
-import { createDatabaseAdminClient } from '@/lib/server/appwrite'
 import { redirect } from 'next/navigation'
 import { ID } from 'node-appwrite'
 import { InnovationRequest } from '@/lib/types'
-import { DatabaseError } from './types'
-import { innovations } from '../../lib/server/database'
-import { getRawRequest, validationErrors } from '../../lib/server/validation'
+import { DatabaseError } from '@/lib/types'
+import { innovations } from '@/lib/server/database'
+import { getRawRequest, validationErrors } from '@/lib/server/validation'
 
 export async function getInnovationRequests() {
   return await innovations.list()

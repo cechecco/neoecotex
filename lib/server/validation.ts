@@ -1,5 +1,4 @@
-import { InnovationRequest } from '@/lib/types'
-import { innovationRequestSchema } from '../../app/actions/types'
+import { InnovationRequest, innovationRequestSchema } from '@/lib/types'
 
 export function getRawRequest(formData: FormData): InnovationRequest {
   const rawRequest = {
