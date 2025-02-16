@@ -1,4 +1,4 @@
-import { getInnovationRequests } from '@/app/actions/innovations/requests/actions'
+import { getInnovationRequests } from '@/app/actions/actions'
 import RequestCard from './requestCard'
 import { InnovationRequest } from '@/lib/types'
 

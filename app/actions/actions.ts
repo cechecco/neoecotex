@@ -5,11 +5,11 @@ import { redirect } from 'next/navigation'
 import { ID } from 'node-appwrite'
 import { InnovationRequest } from '@/lib/types'
 import { DatabaseError } from './types'
-import { createDocument, getDocument, listDocuments, updateDocument } from './database'
-import { getRawRequest, validationErrors } from './validation'
+import { innovations } from '../../lib/server/database'
+import { getRawRequest, validationErrors } from '../../lib/server/validation'
 
 export async function getInnovationRequests() {
-  return await listDocuments()
+  return await innovations.list()
 }
 
 export async function getInnovationRequest(id: string) {
@@ -29,7 +29,7 @@ export async function getInnovationRequest(id: string) {
     } as InnovationRequest
   }
 
-  return await getDocument(id)
+  return await innovations.get(id)
 }
 
 export async function updateInnovationRequest(previousState: InnovationRequest, formData: FormData) {
@@ -46,24 +46,14 @@ export async function updateInnovationRequest(previousState: InnovationRequest, 
   const id = previousState.$id || ID.unique()
 
   if ('$id' in previousState && previousState.$id) {
-    return (await updateDocument(id, request)) as DatabaseError | InnovationRequest
+    return (await innovations.update(id, request)) as DatabaseError | InnovationRequest
   } else {
-    await createDocument(id, request)
+    await innovations.create(id, request)
     redirect(`/innovations/requests/${id}`)
   }
 }
 
 export async function deleteInnovationRequest(id: string) {
-  const { databases } = await createDatabaseAdminClient()
-
-  const promise = databases.deleteDocument('67aa7414000f83ae7018', '67aa745800179944f652', id)
-
-  return promise.then(
-    function () {
-      redirect(`/innovations/requests`)
-    },
-    function (error) {
-      return { error: true, message: error.toString() as string }
-    }
-  )
+  await innovations.delete(id)
+  redirect(`/innovations/requests`)
 }

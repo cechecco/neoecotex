@@ -1,4 +1,4 @@
-import { getInnovationRequest } from '@/app/actions/innovations/requests/actions'
+import { getInnovationRequest } from '@/app/actions/actions'
 import { RequestViewClient } from './requestViewClient'
 import { notFound } from 'next/navigation'
 import { InnovationRequest } from '@/lib/types'

@@ -2,7 +2,7 @@
 
 import { Card, CardFooter, CardHeader, CardTitle } from '../ui/card'
 import { useInnovationRequest } from '@/contexts/innovationRequestContext'
-import { deleteInnovationRequest, updateInnovationRequest } from '@/app/actions/innovations/requests/actions'
+import { deleteInnovationRequest, updateInnovationRequest } from '@/app/actions/actions'
 import { Button } from '../ui/button'
 import Link from 'next/link'
 import { useActionState, useEffect, useState } from 'react'
