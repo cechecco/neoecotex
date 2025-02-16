@@ -1,26 +1,10 @@
-import { getInnovationRequest } from '@/app/innovations/actions/requests/actions'
+import { getInnovationRequest } from '@/app/actions/innovations/requests/actions'
 import RequestFormClient from './requestFormClient'
-import { RequestViewClient } from './requestViewClient'
-import { notFound } from 'next/navigation'
+import { InnovationRequestProvider } from '@/contexts/innovationRequestContext'
 import { InnovationRequest } from '@/lib/types'
-import { InnovationRequestProvider } from '@/contexts/InnovationRequestContext'
 
 interface Props {
   id: string
-}
-
-export async function RequestView({ id }: Props) {
-  const request = await getInnovationRequest(id)
-  if ('error' in request) {
-    return notFound()
-  }
-  return (
-    <div>
-      <InnovationRequestProvider initialRequest={request as unknown as InnovationRequest}>
-        <RequestViewClient />
-      </InnovationRequestProvider>
-    </div>
-  )
 }
 
 export async function RequestForm({ id }: Props) {

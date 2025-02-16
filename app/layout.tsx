@@ -3,7 +3,7 @@ import { Albert_Sans } from 'next/font/google'
 import './globals.css'
 import { Mail, Linkedin } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import NavigationMenus from '@/components/NavigationMenu'
+import MenuServer from '@/components/menuServer'
 
 const albertSans = Albert_Sans({
   variable: '--font-albert-sans',
@@ -23,7 +23,7 @@ export default async function RootLayout({
   return (
     <html lang='en'>
       <body className={`${albertSans.variable} antialiased bg-gradient-to-b from-violet-500 to-fuchsia-500 min-h-screen flex flex-col`}>
-        <NavigationMenus />
+        <MenuServer />
         <div className='min-h-screen'>{children}</div>
         <footer className='w-full bg-black/30 backdrop-blur-xl mt-auto'>
           <div className='max-w-screen-lg mx-auto p-4 text-center'>

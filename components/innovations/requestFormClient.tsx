@@ -1,8 +1,8 @@
 'use client'
 
 import { Card, CardFooter, CardHeader, CardTitle } from '../ui/card'
-import { useInnovationRequest } from '@/contexts/InnovationRequestContext'
-import { deleteInnovationRequest, updateInnovationRequest } from '@/app/innovations/actions/requests/actions'
+import { useInnovationRequest } from '@/contexts/innovationRequestContext'
+import { deleteInnovationRequest, updateInnovationRequest } from '@/app/actions/innovations/requests/actions'
 import { Button } from '../ui/button'
 import Link from 'next/link'
 import { useActionState, useEffect, useState } from 'react'
@@ -11,7 +11,6 @@ import { Input } from '../ui/input'
 import { Textarea } from '../ui/textarea'
 import { Checkbox } from '../ui/checkbox'
 import { Label } from '../ui/label'
-import { SaveButton } from './saveButton'
 import { AlertCircle } from 'lucide-react'
 import { Separator } from '../ui/separator'
 import { InnovationRequest } from '@/lib/types'
@@ -52,21 +51,24 @@ export default function RequestFormClient() {
         <Card>
           <CardHeader>
             <CardTitle>
-              <div className='flex items-center justify-between gap-2 w-full border border-primary bg-primary/10 p-4 rounded-md'>
+              <div className='flex items-center justify-between gap-2 w-full border border-primary bg-primary/20 p-4 rounded-md'>
                 <p className='flex items-center gap-2 font-bold'>Apply changes</p>
                 <div className='flex items-center gap-2'>
                   <Button
                     variant='outline'
-                    disabled={pending || !!(request.$id && JSON.stringify(request) === JSON.stringify(state))}
+                    disabled={pending}
+                    size='sm'
                   >
-                    <Link
-                      href={`/innovations/requests/${request.$id ? request.$id : 'dashboard'}`}
-                      prefetch={false}
-                    >
-                      Discard
-                    </Link>
+                    <Link href={`/innovations/requests/${request.$id ? request.$id : 'dashboard'}`}>Discard</Link>
                   </Button>
-                  <SaveButton />
+                  <Button
+                    form='innovation-form'
+                    type='submit'
+                    disabled={pending || (request.$id ? JSON.stringify(request) === JSON.stringify(state) : false)}
+                    size='sm'
+                  >
+                    Save
+                  </Button>
                 </div>
               </div>
             </CardTitle>
@@ -444,9 +446,9 @@ export default function RequestFormClient() {
             {request.$id && (
               <>
                 <Separator />
-                <div className='flex justify-between items-center gap-2 w-full border border-red-500 bg-red-500/10 p-4 rounded-md'>
+                <div className='flex justify-between items-center gap-2 w-full border border-destructive bg-destructive/10 p-4 rounded-md'>
                   <div className='flex flex-col gap-2'>
-                    <p className='flex items-center gap-2 text-red-500 font-bold'>
+                    <p className='flex items-center gap-2 text-destructive font-bold'>
                       <AlertCircle className='w-4 h-4' /> Danger: Delete this request
                     </p>
                     <p className='text-muted-foreground text-sm'>Once you delete a request, there is no going back. Please be certain.</p>
@@ -454,6 +456,7 @@ export default function RequestFormClient() {
                   <Button
                     variant='destructive'
                     onClick={() => request.$id && deleteInnovationRequest(request.$id)}
+                    size='sm'
                   >
                     Delete
                   </Button>

@@ -1,5 +1,5 @@
 import RequestSkeleton from '@/components/innovations/requestSkeleton'
-import { RequestView } from '@/components/innovations/requestServer'
+import { RequestView } from '@/components/innovations/requestView'
 import { Suspense } from 'react'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'

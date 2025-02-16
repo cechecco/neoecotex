@@ -1,7 +1,7 @@
 'use client'
 
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card'
-import { useInnovationRequest } from '@/contexts/InnovationRequestContext'
+import { useInnovationRequest } from '@/contexts/innovationRequestContext'
 export function RequestViewClient() {
   const { request } = useInnovationRequest()
 

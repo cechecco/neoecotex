@@ -10,7 +10,10 @@ import { signOut } from '@/app/actions'
 export default function UserMenu({ user }: { user: Models.User<Models.Preferences> | null }) {
   if (!user) {
     return (
-      <Button asChild>
+      <Button
+        asChild
+        size='sm'
+      >
         <Link href='/login'>Log in</Link>
       </Button>
     )

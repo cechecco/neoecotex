@@ -1,5 +1,5 @@
 import RequestSkeleton from '@/components/innovations/requestSkeleton'
-import { RequestForm } from '@/components/innovations/requestServer'
+import { RequestForm } from '@/components/innovations/requestForm'
 import { Suspense } from 'react'
 
 interface Props {
