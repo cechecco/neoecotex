@@ -21,7 +21,10 @@ export default async function InnovationRequestPage(props: Props) {
           <Button size='sm'>Submit Solution</Button>
           <Button size='sm'>View Submissions</Button>
           <Button size='sm'>
-            <Link href={`/innovations/requests/${params.id}/edit`} className='flex items-center gap-2'>
+            <Link
+              href={`/innovations/requests/${params.id}/edit`}
+              className='flex items-center gap-2'
+            >
               <Pencil /> Edit
             </Link>
           </Button>

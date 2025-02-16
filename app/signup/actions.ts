@@ -4,6 +4,7 @@ import { cookies } from 'next/headers'
 import { createAdminClient, createSessionClient } from '@/lib/server/appwrite'
 import { redirect } from 'next/navigation'
 import { ID } from 'node-appwrite'
+import { revalidatePath } from 'next/cache'
 export async function signUpWithGoogle() {
   const { account } = await createAdminClient()
 
@@ -20,6 +21,7 @@ export async function signOut() {
   ;(await cookies()).delete('user-session')
   await account.deleteSession('current')
 
+  revalidatePath('/')
   redirect('/signup')
 }
 
@@ -46,6 +48,7 @@ export async function signUpWithEmail(formData: FormData) {
 export async function getLoggedInUser() {
   try {
     const { account } = await createSessionClient()
+    await new Promise((resolve) => setTimeout(resolve, 4000))
     return await account.get()
   } catch {
     return null

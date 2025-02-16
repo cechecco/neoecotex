@@ -8,7 +8,10 @@ export default function InnovationRequestDashboardPage() {
         <p className='text-3xl font-bold'>My Innovation Dashboard</p>
         <div className='flex items-center justify-end gap-2'>
           <Button size='sm'>
-            <Link href={`/innovations/requests/new/edit`} className='flex items-center gap-2'>
+            <Link
+              href={`/innovations/requests/new/edit`}
+              className='flex items-center gap-2'
+            >
               <Plus /> New Request
             </Link>
           </Button>

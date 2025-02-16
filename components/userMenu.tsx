@@ -1,19 +1,16 @@
+'use client'
+
 import Link from 'next/link'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
-import { getLoggedInUser } from '@/app/actions'
-import { LogoutMenuItem } from './LogoutMenuItem'
+import { Models } from 'node-appwrite'
+import { signOut } from '@/app/actions'
 
-export default async function UserMenu() {
-  const user = await getLoggedInUser()
+export default function UserMenu({ user }: { user: Models.User<Models.Preferences> | null }) {
   if (!user) {
     return (
-      <Button
-        asChild
-        variant='ghost'
-        className='bg-transparent hover:bg-fuchsia-500'
-      >
+      <Button asChild>
         <Link href='/login'>Log in</Link>
       </Button>
     )
@@ -47,7 +44,15 @@ export default async function UserMenu() {
           <Link href='/account'>Profile</Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <LogoutMenuItem />
+        <DropdownMenuItem
+          className='cursor-pointer'
+          onSelect={async (event) => {
+            event.preventDefault()
+            await signOut()
+          }}
+        >
+          Logout
+        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   )

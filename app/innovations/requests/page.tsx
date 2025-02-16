@@ -13,7 +13,10 @@ export default function InnovationsPage() {
         <h1 className='text-3xl font-bold'>Innovation Requests</h1>
 
         <Button size='sm'>
-          <Link href='/innovations/requests/dashboard' className='flex items-center gap-2'>
+          <Link
+            href='/innovations/requests/dashboard'
+            className='flex items-center gap-2'
+          >
             <LayoutDashboard />
             Dashboard
           </Link>
