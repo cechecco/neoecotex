@@ -4,7 +4,7 @@ import './globals.css'
 import { Mail, Linkedin } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import MenuServer from '@/components/menuServer'
-
+import Bg from '@/components/bg'
 const albertSans = Albert_Sans({
   variable: '--font-albert-sans',
   subsets: ['latin'],
@@ -22,8 +22,16 @@ export default async function RootLayout({
 }>) {
   return (
     <html lang='en'>
-      <body className={`${albertSans.variable} antialiased bg-gradient-to-b from-violet-500 to-fuchsia-500 min-h-screen flex flex-col`}>
-        <MenuServer />
+      <body className={`${albertSans.variable} relative antialiased bg-gradient-to-b from-violet-500 to-fuchsia-500 min-h-screen flex flex-col`}>
+        <Bg
+          color={[1, 0, 1]}
+          mouseReact={false}
+          amplitude={1}
+          speed={1.0}
+        />
+        <div className='h-16'>
+          <MenuServer />
+        </div>
         <div className='min-h-screen'>{children}</div>
         <footer className='w-full bg-black/30 backdrop-blur-xl mt-auto'>
           <div className='max-w-screen-lg mx-auto p-4 text-center'>

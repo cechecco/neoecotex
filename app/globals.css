@@ -68,7 +68,6 @@ body {
   }
   body {
     @apply bg-background text-foreground;
-    @apply px-4 lg:px-0;
   }
   .main,
   main {

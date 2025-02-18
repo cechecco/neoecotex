@@ -1,8 +1,6 @@
 import { getInnovationRequest } from '@/app/actions/actions'
 import { RequestViewClient } from './requestViewClient'
 import { notFound } from 'next/navigation'
-import { InnovationRequest } from '@/lib/types'
-import { InnovationRequestProvider } from '@/contexts/innovationRequestContext'
 
 interface Props {
   id: string
@@ -15,9 +13,7 @@ export async function RequestView({ id }: Props) {
   }
   return (
     <div>
-      <InnovationRequestProvider initialRequest={request as unknown as InnovationRequest}>
-        <RequestViewClient />
-      </InnovationRequestProvider>
+      <RequestViewClient request={request} />
     </div>
   )
 }

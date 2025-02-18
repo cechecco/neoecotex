@@ -1,26 +1,25 @@
 'use client'
 
 import { Card, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
-import { useInnovationRequest } from '@/contexts/innovationRequestContext'
-import { deleteInnovationRequest, updateInnovationRequest } from '@/app/actions/actions'
+import { deleteSubmission, updateSubmission } from '@/app/actions/actions'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 import { useActionState, useEffect, useState } from 'react'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
-import { Checkbox } from '@/components/ui/checkbox'
 import { Label } from '@/components/ui/label'
 import { AlertCircle } from 'lucide-react'
 import { Separator } from '@/components/ui/separator'
-import { InnovationRequest } from '@/lib/types'
+import { InnovationRequest, Submission } from '@/lib/types'
+import { useSubmission } from '@/contexts/submissionContext'
 
-export default function RequestFormClient() {
-  const { request, setRequest } = useInnovationRequest()
+export default function SubmissionFormClient() {
+  const { submission, setSubmission } = useSubmission()
   // @ts-expect-error https://nextjs.org/docs/app/building-your-application/data-fetching/server-actions-and-mutations#server-side-form-validation
-  const [state, formAction, pending] = useActionState(updateInnovationRequest, request)
-  const [fetchError, setFetchError] = useState<string | false>(false)
-  const [validationError, setValidationError] = useState<Partial<Record<keyof InnovationRequest, string[]>> | false>(false)
+  const [state, formAction, pending] = useActionState(updateSubmission, submission)
+  const [fetchError, setFetchError] = useState<string | undefined>(undefined)
+  const [validationError, setValidationError] = useState<Partial<Record<keyof Submission, string[]>> | false>(false)
 
   useEffect(() => {
     if (!pending) {
@@ -29,10 +28,10 @@ export default function RequestFormClient() {
       } else if ('validationError' in state) {
         setValidationError(state.errors)
       } else {
-        setRequest(state)
+        setSubmission(state)
       }
     }
-  }, [state, setRequest, pending])
+  }, [state, setSubmission, pending])
 
   if (fetchError) {
     return (
@@ -53,18 +52,23 @@ export default function RequestFormClient() {
             <CardTitle>
               <div className='flex items-center justify-between gap-2 w-full border border-primary bg-primary/20 p-4 rounded-md'>
                 <p className='flex items-center gap-2 font-bold'>Apply changes</p>
+                <input
+                  type='hidden'
+                  name='requestId'
+                  value={typeof submission.requestId === 'string' ? submission.requestId : submission.requestId.$id}
+                />
                 <div className='flex items-center gap-2'>
                   <Button
                     variant='outline'
                     disabled={pending}
                     size='sm'
                   >
-                    <Link href={`/innovations/requests/${request.$id ? request.$id : 'dashboard'}`}>Discard</Link>
+                    <Link href={`/innovations/requests/${submission.$id ? submission.$id : 'dashboard'}`}>Discard</Link>
                   </Button>
                   <Button
                     form='innovation-form'
                     type='submit'
-                    disabled={pending || (request.$id ? JSON.stringify(request) === JSON.stringify(state) : false)}
+                    disabled={pending || (submission.$id ? JSON.stringify(submission) === JSON.stringify(state) : false)}
                     size='sm'
                   >
                     Save
@@ -90,19 +94,19 @@ export default function RequestFormClient() {
                       </>
                     )}
                   </div>
-                  <p className='text-xs text-muted-foreground'>{request?.title?.length || 0} / 64</p>
+                  <p className='text-xs text-muted-foreground'>{submission?.title?.length || 0} / 64</p>
                 </Label>
                 <div className='relative'>
                   <Input
                     type='text'
                     id='title'
                     name='title'
-                    defaultValue={request?.title}
+                    defaultValue={submission?.title}
                     className={pending ? 'invisible' : ''}
                     maxLength={64}
                     onChange={(e) => {
-                      setRequest({
-                        ...request,
+                      setSubmission({
+                        ...submission,
                         title: e.target.value,
                       })
                     }}
@@ -128,18 +132,18 @@ export default function RequestFormClient() {
                       </>
                     )}
                   </div>
-                  <p className='text-xs text-muted-foreground'>{request?.briefDescription?.length || 0} / 140</p>
+                  <p className='text-xs text-muted-foreground'>{submission?.briefDescription?.length || 0} / 140</p>
                 </Label>
                 <div className='relative'>
                   <Textarea
                     id='briefDescription'
                     name='briefDescription'
-                    defaultValue={request?.briefDescription}
+                    defaultValue={submission?.briefDescription}
                     className={pending ? 'invisible' : ''}
                     maxLength={140}
                     onChange={(e) => {
-                      setRequest({
-                        ...request,
+                      setSubmission({
+                        ...submission,
                         briefDescription: e.target.value,
                       })
                     }}
@@ -148,7 +152,7 @@ export default function RequestFormClient() {
                 </div>
               </div>
 
-              <div className='grid w-full items-center gap-1.5'>
+              {/* <div className='grid w-full items-center gap-1.5'>
                 <Label
                   htmlFor='detailedDescription'
                   className='flex items-center justify-between'
@@ -165,18 +169,18 @@ export default function RequestFormClient() {
                       </>
                     )}
                   </div>
-                  <p className='text-xs text-muted-foreground'>{request?.detailedDescription?.length || 0} / 1000</p>
+                  <p className='text-xs text-muted-foreground'>{submission?.detailedDescription?.length || 0} / 1000</p>
                 </Label>
                 <div className='relative'>
                   <Textarea
                     id='detailedDescription'
                     name='detailedDescription'
-                    defaultValue={request?.detailedDescription}
+                    defaultValue={submission?.detailedDescription}
                     className={pending ? 'invisible' : ''}
                     maxLength={1000}
                     onChange={(e) => {
-                      setRequest({
-                        ...request,
+                      setSubmission({
+                        ...submission,
                         detailedDescription: e.target.value,
                       })
                     }}
@@ -202,19 +206,19 @@ export default function RequestFormClient() {
                       </>
                     )}
                   </div>
-                  <p className='text-xs text-muted-foreground'>{request?.expectedExpertise?.length || 0} / 140</p>
+                  <p className='text-xs text-muted-foreground'>{submission?.expectedExpertise?.length || 0} / 140</p>
                 </Label>
                 <div className='relative'>
                   <Input
                     type='text'
                     id='expectedExpertise'
                     name='expectedExpertise'
-                    defaultValue={request?.expectedExpertise}
+                    defaultValue={submission?.expectedExpertise}
                     className={pending ? 'invisible' : ''}
                     maxLength={140}
                     onChange={(e) => {
-                      setRequest({
-                        ...request,
+                      setSubmission({
+                        ...submission,
                         expectedExpertise: e.target.value,
                       })
                     }}
@@ -240,19 +244,19 @@ export default function RequestFormClient() {
                       </>
                     )}
                   </div>
-                  <p className='text-xs text-muted-foreground'>{request?.expectedTimeline?.length || 0} / 140</p>
+                  <p className='text-xs text-muted-foreground'>{submission?.expectedTimeline?.length || 0} / 140</p>
                 </Label>
                 <div className='relative'>
                   <Input
                     type='text'
                     id='expectedTimeline'
                     name='expectedTimeline'
-                    defaultValue={request?.expectedTimeline}
+                    defaultValue={submission?.expectedTimeline}
                     className={pending ? 'invisible' : ''}
                     maxLength={140}
                     onChange={(e) => {
-                      setRequest({
-                        ...request,
+                      setSubmission({
+                        ...submission,
                         expectedTimeline: e.target.value,
                       })
                     }}
@@ -278,19 +282,19 @@ export default function RequestFormClient() {
                       </>
                     )}
                   </div>
-                  <p className='text-xs text-muted-foreground'>{request?.company?.length || 0} / 64</p>
+                  <p className='text-xs text-muted-foreground'>{submission?.company?.length || 0} / 64</p>
                 </Label>
                 <div className='relative'>
                   <Input
                     type='text'
                     id='company'
                     name='company'
-                    defaultValue={request?.company}
+                    defaultValue={submission?.company}
                     className={pending ? 'invisible' : ''}
                     maxLength={64}
                     onChange={(e) => {
-                      setRequest({
-                        ...request,
+                      setSubmission({
+                        ...submission,
                         company: e.target.value,
                       })
                     }}
@@ -322,7 +326,7 @@ export default function RequestFormClient() {
                     type='number'
                     id='budget'
                     name='budget'
-                    defaultValue={request?.budget}
+                    defaultValue={submission?.budget}
                     className={pending ? 'invisible' : ''}
                   />
                   {pending && <Skeleton className='absolute inset-0 z-20 h-full' />}
@@ -346,19 +350,19 @@ export default function RequestFormClient() {
                       </>
                     )}
                   </div>
-                  <p className='text-xs text-muted-foreground'>{request?.concept?.length || 0} / 140</p>
+                  <p className='text-xs text-muted-foreground'>{submission?.concept?.length || 0} / 140</p>
                 </Label>
                 <div className='relative'>
                   <Input
                     type='text'
                     id='concept'
                     name='concept'
-                    defaultValue={request?.concept}
+                    defaultValue={submission?.concept}
                     className={pending ? 'invisible' : ''}
                     maxLength={140}
                     onChange={(e) => {
-                      setRequest({
-                        ...request,
+                      setSubmission({
+                        ...submission,
                         concept: e.target.value,
                       })
                     }}
@@ -384,19 +388,19 @@ export default function RequestFormClient() {
                       </>
                     )}
                   </div>
-                  <p className='text-xs text-muted-foreground'>{request?.field?.length || 0} / 140</p>
+                  <p className='text-xs text-muted-foreground'>{submission?.field?.length || 0} / 140</p>
                 </Label>
                 <div className='relative'>
                   <Input
                     type='text'
                     id='field'
                     name='field'
-                    defaultValue={request?.field}
+                    defaultValue={submission?.field}
                     className={pending ? 'invisible' : ''}
                     maxLength={140}
                     onChange={(e) => {
-                      setRequest({
-                        ...request,
+                      setSubmission({
+                        ...submission,
                         field: e.target.value,
                       })
                     }}
@@ -410,7 +414,7 @@ export default function RequestFormClient() {
                   <Checkbox
                     id='marketingConsent'
                     name='marketingConsent'
-                    defaultChecked={request?.marketingConsent}
+                    defaultChecked={submission?.marketingConsent}
                     className={pending ? 'invisible' : ''}
                   />
                   {pending && <Skeleton className='absolute inset-0 z-20 h-full' />}
@@ -428,7 +432,7 @@ export default function RequestFormClient() {
                   <Checkbox
                     id='ecologyConsent'
                     name='ecologyConsent'
-                    defaultChecked={request?.ecologyConsent}
+                    defaultChecked={submission?.ecologyConsent}
                     className={pending ? 'invisible' : ''}
                   />
                   {pending && <Skeleton className='absolute inset-0 z-20 h-full' />}
@@ -439,11 +443,11 @@ export default function RequestFormClient() {
                 >
                   Ecology Consent
                 </Label>
-              </div>
+              </div> */}
             </div>
           </CardHeader>
           <CardFooter className='w-full flex flex-col gap-4'>
-            {request.$id && (
+            {submission.$id && (
               <>
                 <Separator />
                 <div className='flex justify-between items-center gap-2 w-full border border-destructive bg-destructive/10 p-4 rounded-md'>
@@ -455,7 +459,7 @@ export default function RequestFormClient() {
                   </div>
                   <Button
                     variant='destructive'
-                    onClick={() => request.$id && deleteInnovationRequest(request.$id)}
+                    onClick={() => submission.$id && deleteSubmission(submission.$id, (submission.requestId as InnovationRequest).$id!)}
                     size='sm'
                   >
                     Delete

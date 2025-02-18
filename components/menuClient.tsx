@@ -25,13 +25,17 @@ export default function MenuClient({ user }: { user: Models.User<Models.Preferen
   return (
     <>
       {!isMobileOrTablet ? (
-        <><div className='flex justify-start'>
-          <LogoMenu />
-        </div><div className='flex justify-center'>
+        <>
+          <div className='flex justify-start'>
+            <LogoMenu />
+          </div>
+          <div className='flex justify-center'>
             <SiteMenu />
-          </div><div className='flex justify-end'>
+          </div>
+          <div className='flex justify-end'>
             <UserMenu user={user} />
-          </div></>
+          </div>
+        </>
       ) : (
         <div className='flex justify-end gap-4'>
           <Sheet>

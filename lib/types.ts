@@ -47,3 +47,18 @@ export const innovationRequestSchema = z.object({
   marketingConsent: z.boolean(),
   ecologyConsent: z.boolean(),
 }) as z.ZodType<InnovationRequest>
+
+export interface Submission {
+  $id?: string
+  title: string
+  briefDescription: string
+  requestId: InnovationRequest
+}
+
+export type SubmissionWithStringId = Omit<Submission, 'requestId'> & { requestId: string }
+
+export const submissionSchema = z.object({
+  title: z.string().min(1, 'Title is required').max(64, 'Title must be less than 64 characters'),
+  briefDescription: z.string().min(1, 'Brief description is required').max(140, 'Brief description must be less than 140 characters'),
+  requestId: z.string().min(1, 'Request ID is required'),
+}) as z.ZodType<SubmissionWithStringId>

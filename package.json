@@ -28,6 +28,7 @@
     "lucide-react": "^0.475.0",
     "next": "^15.2.0-canary.55",
     "node-appwrite": "^15.0.0",
+    "ogl": "^1.0.11",
     "react": "^19.0.0",
     "react-device-detect": "^2.2.3",
     "react-dom": "^19.0.0",
