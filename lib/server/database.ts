@@ -158,6 +158,7 @@ export const submissions = {
           submissions: [...existingSubmissions, id],
         })
       } catch (error) {
+        console.log('Error updating submitter document:', error)
         // If not exists, create new document with array containing just this submission
         await databases.createDocument(DATABASE_ID, SUBMITTERS_COLLECTION_ID, user.$id, {
           submissions: [id],
