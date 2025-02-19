@@ -23,8 +23,8 @@ export default function InnovationHubHeader() {
           variant='link'
           size='sm'
         >
-          <House className='w-4 h-4' />
-          Innovation Hub
+          <House className='w-4 h-4 text-foreground' />
+          <p className='text-foreground'>Innovation Hub</p>
         </Button>
       </Link>
 
@@ -34,13 +34,14 @@ export default function InnovationHubHeader() {
           <Button
             variant='link'
             size='sm'
+            className='text-foreground'
           >
             <Link
               href={`/innovations/requests/${id}`}
               className='flex items-center gap-2'
             >
-              <CircleHelpIcon className='w-4 h-4' />
-              <span className='hidden md:block'>request {id.slice(0, 6)}</span>
+              <CircleHelpIcon className='w-4 h-4 text-foreground' />
+              <span className='hidden md:block text-foreground'>request {id.slice(0, 6)}</span>
             </Link>
           </Button>
         </>
@@ -52,13 +53,14 @@ export default function InnovationHubHeader() {
           <Button
             variant='link'
             size='sm'
+            className='text-foreground'
           >
             <Link
               href={`/innovations/requests/${id}/submissions/${submission}`}
               className='flex items-center gap-2'
             >
-              <ShieldPlus className='w-4 h-4' />
-              <span className='hidden md:block'>submission {submission.slice(0, 6)}</span>
+              <ShieldPlus className='w-4 h-4 text-foreground' />
+              <span className='hidden md:block text-foreground'>submission {submission.slice(0, 6)}</span>
             </Link>
           </Button>
         </>
@@ -66,10 +68,11 @@ export default function InnovationHubHeader() {
 
       {dashboard && (
         <>
-          <p>/</p>
+          <p className='text-primary'>/</p>
           <Button
             variant='ghost'
             size='sm'
+            className='text-foreground'
           >
             Dashboard
           </Button>

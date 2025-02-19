@@ -50,7 +50,7 @@ export default function SubmissionFormClient() {
         <Card>
           <CardHeader>
             <CardTitle>
-              <div className='flex items-center justify-between gap-2 w-full border border-primary bg-primary/20 p-4 rounded-md'>
+              <div className='flex items-center justify-between gap-2 w-full border border-secondary bg-secondary/20 p-4 rounded-md'>
                 <p className='flex items-center gap-2 font-bold'>Apply changes</p>
                 <input
                   type='hidden'
@@ -72,6 +72,7 @@ export default function SubmissionFormClient() {
                   </Button>
                   <Button
                     form='innovation-form'
+                    variant='secondary'
                     type='submit'
                     disabled={pending || (submission.$id ? JSON.stringify(submission) === JSON.stringify(state) : false)}
                     size='sm'
@@ -460,7 +461,7 @@ export default function SubmissionFormClient() {
                     <p className='flex items-center gap-2 text-destructive font-bold'>
                       <AlertCircle className='w-4 h-4' /> Danger: Delete this request
                     </p>
-                    <p className='text-muted-foreground text-sm'>Once you delete a request, there is no going back. Please be certain.</p>
+                    <p className='text-destructive text-sm'>Once you delete a request, there is no going back. Please be certain.</p>
                   </div>
                   <Button
                     variant='destructive'
