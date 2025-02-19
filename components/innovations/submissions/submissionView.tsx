@@ -9,8 +9,6 @@ interface Props {
 }
 
 export async function SubmissionView({ submissionId, requestId }: Props) {
-  console.log('!!submissionId', submissionId)
-  console.log('!!requestId', requestId)
   const submission = (await getSubmission({ submissionId, requestId })) as Submission
   if ('error' in submission) {
     return notFound()

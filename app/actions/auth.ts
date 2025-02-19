@@ -48,7 +48,6 @@ export async function signUpWithEmail(formData: FormData) {
 export async function getLoggedInUser() {
   try {
     const { account } = await createSessionClient()
-    await new Promise((resolve) => setTimeout(resolve, 4000))
     return await account.get()
   } catch {
     return null

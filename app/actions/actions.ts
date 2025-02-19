@@ -19,7 +19,7 @@ export async function getInnovationRequest(id: string) {
       detailedDescription: '',
       expectedExpertise: '',
       expectedTimeline: '',
-      budget: 0,
+      budget: 100,
       company: '',
       concept: '',
       field: '',
@@ -62,8 +62,6 @@ export async function getSubmissions(requestId: string) {
 }
 
 export async function getSubmission({ submissionId, requestId }: { submissionId: string; requestId: string }) {
-  console.log('submissionId', submissionId)
-  console.log('requestId', requestId)
   if (submissionId === 'new') {
     return {
       title: '',
