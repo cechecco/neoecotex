@@ -4,14 +4,22 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import OpenButton from './openButton'
 
-const SubmissionsList = async () => {
-  const submissionsResponse = await getSubmissions()
+interface Props {
+  requestId: string
+}
+
+const SubmissionsList = async ({ requestId }: Props) => {
+  const submissionsResponse = await getSubmissions(requestId)
 
   if ('error' in submissionsResponse) {
     return <div>Error: {submissionsResponse.message}</div>
   }
 
   const submissions = submissionsResponse.documents
+
+  if (submissions.length === 0) {
+    return <div>No submissions found</div>
+  }
 
   return (
     <Card>

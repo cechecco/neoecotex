@@ -29,7 +29,7 @@ export default async function RootLayout({
           amplitude={1}
           speed={1.0}
         />
-        <div className='h-16'>
+        <div className='h-5 md:h-16'>
           <MenuServer />
         </div>
         <div className='min-h-screen'>{children}</div>

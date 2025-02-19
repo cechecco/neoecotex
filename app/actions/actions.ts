@@ -57,8 +57,8 @@ export async function deleteInnovationRequest(id: string) {
   redirect(`/innovations/requests`)
 }
 
-export async function getSubmissions() {
-  return await submissions.list()
+export async function getSubmissions(requestId: string) {
+  return await submissions.list(requestId)
 }
 
 export async function getSubmission({ submissionId, requestId }: { submissionId: string; requestId: string }) {

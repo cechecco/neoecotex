@@ -62,8 +62,13 @@ export default function SubmissionFormClient() {
                     variant='outline'
                     disabled={pending}
                     size='sm'
+                    type='button'
                   >
-                    <Link href={`/innovations/requests/${submission.$id ? submission.$id : 'dashboard'}`}>Discard</Link>
+                    <Link
+                      href={`/innovations/requests/${typeof submission.requestId === 'string' ? submission.requestId : submission.requestId.$id}/submissions/${'$id' in submission ? submission.$id : ''}`}
+                    >
+                      Discard
+                    </Link>
                   </Button>
                   <Button
                     form='innovation-form'

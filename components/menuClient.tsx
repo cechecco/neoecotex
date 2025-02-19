@@ -1,7 +1,6 @@
 'use client'
 
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from '@/components/ui/sheet'
-import { Button } from '@/components/ui/button'
 import { Menu } from 'lucide-react'
 import SiteMenu from '@/components/siteMenu'
 import LogoMenu from '@/components/logoMenu'
@@ -37,15 +36,10 @@ export default function MenuClient({ user }: { user: Models.User<Models.Preferen
           </div>
         </>
       ) : (
-        <div className='flex justify-end gap-4'>
+        <div className='flex w-full justify-end fixed top-0 right-0 z-10'>
           <Sheet>
             <SheetTrigger asChild>
-              <Button
-                variant='ghost'
-                size='icon'
-              >
-                <Menu className='h-5 w-5' />
-              </Button>
+              <Menu className='h-10 w-10 p-2 bg-white/50 backdrop-blur-xl rounded-lg m-2' />
             </SheetTrigger>
             <SheetContent side='left'>
               <SheetTitle>

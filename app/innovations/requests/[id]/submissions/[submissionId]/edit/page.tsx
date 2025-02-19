@@ -14,8 +14,11 @@ export default async function SubmissionEditorPage(props: Props) {
   const submissionId = params.submissionId
   return (
     <main>
-      <div className='flex justify-between items-center mb-4'>
-        <p className='text-3xl font-bold'>Submission editor {submissionId}</p>
+      <div className='flex flex-col md:flex-row gap-2 justify-between mb-4'>
+        <p className='text-3xl font-bold'>Submission editor</p>
+        <p>
+          {requestId} {submissionId}
+        </p>
       </div>
 
       <Suspense fallback={<RequestSkeleton />}>

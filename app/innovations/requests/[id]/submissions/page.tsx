@@ -2,14 +2,23 @@ import SubmissionsList from '@/components/innovations/submissions/submissionsLis
 import SubmissionsListSkeleton from '@/components/innovations/submissions/submissionsListSkeleton'
 import { Suspense } from 'react'
 
-export default function SubmissionsPage() {
+interface Props {
+  params: Promise<{
+    id: string
+  }>
+}
+
+export default async function SubmissionsPage(props: Props) {
+  const params = await props.params
+  const requestId = params.id
   return (
     <main>
-      <div className='flex justify-between items-center mb-4'>
-        <h1 className='text-3xl font-bold'>Submissions for Innovation Request</h1>
+      <div className='flex flex-col md:flex-row gap-2 justify-between mb-4'>
+        <p className='text-3xl font-bold'>Submissions</p>
+        <p>{requestId}</p>
       </div>
       <Suspense fallback={<SubmissionsListSkeleton />}>
-        <SubmissionsList />
+        <SubmissionsList requestId={requestId} />
       </Suspense>
     </main>
   )

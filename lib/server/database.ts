@@ -1,6 +1,7 @@
 import { createDatabaseAdminClient } from '@/lib/server/appwrite'
 import { InnovationRequest, innovationRequestSchema, Submission, submissionSchema, SubmissionWithStringId } from '@/lib/types'
 import { DatabaseError } from '@/lib/types'
+import { Query } from 'node-appwrite'
 const DATABASE_ID = '67aa7414000f83ae7018'
 const REQUESTS_COLLECTION_ID = '67aa745800179944f652'
 const SUBMISSIONS_COLLECTION_ID = '67b25d700034a4bddeb1'
@@ -130,10 +131,10 @@ export const submissions = {
     }
   },
 
-  async list() {
+  async list(requestId: string) {
     try {
       const { databases } = await createDatabaseAdminClient()
-      return (await databases.listDocuments(DATABASE_ID, SUBMISSIONS_COLLECTION_ID)) as unknown as { documents: Submission[] } // TODO: fix this
+      return (await databases.listDocuments(DATABASE_ID, SUBMISSIONS_COLLECTION_ID, [Query.equal('requestId', requestId)])) as unknown as { documents: Submission[] } // TODO: fix this
     } catch (error) {
       return {
         error: true,

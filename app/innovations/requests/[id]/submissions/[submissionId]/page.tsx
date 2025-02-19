@@ -3,7 +3,7 @@ import { SubmissionView } from '@/components/innovations/submissions/submissionV
 import { Suspense } from 'react'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
-import { Pencil } from 'lucide-react'
+import { Eye, Pencil } from 'lucide-react'
 
 interface Props {
   params: Promise<{
@@ -18,9 +18,18 @@ export default async function SubmissionPage(props: Props) {
   const submissionId = params.submissionId
   return (
     <main>
-      <div className='flex justify-between items-center mb-4'>
+      <div className='flex flex-col md:flex-row gap-2 justify-between mb-4'>
         <p className='text-3xl font-bold'>Submission</p>
         <div className='flex items-center justify-end gap-2'>
+          <Button size='sm'>
+            <Link
+              href={`/innovations/requests/${params.id}/submissions`}
+              className='flex items-center gap-2'
+            >
+              <Eye />
+              View Submissions
+            </Link>
+          </Button>
           <Button size='sm'>
             <Link
               href={`/innovations/requests/${requestId}/submissions/${submissionId}/edit`}
