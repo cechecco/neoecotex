@@ -124,7 +124,7 @@ export default function Iridescence({ color = [1, 1, 1], speed = 1.0, amplitude 
   return (
     <div
       ref={ctnDom}
-      className='w-full h-full absolute top-0 left-0 -z-10 opacity-30'
+      className='w-full h-full absolute top-0 left-0 overflow-hidden -z-10 opacity-30'
       {...rest}
     />
   )

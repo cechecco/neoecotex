@@ -22,7 +22,7 @@ export default async function RootLayout({
 }>) {
   return (
     <html lang='en'>
-      <body className={`${albertSans.variable} relative antialiased bg-gradient-to-b from-violet-500 to-fuchsia-500 min-h-screen flex flex-col`}>
+      <body className={`${albertSans.variable} relative antialiased bg-gradient-to-b from-violet-500 to-fuchsia-500 h-full flex flex-col`}>
         <Bg
           color={[1, 0, 1]}
           mouseReact={false}
@@ -33,7 +33,7 @@ export default async function RootLayout({
           <MenuServer />
         </div>
         <div className='min-h-screen'>{children}</div>
-        <footer className='w-full bg-black/30 backdrop-blur-xl mt-auto'>
+        <footer className='w-full bg-black/30 backdrop-blur-xl'>
           <div className='max-w-screen-lg mx-auto p-4 text-center'>
             <div className='flex items-center justify-center gap-4'>
               <Button

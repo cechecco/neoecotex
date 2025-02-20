@@ -136,6 +136,24 @@ export const innovations = {
 
     return undefined
   },
+  async userHasSubmitted(requestId: string | undefined) {
+    if (!requestId) {
+      return false
+    }
+    const { databases } = await createDatabaseAdminClient()
+    const user = await getLoggedInUser()
+    if (!user) {
+      return false
+    }
+    try {
+      const submitterDoc = await databases.getDocument(DATABASE_ID, SUBMITTERS_COLLECTION_ID, user.$id)
+      const existingSubmissions = submitterDoc.submissions || []
+      return existingSubmissions.find((sub: Submission) => sub.requestId.$id === requestId)
+    } catch (error) {
+      console.log('Error checking if user has submitted:', error)
+      return false
+    }
+  },
 }
 
 export const submissions = {
