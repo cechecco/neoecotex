@@ -215,15 +215,15 @@ export const innovations = {
       return undefined
     }
 
+    const fakeEmail = '****@****.***'
+
     const currentUser = await getLoggedInUser()
     if (!currentUser) {
-      throw new Error('User not found')
+      return fakeEmail
     }
 
-    console.log(currentUser.$id, winnerSubmitterId, await this.isOwner(currentUser.$id, requestId))
-
     if (!(await this.iAmWinner(requestId)) && !(await this.isOwner(currentUser.$id, requestId))) {
-      return '****@****.***'
+      return fakeEmail
     }
     return getUserEmail(winnerSubmitterId)
   },
