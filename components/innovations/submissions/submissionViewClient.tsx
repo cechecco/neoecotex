@@ -5,13 +5,15 @@ import { Submission } from '@/lib/types'
 
 interface Props {
   submission: Submission
+  children: React.ReactNode
 }
 
-export function SubmissionViewClient({ submission }: Props) {
+export function SubmissionViewClient({ submission, children }: Props) {
   return (
     <>
       <Card>
-        <CardHeader>
+        <CardHeader className='flex flex-col items-left gap-2'>
+          {children}
           <CardTitle>{submission.title}</CardTitle>
         </CardHeader>
         <CardContent>

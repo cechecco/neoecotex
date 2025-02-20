@@ -1,5 +1,5 @@
 'use server'
-import { Client, Account, Databases } from 'node-appwrite'
+import { Client, Account, Databases, Users } from 'node-appwrite'
 import { cookies } from 'next/headers'
 
 const APPWRITE_ENDPOINT = process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT!
@@ -52,4 +52,11 @@ export async function createDatabaseAdminClient() {
       return databases
     },
   }
+}
+
+export async function getUserEmail(userId: string) {
+  const client = new Client().setEndpoint(APPWRITE_ENDPOINT).setProject(APPWRITE_PROJECT).setKey(APPWRITE_KEY)
+  const users = new Users(client)
+  const user = await users.get(userId)
+  return user.email
 }

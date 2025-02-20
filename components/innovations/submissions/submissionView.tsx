@@ -2,7 +2,7 @@ import { getSubmission } from '@/app/actions/actions'
 import { SubmissionViewClient } from './submissionViewClient'
 import { notFound } from 'next/navigation'
 import { Submission } from '@/lib/types'
-
+import WinnerEmailButton from '../winnerEmailButton'
 interface Props {
   submissionId: string
   requestId: string
@@ -15,7 +15,9 @@ export async function SubmissionView({ submissionId, requestId }: Props) {
   }
   return (
     <div>
-      <SubmissionViewClient submission={submission} />
+      <SubmissionViewClient submission={submission}>
+        <WinnerEmailButton requestId={requestId} />
+      </SubmissionViewClient>
     </div>
   )
 }

@@ -1,8 +1,9 @@
 import { getLoggedInUser } from '@/app/actions/auth'
-import { createDatabaseAdminClient } from '@/lib/server/appwrite'
+import { createDatabaseAdminClient, getUserEmail } from '@/lib/server/appwrite'
 import { InnovationRequest, innovationRequestSchema, Submission, submissionSchema, SubmissionWithStringId } from '@/lib/types'
 import { DatabaseError } from '@/lib/types'
 import { Query } from 'node-appwrite'
+
 const DATABASE_ID = '67aa7414000f83ae7018'
 const REQUESTS_COLLECTION_ID = '67aa745800179944f652'
 const SUBMISSIONS_COLLECTION_ID = '67b25d700034a4bddeb1'
@@ -153,6 +154,83 @@ export const innovations = {
       console.log('Error checking if user has submitted:', error)
       return false
     }
+  },
+  async selectWinner(requestId: string, submissionId: string) {
+    const { databases } = await createDatabaseAdminClient()
+    // First check if a winner is already set
+    const request = await databases.getDocument(DATABASE_ID, REQUESTS_COLLECTION_ID, requestId)
+    if (request.winner) {
+      throw new Error('A winner has already been selected for this request')
+    }
+    // If no winner is set, proceed with setting the winner
+    await databases.updateDocument(DATABASE_ID, REQUESTS_COLLECTION_ID, requestId, {
+      winner: submissionId,
+    })
+  },
+  async getWinnerId(requestId: string) {
+    const { databases } = await createDatabaseAdminClient()
+    const request = await databases.getDocument(DATABASE_ID, REQUESTS_COLLECTION_ID, requestId)
+    const winnerSubmission = request.winner
+
+    if (!winnerSubmission) {
+      return undefined
+    }
+
+    const winnerSubmissionId = winnerSubmission.$id
+
+    const submitters = await databases.listDocuments(DATABASE_ID, SUBMITTERS_COLLECTION_ID)
+
+    const winnerSubmitterId = submitters.documents.find((submitter) => submitter.submissions.find((sub: Submission) => sub.$id === winnerSubmissionId))?.$id
+
+    if (!winnerSubmitterId) {
+      return undefined
+    }
+    return winnerSubmitterId
+  },
+  async isOwner(userId: string, requestId: string) {
+    const { databases } = await createDatabaseAdminClient()
+    try {
+      const requesterDoc = await databases.getDocument(DATABASE_ID, REQUESTERS_COLLECTION_ID, userId)
+      return requesterDoc.innovationRequests?.find((request: InnovationRequest) => request.$id === requestId) || false
+    } catch (error) {
+      console.log('Error checking request ownership:', error)
+      return false
+    }
+  },
+  async iAmOwner(requestId: string) {
+    const currentUser = await getLoggedInUser()
+    if (!currentUser) {
+      return false
+    }
+    return await this.isOwner(currentUser.$id, requestId)
+  },
+  async iAmWinner(requestId: string) {
+    const winnerSubmitterId = await this.getWinnerId(requestId)
+    const currentUser = await getLoggedInUser()
+    return currentUser?.$id === winnerSubmitterId
+  },
+  async getWinnerEmail(requestId: string) {
+    const winnerSubmitterId = await this.getWinnerId(requestId)
+    if (!winnerSubmitterId) {
+      return undefined
+    }
+
+    const currentUser = await getLoggedInUser()
+    if (!currentUser) {
+      throw new Error('User not found')
+    }
+
+    console.log(currentUser.$id, winnerSubmitterId, await this.isOwner(currentUser.$id, requestId))
+
+    if (!(await this.iAmWinner(requestId)) && !(await this.isOwner(currentUser.$id, requestId))) {
+      return '****@****.***'
+    }
+    return getUserEmail(winnerSubmitterId)
+  },
+  async thereIsWinner(requestId: string) {
+    const { databases } = await createDatabaseAdminClient()
+    const request = await databases.getDocument(DATABASE_ID, REQUESTS_COLLECTION_ID, requestId)
+    return !!request.winner
   },
 }
 

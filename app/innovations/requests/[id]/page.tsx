@@ -7,6 +7,7 @@ import { Eye, Pencil } from 'lucide-react'
 import { innovations } from '@/lib/server/database'
 import UserSubmissionCheck from '@/components/innovations/userSubmissionCheck'
 import SubmissionButton from '@/components/innovations/submissionButton'
+import OwnerCheck from '@/components/innovations/ownerCheck'
 
 export const dynamic = 'force-dynamic'
 
@@ -19,11 +20,13 @@ interface Props {
 export default async function InnovationRequestPage(props: Props) {
   const params = await props.params
   const userHasSubmitted = await innovations.userHasSubmitted(params.id)
+  const thereIsWinner = await innovations.thereIsWinner(params.id)
   return (
     <main>
       <div className='flex flex-col md:flex-row gap-2 justify-between mb-4'>
         <p className='text-3xl font-bold'>Innovation Request</p>
         <div className='flex items-center justify-end gap-2'>
+          <OwnerCheck requestId={params.id} />
           <UserSubmissionCheck userHasSubmitted={userHasSubmitted} />
           <SubmissionButton
             requestId={params.id}
@@ -38,12 +41,16 @@ export default async function InnovationRequestPage(props: Props) {
               View Submissions
             </Link>
           </Button>
-          <Button size='sm'>
+          <Button
+            size='sm'
+            disabled={thereIsWinner}
+          >
             <Link
               href={`/innovations/requests/${params.id}/edit`}
               className='flex items-center gap-2'
             >
-              <Pencil /> Edit
+              Edit
+              <Pencil />
             </Link>
           </Button>
         </div>

@@ -116,3 +116,12 @@ export async function deleteSubmission(id: string, requestId: string) {
   await submissions.delete(id)
   redirect(`/innovations/requests/${requestId}/submissions`)
 }
+
+export async function selectWinner(requestId: string, submissionId: string) {
+  await innovations.selectWinner(requestId, submissionId)
+  // redirect(`/innovations/requests/${requestId}/submissions`)
+}
+
+export async function getWinnerEmail(requestId: string) {
+  return await innovations.getWinnerEmail(requestId)
+}

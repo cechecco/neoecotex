@@ -5,13 +5,15 @@ import { InnovationRequest } from '@/lib/types'
 
 interface Props {
   request: InnovationRequest
+  children: React.ReactNode
 }
 
-export function RequestViewClient({ request }: Props) {
+export function RequestViewClient({ request, children }: Props) {
   return (
     <>
       <Card>
-        <CardHeader>
+        <CardHeader className='flex flex-col items-left gap-2'>
+          {children}
           <CardTitle>{request.title}</CardTitle>
         </CardHeader>
         <CardContent>

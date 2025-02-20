@@ -1,12 +1,14 @@
 import { Plus } from 'lucide-react'
 import { Button } from '../ui/button'
 import Link from 'next/link'
+import { innovations } from '@/lib/server/database'
 
-export default function SubmissionButton({ requestId, userHasSubmitted }: { requestId: string; userHasSubmitted: boolean }) {
+export default async function SubmissionButton({ requestId, userHasSubmitted }: { requestId: string; userHasSubmitted: boolean }) {
+  const thereIsWinner = await innovations.thereIsWinner(requestId)
   return (
     <Button
       size='sm'
-      disabled={userHasSubmitted}
+      disabled={userHasSubmitted || thereIsWinner}
     >
       <Link
         href={`/innovations/requests/${requestId}/submissions/new/edit`}

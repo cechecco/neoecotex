@@ -5,12 +5,14 @@ import Link from 'next/link'
 import { InnovationRequest } from '@/lib/types'
 import UserSubmissionCheck from './userSubmissionCheck'
 import { innovations } from '@/lib/server/database'
+import WinnerEmailButton from './winnerEmailButton'
 
 export default async function InnovationRequestCard({ request }: { request: InnovationRequest }) {
   const userHasSubmitted = await innovations.userHasSubmitted(request.$id)
+  const thereIsWinner = await innovations.thereIsWinner(request.$id!)
   return (
     <Link href={`/innovations/requests/${request.$id}`}>
-      <Card className='h-full hover:translate-y-[-5px] hover:shadow-lg transition-all duration-300 flex flex-col justify-start'>
+      <Card className={`h-full hover:translate-y-[-5px] hover:shadow-lg transition-all duration-300 flex flex-col justify-start ${thereIsWinner ? 'opacity-70' : ''}`}>
         <CardHeader>
           <CardTitle className='flex justify-between items-center'>
             <div>
@@ -26,6 +28,10 @@ export default async function InnovationRequestCard({ request }: { request: Inno
           <div className='flex justify-between items-center w-full'>
             <p className='text-xs text-muted-foreground'>Posted {formatDistance(new Date(request.$createdAt!), new Date(), { addSuffix: true })}</p>
             <UserSubmissionCheck userHasSubmitted={userHasSubmitted} />
+            <WinnerEmailButton
+              requestId={request.$id!}
+              size='sm'
+            />
           </div>
         </CardFooter>
       </Card>

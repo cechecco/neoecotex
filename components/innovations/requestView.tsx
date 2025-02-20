@@ -1,7 +1,7 @@
 import { getInnovationRequest } from '@/app/actions/actions'
 import { RequestViewClient } from './requestViewClient'
 import { notFound } from 'next/navigation'
-
+import WinnerEmailButton from './winnerEmailButton'
 interface Props {
   id: string
 }
@@ -13,7 +13,9 @@ export async function RequestView({ id }: Props) {
   }
   return (
     <div>
-      <RequestViewClient request={request} />
+      <RequestViewClient request={request}>
+        <WinnerEmailButton requestId={id} />
+      </RequestViewClient>
     </div>
   )
 }
