@@ -1,18 +1,32 @@
+'use client'
+
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '../ui/card'
 import { Separator } from '../ui/separator'
 import { formatDistance } from 'date-fns'
 import Link from 'next/link'
-import { InnovationRequest } from '@/lib/types'
 import UserSubmissionCheck from './userSubmissionCheck'
-import { innovations } from '@/lib/server/database'
 import WinnerEmailButton from './winnerEmailButton'
+import { useState, useEffect } from 'react'
+import { InnovationRequest } from '@/lib/types'
+import { userHasSubmitted, thereIsWinner } from '@/app/actions/actions'
 
-export default async function InnovationRequestCard({ request }: { request: InnovationRequest }) {
-  const userHasSubmitted = await innovations.userHasSubmitted(request.$id)
-  const thereIsWinner = await innovations.thereIsWinner(request.$id!)
+export default function InnovationRequestCard({ request }: { request: InnovationRequest }) {
+  const [submitted, setSubmitted] = useState(false)
+  const [won, setWon] = useState(false)
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const submitted = await userHasSubmitted(request.$id!)
+      const winner = await thereIsWinner(request.$id!)
+      setSubmitted(submitted)
+      setWon(winner)
+    }
+    fetchData()
+  }, [request.$id])
+
   return (
     <Link href={`/innovations/requests/${request.$id}`}>
-      <Card className={`h-full hover:translate-y-[-5px] hover:shadow-lg transition-all duration-300 flex flex-col justify-start ${thereIsWinner ? 'opacity-70' : ''}`}>
+      <Card className={`h-full hover:translate-y-[-5px] hover:shadow-lg transition-all duration-300 flex flex-col justify-start ${won ? 'opacity-70' : ''}`}>
         <CardHeader>
           <CardTitle className='flex justify-between items-center'>
             <div>
@@ -27,7 +41,7 @@ export default async function InnovationRequestCard({ request }: { request: Inno
           <Separator className='my-2' />
           <div className='flex justify-between items-center w-full'>
             <p className='text-xs text-muted-foreground'>Posted {formatDistance(new Date(request.$createdAt!), new Date(), { addSuffix: true })}</p>
-            <UserSubmissionCheck userHasSubmitted={userHasSubmitted} />
+            <UserSubmissionCheck userHasSubmitted={submitted} />
             <WinnerEmailButton
               requestId={request.$id!}
               size='sm'

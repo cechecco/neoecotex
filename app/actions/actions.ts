@@ -7,8 +7,8 @@ import { DatabaseError } from '@/lib/types'
 import { innovations } from '@/lib/server/database'
 import { submissions } from '@/lib/server/database'
 
-export async function getInnovationRequests() {
-  return await innovations.list()
+export async function getInnovationRequests(pagination: { page: number; limit: number }) {
+  return await innovations.list(pagination)
 }
 
 export async function getInnovationRequest(id: string) {
@@ -124,4 +124,20 @@ export async function selectWinner(requestId: string, submissionId: string) {
 
 export async function getWinnerEmail(requestId: string) {
   return await innovations.getWinnerEmail(requestId)
+}
+
+export async function iAmOwner(requestId: string) {
+  return await innovations.iAmOwner(requestId)
+}
+
+export async function iAmWinner(requestId: string) {
+  return await innovations.iAmWinner(requestId)
+}
+
+export async function userHasSubmitted(requestId: string) {
+  return await innovations.userHasSubmitted(requestId)
+}
+
+export async function thereIsWinner(requestId: string) {
+  return await innovations.thereIsWinner(requestId)
 }

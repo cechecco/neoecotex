@@ -1,9 +1,9 @@
 import { getInnovationRequests } from '@/app/actions/actions'
-import RequestCard from './requestCard'
 import { InnovationRequest } from '@/lib/types'
+import RequestListClient from './requestListClient'
 
 export default async function RequestsList() {
-  const innovationRequests = await getInnovationRequests()
+  const innovationRequests = await getInnovationRequests({ page: 1, limit: 6 })
   if ('error' in innovationRequests) {
     return (
       <div>
@@ -11,17 +11,6 @@ export default async function RequestsList() {
       </div>
     )
   } else {
-    return (
-      <div>
-        <div className='grid md:grid-cols-2 lg:grid-cols-3 gap-4'>
-          {innovationRequests.documents.map((request: unknown, index: number) => (
-            <RequestCard
-              key={index}
-              request={request as InnovationRequest}
-            />
-          ))}
-        </div>
-      </div>
-    )
+    return <RequestListClient innovationRequests={innovationRequests.documents as unknown as InnovationRequest[]} />
   }
 }

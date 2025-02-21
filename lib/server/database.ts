@@ -68,11 +68,10 @@ export const innovations = {
       } as DatabaseError
     }
   },
-
-  async list() {
+  async list(pagination: { page: number; limit: number }) {
     try {
       const { databases } = await createDatabaseAdminClient()
-      return await databases.listDocuments(DATABASE_ID, REQUESTS_COLLECTION_ID)
+      return await databases.listDocuments(DATABASE_ID, REQUESTS_COLLECTION_ID, [Query.orderDesc('$createdAt'), Query.limit(pagination.limit), Query.offset((pagination.page - 1) * pagination.limit)])
     } catch (error) {
       return {
         error: true,
@@ -150,8 +149,7 @@ export const innovations = {
       const submitterDoc = await databases.getDocument(DATABASE_ID, SUBMITTERS_COLLECTION_ID, user.$id)
       const existingSubmissions = submitterDoc.submissions || []
       return existingSubmissions.find((sub: Submission) => sub.requestId.$id === requestId)
-    } catch (error) {
-      console.log('Error checking if user has submitted:', error)
+    } catch {
       return false
     }
   },
