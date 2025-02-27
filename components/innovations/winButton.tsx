@@ -3,16 +3,16 @@
 import { Button } from '../ui/button'
 import { selectWinner } from '@/app/actions/actions'
 import { useRouter } from 'next/navigation'
-
-export default function WinButton({ submissionId, requestId, winner }: { submissionId: string; requestId: string; winner: boolean }) {
+import { RequestChecks } from '@/lib/server/database'
+export default function WinButton({ submissionId, check }: { submissionId: string, check: RequestChecks }) {
   const router = useRouter()
 
   return (
     <Button
       size='sm'
-      disabled={winner}
+      disabled={check.thereIsWinner}
       onClick={async () => {
-        await selectWinner(requestId, submissionId)
+        await selectWinner(check.requestId, submissionId)
         router.refresh()
       }}
     >

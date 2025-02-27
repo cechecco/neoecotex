@@ -5,9 +5,12 @@ import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 import { Eye, Pencil } from 'lucide-react'
 import { innovations } from '@/lib/server/database'
-import UserSubmissionCheck from '@/components/innovations/userSubmissionCheck'
 import SubmissionButton from '@/components/innovations/submissionButton'
-import OwnerCheck from '@/components/innovations/ownerCheck'
+import { getRequestsChecks } from '@/app/actions/actions'
+// import { innovations } from '@/lib/server/database'
+// import UserSubmissionCheck from '@/components/innovations/userSubmissionCheck'
+// import SubmissionButton from '@/components/innovations/submissionButton'
+// import OwnerCheck from '@/components/innovations/ownerCheck'
 
 export const dynamic = 'force-dynamic'
 
@@ -19,18 +22,19 @@ interface Props {
 
 export default async function InnovationRequestPage(props: Props) {
   const params = await props.params
-  const userHasSubmitted = await innovations.userHasSubmitted(params.id)
-  const thereIsWinner = await innovations.thereIsWinner(params.id)
+  // const userHasSubmitted = await innovations.userHasSubmitted(params.id)
+  // const thereIsWinner = await innovations.thereIsWinner(params.id)
+
+  const checks = (await getRequestsChecks([params.id]))[params.id]
   return (
     <main>
       <div className='flex flex-col md:flex-row gap-2 justify-between mb-4'>
         <p className='text-3xl font-bold'>Innovation Request</p>
         <div className='flex items-center justify-end gap-2'>
-          <OwnerCheck requestId={params.id} />
-          <UserSubmissionCheck userHasSubmitted={userHasSubmitted} />
+          {/* <OwnerCheck requestId={params.id} />
+          <UserSubmissionCheck userHasSubmitted={userHasSubmitted} /> */}
           <SubmissionButton
-            requestId={params.id}
-            userHasSubmitted={userHasSubmitted}
+            checks={checks}
           />
           <Button size='sm'>
             <Link
@@ -43,7 +47,7 @@ export default async function InnovationRequestPage(props: Props) {
           </Button>
           <Button
             size='sm'
-            disabled={thereIsWinner}
+            // disabled={thereIsWinner}
           >
             <Link
               href={`/innovations/requests/${params.id}/edit`}

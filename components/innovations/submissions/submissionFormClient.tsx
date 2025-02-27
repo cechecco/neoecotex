@@ -16,7 +16,6 @@ import { useSubmission } from '@/contexts/submissionContext'
 
 export default function SubmissionFormClient() {
   const { submission, setSubmission } = useSubmission()
-  // @ts-expect-error https://nextjs.org/docs/app/building-your-application/data-fetching/server-actions-and-mutations#server-side-form-validation
   const [state, formAction, pending] = useActionState(updateSubmission, submission)
   const [fetchError, setFetchError] = useState<string | undefined>(undefined)
   const [validationError, setValidationError] = useState<Partial<Record<keyof Submission, string[]>> | false>(false)
@@ -55,7 +54,7 @@ export default function SubmissionFormClient() {
                 <input
                   type='hidden'
                   name='requestId'
-                  value={typeof submission.requestId === 'string' ? submission.requestId : submission.requestId.$id}
+                  value={submission.requestId}
                 />
                 <div className='flex items-center gap-2'>
                   <Button
@@ -64,8 +63,9 @@ export default function SubmissionFormClient() {
                     size='sm'
                     type='button'
                   >
+                    {/* TODO: quel check su id non e' bello */}
                     <Link
-                      href={`/innovations/requests/${typeof submission.requestId === 'string' ? submission.requestId : submission.requestId.$id}/submissions/${'$id' in submission ? submission.$id : ''}`}
+                      href={`/innovations/requests/${submission.requestId}/submissions/${'$id' in submission ? submission.$id : ''}`}
                     >
                       Discard
                     </Link>

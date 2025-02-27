@@ -7,13 +7,21 @@ import { Pagination, PaginationContent, PaginationItem, PaginationNext, Paginati
 import { getInnovationRequests } from '@/app/actions/actions'
 import { useRouter } from 'next/navigation'
 import Loader from '../loader'
+import { getRequestsChecks } from '@/app/actions/actions'
+import { RequestChecksMap } from '@/lib/server/database'
 
-export default function RequestListClient({ innovationRequests }: { innovationRequests: InnovationRequest[] }) {
+interface Props {
+  innovationRequests: InnovationRequest[]
+  checks: RequestChecksMap
+}
+
+export default function RequestListClient({ innovationRequests, checks }: Props) {
   const [currentPage, setCurrentPage] = useState(1)
-  const [currentItems, setCurrentItems] = useState<InnovationRequest[]>(innovationRequests)
+  const [currentItems, setCurrentItems] = useState(innovationRequests)
+  const [currentChecks, setCurrentChecks] = useState(checks)
   const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
-  const itemsPerPage = 6 // 3x3 grid
+  const itemsPerPage = 3 // 3x3 grid
 
   const handlePageChange = async (page: number) => {
     setIsLoading(true)
@@ -22,7 +30,11 @@ export default function RequestListClient({ innovationRequests }: { innovationRe
       console.error(response.message)
     } else {
       const requests = response.documents as unknown as InnovationRequest[]
+      // Get the IDs and fetch the checks
+      const requestIds = requests.map((doc) => doc.$id!).filter(Boolean)
+      const newChecks = await getRequestsChecks(requestIds)
       setCurrentItems(requests)
+      setCurrentChecks(newChecks)
       setCurrentPage(page)
     }
     setIsLoading(false)
@@ -58,15 +70,19 @@ export default function RequestListClient({ innovationRequests }: { innovationRe
       </div>
       {isLoading && <Loader />}
       <div className='grid md:grid-cols-2 lg:grid-cols-3 gap-4'>
-        {currentItems.map((request: InnovationRequest) => (
-          <div
-            key={request.$id}
-            onClick={() => request.$id && handleCardClick(request.$id)}
-            className='cursor-pointer'
-          >
-            <RequestCard request={request} />
-          </div>
-        ))}
+        {currentItems.map((req) => {
+          const requestId = req.$id!
+          const check = currentChecks[requestId]
+          return (
+            <div
+              key={req.$id}
+              onClick={() => requestId && handleCardClick(requestId)}
+              className='cursor-pointer'
+            >
+              <RequestCard request={req} check={check} />
+            </div>
+          )
+        })}
       </div>
     </div>
   )

@@ -2,38 +2,32 @@
 
 import { redirect } from 'next/navigation'
 import { ID } from 'node-appwrite'
-import { InnovationRequest, Submission, SubmissionWithStringId } from '@/lib/types'
+import { InnovationRequest, Submission, SubmissionWithMetadata } from '@/lib/types'
 import { DatabaseError } from '@/lib/types'
-import { innovations } from '@/lib/server/database'
+import { computeRequestChecks, innovations } from '@/lib/server/database'
 import { submissions } from '@/lib/server/database'
+import { getLoggedInUser } from '../actions'
 
 export async function getInnovationRequests(pagination: { page: number; limit: number }) {
-  return await innovations.list(pagination)
+  const response = await innovations.list(pagination)
+  if ('error' in response) {
+    return response
+  }
+
+  const typedDocs: InnovationRequest[] = response.documents as unknown as InnovationRequest[]
+
+  return {
+    documents: typedDocs
+  }
 }
 
 export async function getInnovationRequest(id: string) {
-  if (id === 'new') {
-    return {
-      title: '',
-      briefDescription: '',
-      detailedDescription: '',
-      expectedExpertise: '',
-      expectedTimeline: '',
-      budget: 100,
-      company: '',
-      concept: '',
-      field: '',
-      marketingConsent: false,
-      ecologyConsent: false,
-    } as InnovationRequest
-  }
-
   return (await innovations.get(id)) as InnovationRequest | DatabaseError
 }
 
 export async function updateInnovationRequest(previousState: InnovationRequest, formData: FormData) {
-  const request = innovations.getRawRequest(formData)
-  const errors = innovations.validationErrors(request)
+  const data = innovations.getRequestData(formData)
+  const errors = innovations.validationErrors(data)
 
   if (errors) {
     return {
@@ -42,12 +36,11 @@ export async function updateInnovationRequest(previousState: InnovationRequest, 
     }
   }
 
-  const id = previousState.$id || ID.unique()
-
   if ('$id' in previousState && previousState.$id) {
-    return (await innovations.update(id, request)) as DatabaseError | InnovationRequest
+    const id = previousState.$id
+    return (await innovations.update(data, id)) as DatabaseError | InnovationRequest
   } else {
-    await innovations.create(id, request)
+    const id = await innovations.create(data)
     redirect(`/innovations/requests/${id}`)
   }
 }
@@ -61,19 +54,32 @@ export async function getSubmissions(requestId: string) {
   return await submissions.list(requestId)
 }
 
-export async function getSubmission({ submissionId, requestId }: { submissionId: string; requestId: string }) {
-  if (submissionId === 'new') {
+export async function getSubmissionData(submissionId: string, requestId: string) {
+  const user = await getLoggedInUser()
+
+  if (!user) {
+    console.error('User not found')
     return {
+      error: true,
+      message: 'User not found'
+    }
+  }
+
+  if (submissionId === 'new') {
+    const submission: SubmissionWithMetadata = {
       title: '',
       briefDescription: '',
       requestId: requestId,
-    } as SubmissionWithStringId
+      owner: user?.$id
+    }
+    return submission
   }
   return (await submissions.get(submissionId)) as Submission | DatabaseError
 }
 
 export async function updateSubmission(previousState: Submission, formData: FormData) {
   const submission = submissions.getRawSubmission(formData)
+
   const errors = submissions.validationErrors(submission)
 
   if (errors) {
@@ -95,11 +101,19 @@ export async function updateSubmission(previousState: Submission, formData: Form
         message: 'Error updating submission',
       }
     } finally {
-      redirect(`/innovations/requests/${previousState.requestId.$id}/submissions/${id}`)
+      redirect(`/innovations/requests/${previousState.requestId}/submissions/${id}`)
     }
   } else {
     try {
-      await submissions.create(id, submission)
+      const user = await getLoggedInUser()
+      if (!user) {
+        console.error('User not found')
+        return {
+          error: true,
+          message: 'User not found' 
+        }
+      }
+      await submissions.create({ ...submission, owner: user.$id })
     } catch (error) {
       console.error(error)
       return {
@@ -122,22 +136,7 @@ export async function selectWinner(requestId: string, submissionId: string) {
   // redirect(`/innovations/requests/${requestId}/submissions`)
 }
 
-export async function getWinnerEmail(requestId: string) {
-  return await innovations.getWinnerEmail(requestId)
-}
-
-export async function iAmOwner(requestId: string) {
-  return await innovations.iAmOwner(requestId)
-}
-
-export async function iAmWinner(requestId: string) {
-  return await innovations.iAmWinner(requestId)
-}
-
-export async function userHasSubmitted(requestId: string) {
-  return await innovations.userHasSubmitted(requestId)
-}
-
-export async function thereIsWinner(requestId: string) {
-  return await innovations.thereIsWinner(requestId)
+export async function getRequestsChecks(requestIds: string[]) {
+  console.log('getRequestsChecks', requestIds)
+  return await computeRequestChecks(requestIds)
 }

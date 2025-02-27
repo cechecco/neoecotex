@@ -1,4 +1,4 @@
-import { getSubmission } from '@/app/actions/actions'
+import { getSubmissionData } from '@/app/actions/actions'
 import SubmissionFormClient from './submissionFormClient'
 import { Submission } from '@/lib/types'
 import { SubmissionProvider } from '@/contexts/submissionContext'
@@ -9,7 +9,7 @@ interface Props {
 }
 
 export async function SubmissionForm({ submissionId, requestId }: Props) {
-  const submission = await getSubmission({ submissionId, requestId })
+  const submission = await getSubmissionData(submissionId, requestId)
   if ('error' in submission) {
     return (
       <div className='flex items-center justify-center h-full'>
@@ -19,7 +19,10 @@ export async function SubmissionForm({ submissionId, requestId }: Props) {
   }
   return (
     <div>
+      {JSON.stringify(submission)}
+      
       <SubmissionProvider initialSubmission={submission as unknown as Submission}>
+        aa
         <SubmissionFormClient />
       </SubmissionProvider>
     </div>

@@ -1,5 +1,5 @@
 import React from 'react'
-import { getSubmissions } from '@/app/actions/actions'
+import { getRequestsChecks, getSubmissions } from '@/app/actions/actions'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import OpenButton from './openButton'
@@ -24,12 +24,12 @@ const SubmissionsList = async ({ requestId }: Props) => {
     return <div>No submissions found</div>
   }
 
-  const winner = await innovations.thereIsWinner(requestId)
+  const check = (await getRequestsChecks([requestId]))[requestId]
 
   return (
     <Card>
       <CardHeader>
-        <WinnerEmailButton requestId={requestId} />
+        <WinnerEmailButton check={check} />
       </CardHeader>
       <CardContent>
         <Table>
@@ -46,12 +46,11 @@ const SubmissionsList = async ({ requestId }: Props) => {
                 <TableCell className='flex gap-2'>
                   <OpenButton
                     submissionId={submission.$id!}
-                    requestId={submission.requestId.$id!}
+                    requestId={submission.requestId}
                   />
                   <WinButton
                     submissionId={submission.$id!}
-                    requestId={submission.requestId.$id!}
-                    winner={winner}
+                    check={check}
                   />
                 </TableCell>
               </TableRow>

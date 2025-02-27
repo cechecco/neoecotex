@@ -11,14 +11,11 @@ interface Props {
 export default async function SubmissionEditorPage(props: Props) {
   const params = await props.params
   const requestId = params.id
-  const submissionId = params.submissionId
+  const submissionId = params.submissionId // could be 'new'
   return (
     <main>
       <div className='flex flex-col md:flex-row gap-2 justify-between mb-4'>
         <p className='text-3xl font-bold'>Submission editor</p>
-        <p>
-          {requestId} {submissionId}
-        </p>
       </div>
 
       <Suspense fallback={<RequestSkeleton />}>
