@@ -1,17 +1,16 @@
 import { Plus } from 'lucide-react'
 import { Button } from '../ui/button'
 import Link from 'next/link'
-import { RequestChecks } from '@/lib/server/database'
+import { RequestCheck } from '@/lib/server/database'
 
-export default async function SubmissionButton({ checks }: { checks: RequestChecks }) {
-
+export default function SubmitSolutionButton({ check }: { check: RequestCheck }) {
   return (
     <Button
       size='sm'
-      disabled={checks.iHaveSubmitted || checks.thereIsWinner}
+      disabled={check.iHaveSubmitted || check.thereIsWinner}
     >
       <Link
-        href={`/innovations/requests/${checks.requestId}/submissions/new/edit`}
+        href={`/innovations/requests/${check.requestId}/submissions/new/edit`}
         className='flex items-center gap-2'
       >
         <Plus />

@@ -1,331 +1,219 @@
-import { getLoggedInUser } from '@/app/actions/auth'
 import { createDatabaseAdminClient, getUserEmail } from '@/lib/server/appwrite'
-import { InnovationRequest, InnovationRequestData, innovationRequestSchema, InnovationRequestWithMetadata, Submission, SubmissionData, submissionSchema, SubmissionWithMetadata } from '@/lib/types'
-import { DatabaseError } from '@/lib/types'
-import { ID, Query } from 'node-appwrite'
-import { Models } from 'node-appwrite'
+import { getLoggedInUser } from '@/app/actions/auth'
+import { Request, RequestCreateInput, RequestData, requestSchema, Submission } from '@/lib/types'
+import { ID, Models, Query } from 'node-appwrite'
 
 const DATABASE_ID = '67aa7414000f83ae7018'
 const REQUESTS_COLLECTION_ID = '67aa745800179944f652'
 const SUBMISSIONS_COLLECTION_ID = '67b25d700034a4bddeb1'
-const REQUESTERS_COLLECTION_ID = '67b5f3f80009d5634aa5'
-const SUBMITTERS_COLLECTION_ID = '67b66b5500294dca33eb'
 
-export const innovations = {
-  async create(data: InnovationRequestData) {
+async function getCurrentUser() {
+  const user = await getLoggedInUser()
+  if (!user) {
+    throw new Error('User not found')
+  }
+  return user
+}
+
+export const requestsService = {
+  async create(data: RequestData) {
+
+    const { databases } = await createDatabaseAdminClient()
+    const user = await getCurrentUser()
+    const newId = ID.unique()
+
+    const docToCreate: RequestCreateInput = {
+      ...data,
+      owner: user.$id,
+      winner: null,
+      submissionsId: [],
+    }
+
     try {
-      const { databases } = await createDatabaseAdminClient()
-      const user = await getLoggedInUser()
-      if (!user) {
-        throw new Error('User not found')
-      }
-
-      const request: InnovationRequestWithMetadata = {
-        ...data,
-        owner: user.$id,
-        winner: null,
-        submissionsId: [],
-      }
-
-      const id = ID.unique()
-
-      const document = await databases.createDocument(DATABASE_ID, REQUESTS_COLLECTION_ID, id, request)
-      
-      return id
-      // First check if requester document exists and get current innovation requests
-      // let requesterDoc
-      // try {
-      //   requesterDoc = await databases.getDocument(DATABASE_ID, REQUESTERS_COLLECTION_ID, user.$id)
-      //   // If exists, append new request to existing array
-      //   const existingRequests = requesterDoc.innovationRequests || []
-      //   await databases.updateDocument(DATABASE_ID, REQUESTERS_COLLECTION_ID, user.$id, {
-      //     innovationRequests: [...existingRequests, id],
-      //   })
-      // } catch (error) {
-      //   console.log('Error updating requester document:', error)
-      //   // If not exists, create new document with array containing just this request
-      //   await databases.createDocument(DATABASE_ID, REQUESTERS_COLLECTION_ID, user.$id, {
-      //     innovationRequests: [id],
-      //   })
-      // }
-      return document
+      const created = await databases.createDocument(
+        DATABASE_ID,
+        REQUESTS_COLLECTION_ID,
+        newId,
+        docToCreate
+      )
+      return created as Request
     } catch (error) {
-      console.log(error)
-      return {
-        error: true,
-        message: (error as Error).toString(),
-      } as DatabaseError
+      console.error(error)
+      throw error // TODO: format error for frontend
     }
   },
 
-  async update(data: InnovationRequestData, id: string) {
+  async update(requestId: string, requestData: Partial<Request>) {
+
+    ///
+    // const hasAlreadyWinner = await this.getOne(id).then((req) => req.winner !== null)
+
+    // if (hasAlreadyWinner) {
+    //   throw new Error('A winner has already been selected.')
+    // }
+    ///
+
+    const { databases } = await createDatabaseAdminClient()
 
     try {
-      const { databases } = await createDatabaseAdminClient()
-      return await databases.updateDocument(DATABASE_ID, REQUESTS_COLLECTION_ID, id, { ...data })
+      const updated = await databases.updateDocument(
+        DATABASE_ID,
+        REQUESTS_COLLECTION_ID,
+        requestId,
+        requestData
+      )
+      return updated as Request
     } catch (error) {
-      return {
-        error: true,
-        message: (error as Error).toString(),
-      } as DatabaseError
+      console.error(error)
+      throw error // TODO: format error for frontend
     }
   },
 
-  async get(id: string) {
-    if (id === 'new') {
-
-      const user = await getLoggedInUser()
-      if (!user) {
-        throw new Error('User not found')
-      }
-      const data: InnovationRequestData = {
-          title: '',
-          briefDescription: '',
-          detailedDescription: '',
-          expectedExpertise: '',
-          expectedTimeline: '',
-          budget: 100,
-          company: '',
-          concept: '',
-          field: '',
-          marketingConsent: false,
-          ecologyConsent: false,
-        }
-      
-      const newRequest: InnovationRequestWithMetadata = {
-        ...data,
-        owner: user.$id,
-        winner: null,
-        submissionsId: [],
-      }
-        
-      return newRequest
-      }
+  async getOne(id: string) {
+    const { databases } = await createDatabaseAdminClient()
     try {
-      const { databases } = await createDatabaseAdminClient()
-      return await databases.getDocument(DATABASE_ID, REQUESTS_COLLECTION_ID, id)
+      const doc = await databases.getDocument(
+        DATABASE_ID,
+        REQUESTS_COLLECTION_ID,
+        id
+      )
+      return doc as Request
     } catch (error) {
-      return {
-        error: true,
-        message: (error as Error).toString(),
-      } as DatabaseError
+      console.error(error)
+      throw error // TODO: format error for frontend
     }
   },
+
   async list(pagination: { page: number; limit: number }) {
+    const { databases } = await createDatabaseAdminClient()
+    const { page, limit } = pagination
     try {
-      const { databases } = await createDatabaseAdminClient()
-      return await databases.listDocuments(DATABASE_ID, REQUESTS_COLLECTION_ID, [Query.orderDesc('$createdAt'), Query.limit(pagination.limit), Query.offset((pagination.page - 1) * pagination.limit)])
+      const list = await databases.listDocuments(DATABASE_ID, REQUESTS_COLLECTION_ID, [
+        Query.orderDesc('$createdAt'),
+        Query.limit(limit),
+        Query.offset((page - 1) * limit),
+      ])
+      return list as Models.DocumentList<Request>
     } catch (error) {
-      return {
-        error: true,
-        message: (error as Error).toString(),
-      } as DatabaseError
+      console.error(error)
+      throw error // TODO: format error for frontend
     }
   },
 
-  async delete(id: string) {
+  async deleteOne(id: string) {
+    const { databases } = await createDatabaseAdminClient()
+    await getCurrentUser()
     try {
-      const { databases } = await createDatabaseAdminClient()
-      const user = await getLoggedInUser()
-      if (!user) {
-        throw new Error('User not found')
-      }
-
-      // First delete the innovation request
       await databases.deleteDocument(DATABASE_ID, REQUESTS_COLLECTION_ID, id)
-
-      // Then update the requester's document to remove this request ID
-      try {
-        const requesterDoc = await databases.getDocument(DATABASE_ID, REQUESTERS_COLLECTION_ID, user.$id)
-        const existingRequests = requesterDoc.innovationRequests || []
-        const updatedRequests = existingRequests.filter((requestId: string) => requestId !== id)
-
-        await databases.updateDocument(DATABASE_ID, REQUESTERS_COLLECTION_ID, user.$id, {
-          innovationRequests: updatedRequests,
-        })
-      } catch (error) {
-        console.log('Error updating requester document:', error)
-      }
+      return true
     } catch (error) {
-      return {
-        error: true,
-        message: (error as Error).toString(),
-      } as DatabaseError
+      console.error(error)
+      throw error // TODO: format error for frontend
     }
   },
-  getRequestData(formData: FormData) {
-    const data: InnovationRequestData = {
-        title: formData.get('title') as string,
-        briefDescription: formData.get('briefDescription') as string,
-        detailedDescription: formData.get('detailedDescription') as string,
-        expectedExpertise: formData.get('expectedExpertise') as string,
-        expectedTimeline: formData.get('expectedTimeline') as string,
-        budget: parseInt(formData.get('budget') as string) || 0,
-        company: formData.get('company') as string  || '',
-        concept: formData.get('concept') as string || '',
-        field: formData.get('field') as string || '',
-        marketingConsent: !!formData.get('marketingConsent'),
-        ecologyConsent: !!formData.get('ecologyConsent'),
-      }
 
-    return data
-  },
-  validationErrors(data: InnovationRequestData): Partial<Record<keyof InnovationRequestData, string[] | undefined>> | undefined {
-    const validatedFields = innovationRequestSchema.safeParse(data)
-
-    if (!validatedFields.success) {
-      return validatedFields.error.flatten().fieldErrors
-    }
-
-    return undefined
-  },
   async selectWinner(requestId: string, submissionId: string) {
     const { databases } = await createDatabaseAdminClient()
-    // First check if a winner is already set
-    const request = await databases.getDocument(DATABASE_ID, REQUESTS_COLLECTION_ID, requestId)
-    if (request.winner) {
-      throw new Error('A winner has already been selected for this request')
+    try {
+      const doc = await databases.getDocument(DATABASE_ID, REQUESTS_COLLECTION_ID, requestId)
+      if (doc.winner) {
+        throw new Error('A winner has already been selected.')
+      }
+      return await databases.updateDocument(DATABASE_ID, REQUESTS_COLLECTION_ID, requestId, {
+        winner: submissionId,
+      })
+    } catch (error) {
+      console.error(error)
+      throw error
     }
-    // If no winner is set, proceed with setting the winner
-    await databases.updateDocument(DATABASE_ID, REQUESTS_COLLECTION_ID, requestId, {
-      winner: submissionId,
-    })
   },
 }
 
-export const submissions = {
-  async create(submission: SubmissionWithMetadata) {
+export const submissionsService = {
+  async create(data: Omit<Submission, '$id'|'$createdAt'|'$updatedAt'>) {
+    const { databases } = await createDatabaseAdminClient()
+    await getCurrentUser()
+    const newId = ID.unique()
     try {
-      const { databases } = await createDatabaseAdminClient()
-      const user = await getLoggedInUser()
-      if (!user) {
-        throw new Error('User not found')
-      }
-
-      const document = await databases.createDocument(DATABASE_ID, SUBMISSIONS_COLLECTION_ID, ID.unique(), submission)
-
-      try {
-        const request = await databases.getDocument(DATABASE_ID, REQUESTS_COLLECTION_ID, submission.requestId) as unknown as InnovationRequest
-        const existingSubmissions = request.submissionsId || []
-        await databases.updateDocument(DATABASE_ID, REQUESTS_COLLECTION_ID, submission.requestId, {
-          submissionsId: [...existingSubmissions, document.$id],
-        })
-      } catch (error) {
-        console.log('Error updating innovation request submissions:', error)
-      }
-
-      // Handle submitter document
-      // try {
-      //   const submitterDoc = await databases.getDocument(DATABASE_ID, SUBMITTERS_COLLECTION_ID, user.$id)
-      //   // If exists, append new submission to existing array
-      //   const existingSubmissions = submitterDoc.submissions || []
-      //   await databases.updateDocument(DATABASE_ID, SUBMITTERS_COLLECTION_ID, user.$id, {
-      //     submissions: [...existingSubmissions, id],
-      //   })
-      // } catch (error) {
-      //   console.log('Error updating submitter document:', error)
-      //   // If not exists, create new document with array containing just this submission
-      //   await databases.createDocument(DATABASE_ID, SUBMITTERS_COLLECTION_ID, user.$id, {
-      //     submissions: [id],
-      //   })
-      // }
-      return document
+      const created = await databases.createDocument(
+        DATABASE_ID,
+        SUBMISSIONS_COLLECTION_ID,
+        newId,
+        data
+      )
+      // Aggiorniamo la Request per aggiungere la submissionId
+      const reqDoc = await databases.getDocument(DATABASE_ID, REQUESTS_COLLECTION_ID, data.requestId)
+      const oldSubIds = reqDoc.submissionsId || []
+      await databases.updateDocument(DATABASE_ID, REQUESTS_COLLECTION_ID, data.requestId, {
+        submissionsId: [...oldSubIds, created.$id],
+      })
+      return created
     } catch (error) {
-      console.log(error)
-      return {
-        error: true,
-        message: (error as Error).toString(),
-      } as DatabaseError
+      console.error(error)
+      throw error
     }
   },
 
-  async update(id: string, data: SubmissionData) {
+  async update(id: string, partialData: Partial<Submission>) {
+    const { databases } = await createDatabaseAdminClient()
     try {
-      const { databases } = await createDatabaseAdminClient()
-      return await databases.updateDocument(DATABASE_ID, SUBMISSIONS_COLLECTION_ID, id, data)
+      const updated = await databases.updateDocument(
+        DATABASE_ID,
+        SUBMISSIONS_COLLECTION_ID,
+        id,
+        partialData
+      )
+      return updated
     } catch (error) {
-      return {
-        error: true,
-        message: (error as Error).toString(),
-      } as DatabaseError
+      console.error(error)
+      throw error
     }
   },
 
-  async get(id: string) {
+  async getOne(id: string) {
+    const { databases } = await createDatabaseAdminClient()
     try {
-      const { databases } = await createDatabaseAdminClient()
-      console.log('get submission', id)
-      return (await databases.getDocument(DATABASE_ID, SUBMISSIONS_COLLECTION_ID, id)) as unknown as Submission
+      const doc = await databases.getDocument(
+        DATABASE_ID,
+        SUBMISSIONS_COLLECTION_ID,
+        id
+      )
+      // Se vuoi validare con Zod:
+      // return submissionSchema.parse(doc)
+      return doc
     } catch (error) {
-      return {
-        error: true,
-        message: (error as Error).toString(),
-      } as DatabaseError
+      console.error(error)
+      throw error
     }
   },
 
-  async list(requestId: string) {
+  async listByRequest(requestId: string) {
+    const { databases } = await createDatabaseAdminClient()
     try {
-      const { databases } = await createDatabaseAdminClient()
-      return (await databases.listDocuments(DATABASE_ID, SUBMISSIONS_COLLECTION_ID, [Query.equal('requestId', requestId)])) as unknown as { documents: Submission[] } // TODO: fix this
+      return await databases.listDocuments(DATABASE_ID, SUBMISSIONS_COLLECTION_ID, [
+        Query.equal('requestId', requestId),
+      ])
     } catch (error) {
-      return {
-        error: true,
-        message: (error as Error).toString(),
-      } as DatabaseError
+      console.error(error)
+      throw error
     }
   },
 
-  async delete(id: string) {
+  async deleteOne(id: string) {
+    const { databases } = await createDatabaseAdminClient()
+    await getCurrentUser()
     try {
-      const { databases } = await createDatabaseAdminClient()
-      const user = await getLoggedInUser()
-      if (!user) {
-        throw new Error('User not found')
-      }
-
-      // First delete the submission
       await databases.deleteDocument(DATABASE_ID, SUBMISSIONS_COLLECTION_ID, id)
-
-      // Then update the submitter's document to remove this submission ID
-      try {
-        const submitterDoc = await databases.getDocument(DATABASE_ID, SUBMITTERS_COLLECTION_ID, user.$id)
-        const existingSubmissions = submitterDoc.submissions || []
-        const updatedSubmissions = existingSubmissions.filter((submissionId: string) => submissionId !== id)
-
-        await databases.updateDocument(DATABASE_ID, SUBMITTERS_COLLECTION_ID, user.$id, {
-          submissions: updatedSubmissions,
-        })
-      } catch (error) {
-        console.log('Error updating submitter document:', error)
-      }
+      return true
     } catch (error) {
-      return {
-        error: true,
-        message: (error as Error).toString(),
-      } as DatabaseError
-    }
-  },
-  getRawSubmission(formData: FormData) {
-    const rawSubmission = {
-      title: formData.get('title'),
-      briefDescription: formData.get('briefDescription'),
-      requestId: formData.get('requestId'),
-      owner: formData.get('owner'),
-    } as SubmissionWithMetadata
-
-    return rawSubmission
-  },
-  validationErrors(submission: SubmissionData): Partial<Record<keyof SubmissionData, string[] | undefined>> | undefined {
-    const validatedFields = submissionSchema.safeParse(submission)
-
-    if (!validatedFields.success) {
-      return validatedFields.error.flatten().fieldErrors
+      console.error(error)
+      throw error
     }
   },
 }
 
-export type RequestChecks = {
+/** Esempio di checks per Request */
+export type RequestCheck = {
   iAmOwner: boolean
   iAmWinner: boolean
   iHaveSubmitted: boolean
@@ -334,64 +222,54 @@ export type RequestChecks = {
   requestId: string
 }
 
-export type RequestChecksMap = {
-  [requestId: string]: RequestChecks;
-}
+export type RequestChecksMap = Record<string, RequestCheck>
 
-async function getRequests(requestIds: string[]) {    
-  if (!requestIds.length) {
-    return []
-  }
-
+async function getRequestsByIds(ids: string[]) {
+  if (!ids.length) return []
   const { databases } = await createDatabaseAdminClient()
-
-  const requests = await databases.listDocuments(DATABASE_ID, REQUESTS_COLLECTION_ID, [
-    Query.equal('$id', requestIds)
+  const result = await databases.listDocuments(DATABASE_ID, REQUESTS_COLLECTION_ID, [
+    Query.equal('$id', ids),
   ])
-
-  return requests.documents
-
+  return result.documents
 }
 
-export async function computeRequestChecks(requestIds: string[]): Promise<RequestChecksMap> {
-  const currentUser = await getLoggedInUser()
+export async function computeRequestChecks(requestIds: string[]) {
+  const user = await getCurrentUser()
+  const docs = await getRequestsByIds(requestIds)
 
-  const requests = await getRequests(requestIds) as unknown as InnovationRequest[]
+  const checksMap: RequestChecksMap = {}
 
-  const results = await Promise.all(requests.map(async (request) => {
+  await Promise.all(
+    docs.map(async (reqDoc: any) => {
+      const iAmOwner = reqDoc.owner === user.$id
+      let iAmWinner = false
+      let winnerEmail = ''
 
-    const iAmOwner = request.owner === currentUser?.$id
-    const iAmWinner = request.winner === currentUser?.$id
-    const iHaveSubmitted = request.submissionsId.some((submissionId: string) => submissionId === currentUser?.$id)
-    const thereIsWinner = !!request.winner
+      if (reqDoc.winner) {
+        const winnerSub = await submissionsService.getOne(reqDoc.winner)
+        if (winnerSub.owner === user.$id) {
+          iAmWinner = true
+        }
+        if (winnerSub.owner) {
+          winnerEmail = iAmWinner || iAmOwner
+            ? await getUserEmail(winnerSub.owner)
+            : '****@****.***'
+        }
+      }
 
-    let winnerEmail = ''
+      const iHaveSubmitted = (reqDoc.submissionsId || []).includes(user.$id)
+      const thereIsWinner = !!reqDoc.winner
 
-    if (request.winner) {
-      const winnerSubmission = await submissions.get(request.winner) // TODO typing!
-      const winnerUserId = (winnerSubmission as unknown as Submission).owner
-      winnerEmail = !winnerUserId
-        ? ''
-        : iAmWinner || iAmOwner
-          ? await getUserEmail(winnerUserId)
-          : '****@****.***'
-    }
-
-    return {
-      id: request.$id,
-      checks: {
+      checksMap[reqDoc.$id] = {
         iAmOwner,
         iAmWinner,
         iHaveSubmitted,
         thereIsWinner,
         winnerEmail,
-        requestId: request.$id // important to have the requestId in the checks object
+        requestId: reqDoc.$id,
       }
-    }
-  }))
+    })
+  )
 
-  return results.reduce((acc: any, { id, checks }: any) => ({
-    ...acc,
-    [id!]: checks
-  }), {})
+  return checksMap
 }

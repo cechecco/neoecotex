@@ -1,142 +1,168 @@
 'use server'
 
 import { redirect } from 'next/navigation'
-import { ID } from 'node-appwrite'
-import { InnovationRequest, Submission, SubmissionWithMetadata } from '@/lib/types'
-import { DatabaseError } from '@/lib/types'
-import { computeRequestChecks, innovations } from '@/lib/server/database'
-import { submissions } from '@/lib/server/database'
-import { getLoggedInUser } from '../actions'
+import { requestsService, submissionsService, computeRequestChecks, RequestCheck } from '@/lib/server/database'
+import { Request, RequestCreateInput, RequestData, requestSchema, Submission } from '@/lib/types'
+import { getLoggedInUser } from './auth'
 
-export async function getInnovationRequests(pagination: { page: number; limit: number }) {
-  const response = await innovations.list(pagination)
-  if ('error' in response) {
-    return response
-  }
-
-  const typedDocs: InnovationRequest[] = response.documents as unknown as InnovationRequest[]
-
-  return {
-    documents: typedDocs
+export async function listRequests(page: number, limit: number) {
+  try {
+    const result = await requestsService.list({ page, limit })
+    return result // { total, documents: Request[] ... }
+  } catch (error) {
+    console.error(error)
+    return { error: true, message: String(error) }
   }
 }
 
-export async function getInnovationRequest(id: string) {
-  return (await innovations.get(id)) as InnovationRequest | DatabaseError
+export async function getOneRequest(requestId: string) {
+  try {
+    return await requestsService.getOne(requestId)
+  } catch (error) {
+    console.error(error)
+    return { error: true, message: String(error) }
+  }
 }
 
-export async function updateInnovationRequest(previousState: InnovationRequest, formData: FormData) {
-  const data = innovations.getRequestData(formData)
-  const errors = innovations.validationErrors(data)
+const validateRequest = (data: Partial<Request>) => {
+  const error = requestSchema.safeParse(data)
+  if (error.success) {
+    return null
+  }
 
-  if (errors) {
-    return {
-      validationError: true,
-      errors,
+  console.error(error.error.message)
+  throw new Error(error.error.message)
+}
+
+const getRequestsData = (formData: FormData) => {
+  const data: RequestData = {
+    title: formData.get('title') as string,
+    briefDescription: formData.get('briefDescription') as string, 
+    detailedDescription: formData.get('detailedDescription') as string,
+    expectedExpertise: formData.get('expectedExpertise') as string,
+    expectedTimeline: formData.get('expectedTimeline') as string,
+    budget: parseInt(formData.get('budget') as string) || 0,
+    company: formData.get('company') as string || '',
+    concept: formData.get('concept') as string || '',
+    field: formData.get('field') as string || '',
+    marketingConsent: !!formData.get('marketingConsent'),
+    ecologyConsent: !!formData.get('ecologyConsent'),
+  }
+  return data
+}
+
+export async function createRequest(data: RequestCreateInput) {
+  try {
+    const created = await requestsService.create(data)
+    return created
+  } catch (error) {
+    return { error: true, message: String(error) }
+  }
+}
+
+export async function updateRequest(previousRequest: Request | undefined, formData: FormData) {
+  try {
+    const request = getRequestsData(formData)
+    validateRequest(request)
+
+    if (!previousRequest) {
+      return await requestsService.create(request)
     }
-  }
-
-  if ('$id' in previousState && previousState.$id) {
-    const id = previousState.$id
-    return (await innovations.update(data, id)) as DatabaseError | InnovationRequest
-  } else {
-    const id = await innovations.create(data)
-    redirect(`/innovations/requests/${id}`)
+    return await requestsService.update(previousRequest.$id, request)
+  } catch (error) {
+    console.error(error)
+    return { error: true, message: String(error) }
   }
 }
 
-export async function deleteInnovationRequest(id: string) {
-  await innovations.delete(id)
-  redirect(`/innovations/requests`)
-}
-
-export async function getSubmissions(requestId: string) {
-  return await submissions.list(requestId)
-}
-
-export async function getSubmissionData(submissionId: string, requestId: string) {
-  const user = await getLoggedInUser()
-
-  if (!user) {
-    console.error('User not found')
-    return {
-      error: true,
-      message: 'User not found'
-    }
+export async function deleteRequest(requestId: string) {
+  try {
+    await requestsService.deleteOne(requestId)
+    redirect('/requests')
+  } catch (error) {
+    console.error(error)
+    return { error: true, message: String(error) }
   }
-
-  if (submissionId === 'new') {
-    const submission: SubmissionWithMetadata = {
-      title: '',
-      briefDescription: '',
-      requestId: requestId,
-      owner: user?.$id
-    }
-    return submission
-  }
-  return (await submissions.get(submissionId)) as Submission | DatabaseError
-}
-
-export async function updateSubmission(previousState: Submission, formData: FormData) {
-  const submission = submissions.getRawSubmission(formData)
-
-  const errors = submissions.validationErrors(submission)
-
-  if (errors) {
-    return {
-      validationError: true,
-      errors,
-    }
-  }
-
-  const id = previousState.$id || ID.unique()
-
-  if ('$id' in previousState && previousState.$id) {
-    try {
-      ;(await submissions.update(id, submission)) as DatabaseError | Submission //
-    } catch (error) {
-      console.error(error)
-      return {
-        error: true,
-        message: 'Error updating submission',
-      }
-    } finally {
-      redirect(`/innovations/requests/${previousState.requestId}/submissions/${id}`)
-    }
-  } else {
-    try {
-      const user = await getLoggedInUser()
-      if (!user) {
-        console.error('User not found')
-        return {
-          error: true,
-          message: 'User not found' 
-        }
-      }
-      await submissions.create({ ...submission, owner: user.$id })
-    } catch (error) {
-      console.error(error)
-      return {
-        error: true,
-        message: 'Error creating submission',
-      }
-    } finally {
-      redirect(`/innovations/requests/${previousState.requestId}/submissions/${id}`)
-    }
-  }
-}
-
-export async function deleteSubmission(id: string, requestId: string) {
-  await submissions.delete(id)
-  redirect(`/innovations/requests/${requestId}/submissions`)
 }
 
 export async function selectWinner(requestId: string, submissionId: string) {
-  await innovations.selectWinner(requestId, submissionId)
-  // redirect(`/innovations/requests/${requestId}/submissions`)
+  try {
+    await requestsService.selectWinner(requestId, submissionId)
+    redirect(`/requests/${requestId}`)
+  } catch (error) {
+    console.error(error)
+    return { error: true, message: String(error) }
+  }
+}
+
+export async function listSubmissions(requestId: string) {
+  try {
+    return await submissionsService.listByRequest(requestId)
+  } catch (error) {
+    console.error(error)
+    return { error: true, message: String(error) }
+  }
+}
+
+export async function getOneSubmission(submissionId: string) {
+  try {
+    return await submissionsService.getOne(submissionId)
+  } catch (error) {
+    console.error(error)
+    return { error: true, message: String(error) }
+  }
+}
+
+export async function createSubmission(data: Omit<Submission, '$id'|'$createdAt'|'$updatedAt'>) {
+  try {
+    const user = await getLoggedInUser()
+    if (!user) {
+      return { error: true, message: 'User not found' }
+    }
+    // Potresti anche forzare data.owner = user.$id, se vuoi
+    const created = await submissionsService.create(data)
+    // redirect(`/requests/${created.requestId}/submissions/${created.$id}`)
+    return created
+  } catch (error) {
+    console.error(error)
+    return { error: true, message: String(error) }
+  }
+}
+
+export async function updateSubmission(submissionId: string, partialData: Partial<Submission>) {
+  try {
+    return await submissionsService.update(submissionId, partialData)
+  } catch (error) {
+    console.error(error)
+    return { error: true, message: String(error) }
+  }
+}
+
+export async function deleteSubmission(submissionId: string, requestId: string) {
+  try {
+    await submissionsService.deleteOne(submissionId)
+    redirect(`/requests/${requestId}/submissions`)
+  } catch (error) {
+    console.error(error)
+    return { error: true, message: String(error) }
+  }
 }
 
 export async function getRequestsChecks(requestIds: string[]) {
-  console.log('getRequestsChecks', requestIds)
-  return await computeRequestChecks(requestIds)
+  try {
+    return await computeRequestChecks(requestIds)
+  } catch (error) {
+    console.error(error)
+    return {}
+  }
+}
+
+export async function getRequestCheck(requestId: string) {
+  try {
+    const checksMap = await getRequestsChecks([requestId])
+  return checksMap[requestId]
+  } catch (error) {
+    console.error(error)
+    throw error
+  }
 }

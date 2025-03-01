@@ -5,6 +5,7 @@ import { Mail, Linkedin } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import MenuServer from '@/components/menuServer'
 import Bg from '@/components/bg'
+import { StoreProvider } from '@/contexts/store'
 const albertSans = Albert_Sans({
   variable: '--font-albert-sans',
   subsets: ['latin'],
@@ -23,15 +24,16 @@ export default async function RootLayout({
   return (
     <html lang='en'>
       <body className={`${albertSans.variable} relative antialiased bg-gradient-to-b from-violet-500 to-fuchsia-500 h-full flex flex-col`}>
-        <Bg
+        {/* <Bg
           color={[1, 0, 1]}
           mouseReact={false}
           amplitude={1}
           speed={1.0}
-        />
-        <div className='h-5 md:h-16'>
-          <MenuServer />
-        </div>
+        /> */}
+        <StoreProvider>
+          <div className='h-5 md:h-16'>
+            <MenuServer />
+          </div>
         <div className='min-h-screen'>{children}</div>
         <footer className='w-full bg-black/30 backdrop-blur-xl'>
           <div className='max-w-screen-lg mx-auto p-4 text-center'>
@@ -63,8 +65,9 @@ export default async function RootLayout({
                 </a>
               </Button>
             </div>
-          </div>
-        </footer>
+            </div>
+          </footer>
+        </StoreProvider>
       </body>
     </html>
   )

@@ -1,16 +1,12 @@
 import RequestSkeleton from '@/components/innovations/requestSkeleton'
-import { RequestView } from '@/components/innovations/requestView'
+import RequestViewServer from '@/components/innovations/requestView'
 import { Suspense } from 'react'
-import { Button } from '@/components/ui/button'
-import Link from 'next/link'
-import { Eye, Pencil } from 'lucide-react'
-import { innovations } from '@/lib/server/database'
-import SubmissionButton from '@/components/innovations/submissionButton'
-import { getRequestsChecks } from '@/app/actions/actions'
-// import { innovations } from '@/lib/server/database'
-// import UserSubmissionCheck from '@/components/innovations/userSubmissionCheck'
-// import SubmissionButton from '@/components/innovations/submissionButton'
-// import OwnerCheck from '@/components/innovations/ownerCheck'
+import SubmitSolutionButton from '@/components/innovations/submissionButton'
+import { getRequestCheck } from '@/app/actions/actions'
+import SubmissionStatusBadge from '@/components/innovations/userSubmissionCheck'
+import RequestOwnerBadge from '@/components/innovations/ownerCheck'
+import ViewSubmissionsButton from '@/components/innovations/viewSubmissionsButton'
+import EditRequestButton from '@/components/innovations/editRequestButton'
 
 export const dynamic = 'force-dynamic'
 
@@ -22,45 +18,22 @@ interface Props {
 
 export default async function InnovationRequestPage(props: Props) {
   const params = await props.params
-  // const userHasSubmitted = await innovations.userHasSubmitted(params.id)
-  // const thereIsWinner = await innovations.thereIsWinner(params.id)
+  const check = await getRequestCheck(params.id) // TODO: handle error
 
-  const checks = (await getRequestsChecks([params.id]))[params.id]
   return (
     <main>
       <div className='flex flex-col md:flex-row gap-2 justify-between mb-4'>
         <p className='text-3xl font-bold'>Innovation Request</p>
         <div className='flex items-center justify-end gap-2'>
-          {/* <OwnerCheck requestId={params.id} />
-          <UserSubmissionCheck userHasSubmitted={userHasSubmitted} /> */}
-          <SubmissionButton
-            checks={checks}
-          />
-          <Button size='sm'>
-            <Link
-              href={`/innovations/requests/${params.id}/submissions`}
-              className='flex items-center gap-2'
-            >
-              <Eye />
-              View Submissions
-            </Link>
-          </Button>
-          <Button
-            size='sm'
-            // disabled={thereIsWinner}
-          >
-            <Link
-              href={`/innovations/requests/${params.id}/edit`}
-              className='flex items-center gap-2'
-            >
-              Edit
-              <Pencil />
-            </Link>
-          </Button>
+          <RequestOwnerBadge check={check} />
+          <SubmissionStatusBadge check={check} />
+          <SubmitSolutionButton check={check} />
+          <ViewSubmissionsButton requestId={params.id} />
+          <EditRequestButton requestId={params.id} check={check} />
         </div>
       </div>
       <Suspense fallback={<RequestSkeleton />}>
-        <RequestView id={params.id} />
+        <RequestViewServer id={params.id} />
       </Suspense>
     </main>
   )

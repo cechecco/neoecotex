@@ -1,23 +1,27 @@
-import { getInnovationRequest } from '@/app/actions/actions'
-import { RequestViewClient } from './requestViewClient'
 import { notFound } from 'next/navigation'
-import WinnerEmailButton from './winnerEmailButton'
-import { computeRequestChecks } from '@/lib/server/database'
-interface Props {
+import { getOneRequest, getRequestCheck, getRequestsChecks } from '@/app/actions/actions'
+import { RequestViewClient } from './requestViewClient'
+
+interface RequestViewServerProps {
   id: string
 }
 
-export async function RequestView({ id }: Props) {
-  const request = await getInnovationRequest(id)
-  const checks = await computeRequestChecks([id])
-  if ('error' in request) {
+export default async function RequestViewServer({ id }: RequestViewServerProps) {
+  try {
+    const request = await getOneRequest(id)
+    if ('error' in request) {
+      return notFound()
+    }
+
+    const check = await getRequestCheck(id)
+
+    return (
+      <div>
+        <RequestViewClient request={request} check={check} />
+      </div>
+    )
+  } catch (error) {
+    console.error(error)
     return notFound()
   }
-  return (
-    <div>
-      <RequestViewClient request={request}>
-        <WinnerEmailButton check={checks[id]} />
-      </RequestViewClient>
-    </div>
-  )
 }

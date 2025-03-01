@@ -1,15 +1,14 @@
-import { getInnovationRequest } from '@/app/actions/actions'
+import { getOneRequest } from '@/app/actions/actions'
 import RequestFormClient from './requestFormClient'
-import { InnovationRequestProvider } from '@/contexts/innovationRequestContext'
-import { InnovationRequest } from '@/lib/types'
 
 interface Props {
   id: string
 }
 
 export async function RequestForm({ id }: Props) {
-  const request = await getInnovationRequest(id)
-  if ('error' in request) {
+  const request = id === 'new' ? undefined : await getOneRequest(id)
+
+  if (request && 'error' in request) {
     return (
       <div className='flex items-center justify-center h-full'>
         <p className='text-red-500'>{request.message}</p>
@@ -18,9 +17,7 @@ export async function RequestForm({ id }: Props) {
   }
   return (
     <div>
-      <InnovationRequestProvider initialRequest={request as unknown as InnovationRequest}>
-        <RequestFormClient />
-      </InnovationRequestProvider>
+      <RequestFormClient initialRequest={request} />
     </div>
   )
 }

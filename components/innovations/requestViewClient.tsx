@@ -1,19 +1,23 @@
 'use client'
 
+import React from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card'
-import { InnovationRequest } from '@/lib/types'
+import { Request } from '@/lib/types'
+import WinnerEmailButton from './winnerEmailButton'
+import { RequestCheck } from '@/lib/server/database'
 
 interface Props {
-  request: InnovationRequest
-  children: React.ReactNode
+  request: Request
+  check: RequestCheck
 }
 
-export function RequestViewClient({ request, children }: Props) {
+export function RequestViewClient({ request, check }: Props) {
+
   return (
     <>
       <Card>
         <CardHeader className='flex flex-col items-left gap-2'>
-          {children}
+          <WinnerEmailButton check={check} />
           <CardTitle>{request.title}</CardTitle>
         </CardHeader>
         <CardContent>

@@ -1,8 +1,7 @@
 'use client'
 
 import { Card, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
-import { useInnovationRequest } from '@/contexts/innovationRequestContext'
-import { deleteInnovationRequest, updateInnovationRequest } from '@/app/actions/actions'
+import { deleteRequest, updateRequest } from '@/app/actions/actions'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 import { useActionState, useEffect, useState } from 'react'
@@ -13,14 +12,28 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { Label } from '@/components/ui/label'
 import { AlertCircle } from 'lucide-react'
 import { Separator } from '@/components/ui/separator'
-import { InnovationRequest } from '@/lib/types'
+import { Request, RequestData } from '@/lib/types'
 
-export default function RequestFormClient() {
-  const { request, setRequest } = useInnovationRequest()
+const defaultRequest: RequestData = {
+  title: '',
+  briefDescription: '',
+  detailedDescription: '',
+  expectedExpertise: '',
+  expectedTimeline: '',
+  budget: 0,
+  company: '',
+  concept: '',
+  field: '',
+  marketingConsent: false,
+  ecologyConsent: false
+} 
+
+export default function RequestFormClient({initialRequest}: {initialRequest: Request | undefined}) {
+  const [request, setRequest] = useState<Request | RequestData>(initialRequest || defaultRequest)
   // @ts-expect-error https://nextjs.org/docs/app/building-your-application/data-fetching/server-actions-and-mutations#server-side-form-validation
-  const [state, formAction, pending] = useActionState(updateInnovationRequest, request)
+  const [state, formAction, pending] = useActionState(updateRequest, request)
   const [fetchError, setFetchError] = useState<string | false>(false)
-  const [validationError, setValidationError] = useState<Partial<Record<keyof InnovationRequest, string[]>> | false>(false)
+  const [validationError, setValidationError] = useState<Partial<Record<keyof Request, string[]>> | false>(false)
 
   useEffect(() => {
     if (!pending) {
@@ -59,13 +72,13 @@ export default function RequestFormClient() {
                     disabled={pending}
                     size='sm'
                   >
-                    <Link href={`/innovations/requests/${request.$id ? request.$id : 'dashboard'}`}>Discard</Link>
+                    <Link href={`/innovations/requests/${'$id' in request ? request.$id : 'dashboard'}`}>Discard</Link>
                   </Button>
                   <Button
                     form='innovation-form'
                     type='submit'
                     variant='secondary'
-                    disabled={pending || (request.$id ? JSON.stringify(request) === JSON.stringify(state) : false)}
+                    disabled={pending || ('$id' in request ? JSON.stringify(request) === JSON.stringify(state) : false)}
                     size='sm'
                   >
                     Save
@@ -444,7 +457,7 @@ export default function RequestFormClient() {
             </div>
           </CardHeader>
           <CardFooter className='w-full flex flex-col gap-4'>
-            {request.$id && (
+            {'$id' in request && (
               <>
                 <Separator />
                 <div className='flex justify-between items-center gap-2 w-full border border-destructive bg-destructive/10 p-4 rounded-md'>
@@ -456,7 +469,7 @@ export default function RequestFormClient() {
                   </div>
                   <Button
                     variant='destructive'
-                    onClick={() => request.$id && deleteInnovationRequest(request.$id)}
+                    onClick={() => '$id' in request && deleteRequest(request.$id)}
                     size='sm'
                   >
                     Delete

@@ -1,14 +1,14 @@
-import { Check } from 'lucide-react'
+import { RequestCheck } from '@/lib/server/database'
+import { CheckCircle } from 'lucide-react'
+import { Badge } from '../ui/badge'
 
-export default function UserSubmissionCheck({ userHasSubmitted }: { userHasSubmitted: boolean }) {
-  if (userHasSubmitted) {
-    return (
-      <div className='flex items-center gap-1 text-xs'>
-        <span>Submitted</span>
-        <Check className='w-4 h-4' />
-      </div>
-    )
-  } else {
-    return <></>
-  }
+export default function SubmissionStatusBadge({ check }: { check: RequestCheck }) {
+  if (!check.iHaveSubmitted) return null
+
+  return (
+    <Badge className='bg-green-500 hover:bg-green-600'>
+      <CheckCircle className='w-3 h-3 mr-1' />
+      You have submitted
+    </Badge>
+  )
 }
