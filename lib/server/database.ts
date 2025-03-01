@@ -39,7 +39,7 @@ export const requestsService = {
       return created as Request
     } catch (error) {
       console.error(error)
-      throw error // TODO: format error for frontend
+      throw new Error('Failed to create request')
     }
   },
 

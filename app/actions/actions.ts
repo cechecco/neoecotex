@@ -25,13 +25,11 @@ export async function getOneRequest(requestId: string) {
 }
 
 const validateRequest = (data: Partial<Request>) => {
-  const error = requestSchema.safeParse(data)
-  if (error.success) {
-    return null
+  const validatedFields = requestSchema.safeParse(data)
+  if (!validatedFields.success) {
+    return validatedFields.error.flatten().fieldErrors
   }
-
-  console.error(error.error.message)
-  throw new Error(error.error.message)
+  return null
 }
 
 const getRequestsData = (formData: FormData) => {
@@ -51,27 +49,30 @@ const getRequestsData = (formData: FormData) => {
   return data
 }
 
-export async function createRequest(data: RequestCreateInput) {
-  try {
-    const created = await requestsService.create(data)
-    return created
-  } catch (error) {
-    return { error: true, message: String(error) }
-  }
-}
+// export async function createRequest(formData: FormData) {
+//   const request = getRequestsData(formData)
+//   const validationErrors = validateRequest(request)
+//   if (validationErrors) return { validationErrors }
+//   return await requestsService.create(request)
+// }
 
-export async function updateRequest(previousRequest: Request | undefined, formData: FormData) {
-  try {
-    const request = getRequestsData(formData)
-    validateRequest(request)
-
-    if (!previousRequest) {
-      return await requestsService.create(request)
+export async function updateRequest(requestId: string | undefined, formData: FormData) {
+  const request = getRequestsData(formData)
+  const validationErrors = validateRequest(request)
+  if (validationErrors) return { validationErrors }
+  if (!requestId) {
+    let newRequestId: string
+    try {
+      const created = await requestsService.create(request)
+      newRequestId = created.$id
+    } catch (error) {
+      return { error: (error as Error).message }
     }
-    return await requestsService.update(previousRequest.$id, request)
-  } catch (error) {
-    console.error(error)
-    return { error: true, message: String(error) }
+    redirect(`/innovations/requests/${newRequestId}`)
+  } else {
+    return {
+      request: await requestsService.update(requestId, request)
+    }
   }
 }
 

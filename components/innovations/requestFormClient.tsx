@@ -4,7 +4,7 @@ import { Card, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { deleteRequest, updateRequest } from '@/app/actions/actions'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
-import { useActionState, useEffect, useState } from 'react'
+import { useState } from 'react'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
@@ -14,38 +14,31 @@ import { AlertCircle } from 'lucide-react'
 import { Separator } from '@/components/ui/separator'
 import { Request, RequestData } from '@/lib/types'
 
-const defaultRequest: RequestData = {
-  title: '',
-  briefDescription: '',
-  detailedDescription: '',
-  expectedExpertise: '',
-  expectedTimeline: '',
-  budget: 0,
-  company: '',
-  concept: '',
-  field: '',
-  marketingConsent: false,
-  ecologyConsent: false
-} 
-
-export default function RequestFormClient({initialRequest}: {initialRequest: Request | undefined}) {
-  const [request, setRequest] = useState<Request | RequestData>(initialRequest || defaultRequest)
-  // @ts-expect-error https://nextjs.org/docs/app/building-your-application/data-fetching/server-actions-and-mutations#server-side-form-validation
-  const [state, formAction, pending] = useActionState(updateRequest, request)
-  const [fetchError, setFetchError] = useState<string | false>(false)
+export default function RequestFormClient({initialRequest, requestId}: {initialRequest: RequestData, requestId: string | undefined}) {
+  const [request, setRequest] = useState<RequestData>(initialRequest)
   const [validationError, setValidationError] = useState<Partial<Record<keyof Request, string[]>> | false>(false)
+  const [fetchError, setFetchError] = useState<string | false>(false)
+  const [pending, setPending] = useState(false)
 
-  useEffect(() => {
-    if (!pending) {
-      if ('error' in state) {
-        setFetchError(state.message)
-      } else if ('validationError' in state) {
-        setValidationError(state.errors)
-      } else {
-        setRequest(state)
-      }
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setValidationError(false)
+    setFetchError(false)
+    setPending(true)
+    
+    const formData = new FormData(e.target as HTMLFormElement)
+    const result = await updateRequest(requestId, formData)
+
+    if (result.error) {
+      setFetchError(result.error)
+    } else if (result.validationErrors) {
+      setValidationError(result.validationErrors)
+    } else if (result.request) {
+      setRequest(result.request)
     }
-  }, [state, setRequest, pending])
+
+    setPending(false)
+  }
 
   if (fetchError) {
     return (
@@ -59,7 +52,7 @@ export default function RequestFormClient({initialRequest}: {initialRequest: Req
     <>
       <form
         id='innovation-form'
-        action={formAction}
+        onSubmit={handleSubmit}
       >
         <Card>
           <CardHeader>
@@ -78,7 +71,7 @@ export default function RequestFormClient({initialRequest}: {initialRequest: Req
                     form='innovation-form'
                     type='submit'
                     variant='secondary'
-                    disabled={pending || ('$id' in request ? JSON.stringify(request) === JSON.stringify(state) : false)}
+                    disabled={pending}
                     size='sm'
                   >
                     Save
@@ -338,6 +331,12 @@ export default function RequestFormClient({initialRequest}: {initialRequest: Req
                     name='budget'
                     defaultValue={request?.budget}
                     className={pending ? 'invisible' : ''}
+                    onChange={(e) => {
+                      setRequest({
+                        ...request,
+                        budget: parseFloat(e.target.value) || 0,
+                      })
+                    }}
                   />
                   {pending && <Skeleton className='absolute inset-0 z-20 h-full' />}
                 </div>
@@ -426,6 +425,12 @@ export default function RequestFormClient({initialRequest}: {initialRequest: Req
                     name='marketingConsent'
                     defaultChecked={request?.marketingConsent}
                     className={pending ? 'invisible' : ''}
+                    onChange={(e) => {
+                      setRequest({
+                        ...request,
+                        marketingConsent: (e.target as HTMLInputElement).checked,
+                      })
+                    }}
                   />
                   {pending && <Skeleton className='absolute inset-0 z-20 h-full' />}
                 </div>
@@ -444,6 +449,12 @@ export default function RequestFormClient({initialRequest}: {initialRequest: Req
                     name='ecologyConsent'
                     defaultChecked={request?.ecologyConsent}
                     className={pending ? 'invisible' : ''}
+                    onChange={(e) => {
+                      setRequest({
+                        ...request,
+                        ecologyConsent: (e.target as HTMLInputElement).checked,
+                      })
+                    }}
                   />
                   {pending && <Skeleton className='absolute inset-0 z-20 h-full' />}
                 </div>
@@ -469,7 +480,22 @@ export default function RequestFormClient({initialRequest}: {initialRequest: Req
                   </div>
                   <Button
                     variant='destructive'
-                    onClick={() => '$id' in request && deleteRequest(request.$id)}
+                    onClick={async () => {
+                      if ('$id' in request && requestId) {
+                        setPending(true);
+                        try {
+                          await deleteRequest(requestId);
+                          // Redirect could be handled here or in deleteRequest
+                          window.location.href = '/innovations/requests/dashboard';
+                        } catch (error) {
+                          console.error('Error deleting request:', error);
+                          const errorMsg = error instanceof Error ? error.message : 'Si è verificato un errore durante l\'eliminazione';
+                          setFetchError(errorMsg);
+                        } finally {
+                          setPending(false);
+                        }
+                      }
+                    }}
                     size='sm'
                   >
                     Delete
