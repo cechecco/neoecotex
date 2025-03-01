@@ -1,4 +1,4 @@
-import { RequestCheck } from '@/lib/server/database'
+import { RequestCheck } from '@/lib/types'
 import { CheckCircle } from 'lucide-react'
 import { Badge } from '../ui/badge'
 

@@ -2,9 +2,8 @@
 
 import React from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card'
-import { Request } from '@/lib/types'
-import WinnerEmailButton from './winnerEmailButton'
-import { RequestCheck } from '@/lib/server/database'
+import { Request, RequestCheck } from '@/lib/types'
+import RequestStatus from './requestStatus'
 
 interface Props {
   request: Request
@@ -12,12 +11,11 @@ interface Props {
 }
 
 export function RequestViewClient({ request, check }: Props) {
-
   return (
     <>
       <Card>
         <CardHeader className='flex flex-col items-left gap-2'>
-          <WinnerEmailButton check={check} />
+          <RequestStatus check={check} />
           <CardTitle>{request.title}</CardTitle>
         </CardHeader>
         <CardContent>

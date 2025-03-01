@@ -1,36 +1,23 @@
 import React from 'react'
-import { getRequestsChecks, getSubmissions } from '@/app/actions/actions'
+import { Submission, RequestChecksMap } from '@/lib/types'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
-import { Card, CardContent, CardHeader } from '@/components/ui/card'
+import { Card, CardContent } from '@/components/ui/card'
 import OpenButton from './openButton'
 import WinButton from '../winButton'
-import WinnerEmailButton from '../winnerEmailButton'
-import { innovations } from '@/lib/server/database'
+import RequestStatus from '../requestStatus'
 
 interface Props {
   requestId: string
+  submissions: Submission[]
+  checks: RequestChecksMap
 }
 
-const SubmissionsList = async ({ requestId }: Props) => {
-  const submissionsResponse = await getSubmissions(requestId)
-
-  if ('error' in submissionsResponse) {
-    return <div>Error: {submissionsResponse.message}</div>
-  }
-
-  const submissions = submissionsResponse.documents
-
-  if (submissions.length === 0) {
-    return <div>No submissions found</div>
-  }
-
-  const check = (await getRequestsChecks([requestId]))[requestId]
+export default function SubmissionsListClient({ requestId, submissions, checks }: Props) {
+  const check = checks[requestId]
 
   return (
     <Card>
-      <CardHeader>
-        <WinnerEmailButton check={check} />
-      </CardHeader>
+      <RequestStatus check={check} />
       <CardContent>
         <Table>
           <TableHeader>
@@ -45,11 +32,11 @@ const SubmissionsList = async ({ requestId }: Props) => {
                 <TableCell>{submission.title}</TableCell>
                 <TableCell className='flex gap-2'>
                   <OpenButton
-                    submissionId={submission.$id!}
+                    submissionId={submission.$id}
                     requestId={submission.requestId}
                   />
                   <WinButton
-                    submissionId={submission.$id!}
+                    submissionId={submission.$id}
                     check={check}
                   />
                 </TableCell>
@@ -61,5 +48,3 @@ const SubmissionsList = async ({ requestId }: Props) => {
     </Card>
   )
 }
-
-export default SubmissionsList

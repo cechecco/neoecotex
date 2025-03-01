@@ -1,9 +1,9 @@
 'use server'
 
 import { redirect } from 'next/navigation'
-import { requestsService, submissionsService, computeRequestChecks, RequestCheck } from '@/lib/server/database'
-import { Request, RequestCreateInput, RequestData, requestSchema, Submission } from '@/lib/types'
-import { getLoggedInUser } from './auth'
+import { requestsService, submissionsService, computeRequestChecks } from '@/lib/server/database'
+import { Request, RequestData, requestSchema, Submission, SubmissionData, submissionSchema } from '@/lib/types'
+import { revalidatePath } from 'next/cache'
 
 export async function listRequests(page: number, limit: number) {
   try {
@@ -35,14 +35,14 @@ const validateRequest = (data: Partial<Request>) => {
 const getRequestsData = (formData: FormData) => {
   const data: RequestData = {
     title: formData.get('title') as string,
-    briefDescription: formData.get('briefDescription') as string, 
+    briefDescription: formData.get('briefDescription') as string,
     detailedDescription: formData.get('detailedDescription') as string,
     expectedExpertise: formData.get('expectedExpertise') as string,
     expectedTimeline: formData.get('expectedTimeline') as string,
     budget: parseInt(formData.get('budget') as string) || 0,
-    company: formData.get('company') as string || '',
-    concept: formData.get('concept') as string || '',
-    field: formData.get('field') as string || '',
+    company: (formData.get('company') as string) || '',
+    concept: (formData.get('concept') as string) || '',
+    field: (formData.get('field') as string) || '',
     marketingConsent: !!formData.get('marketingConsent'),
     ecologyConsent: !!formData.get('ecologyConsent'),
   }
@@ -71,7 +71,7 @@ export async function updateRequest(requestId: string | undefined, formData: For
     redirect(`/innovations/requests/${newRequestId}`)
   } else {
     return {
-      request: await requestsService.update(requestId, request)
+      request: await requestsService.update(requestId, request),
     }
   }
 }
@@ -79,17 +79,19 @@ export async function updateRequest(requestId: string | undefined, formData: For
 export async function deleteRequest(requestId: string) {
   try {
     await requestsService.deleteOne(requestId)
-    redirect('/requests')
   } catch (error) {
     console.error(error)
     return { error: true, message: String(error) }
+  } finally {
+    revalidatePath('/innovations/requests')
+    redirect('/innovations/requests')
   }
 }
 
 export async function selectWinner(requestId: string, submissionId: string) {
   try {
     await requestsService.selectWinner(requestId, submissionId)
-    redirect(`/requests/${requestId}`)
+    redirect(`/innovations/requests/${requestId}/submissions/${submissionId}`)
   } catch (error) {
     console.error(error)
     return { error: true, message: String(error) }
@@ -114,38 +116,53 @@ export async function getOneSubmission(submissionId: string) {
   }
 }
 
-export async function createSubmission(data: Omit<Submission, '$id'|'$createdAt'|'$updatedAt'>) {
-  try {
-    const user = await getLoggedInUser()
-    if (!user) {
-      return { error: true, message: 'User not found' }
-    }
-    // Potresti anche forzare data.owner = user.$id, se vuoi
-    const created = await submissionsService.create(data)
-    // redirect(`/requests/${created.requestId}/submissions/${created.$id}`)
-    return created
-  } catch (error) {
-    console.error(error)
-    return { error: true, message: String(error) }
+const validateSubmission = (data: Partial<Submission>) => {
+  const validatedFields = submissionSchema.safeParse(data)
+  if (!validatedFields.success) {
+    return validatedFields.error.flatten().fieldErrors
   }
+  return null
 }
 
-export async function updateSubmission(submissionId: string, partialData: Partial<Submission>) {
-  try {
-    return await submissionsService.update(submissionId, partialData)
-  } catch (error) {
-    console.error(error)
-    return { error: true, message: String(error) }
+const getSubmissionData = (formData: FormData) => {
+  const data: SubmissionData = {
+    title: formData.get('title') as string,
+    briefDescription: formData.get('briefDescription') as string,
+    requestId: formData.get('requestId') as string,
+  }
+  return data
+}
+
+export async function updateSubmission(submissionId: string | undefined, formData: FormData) {
+  const data = getSubmissionData(formData)
+  const validationErrors = validateSubmission(data)
+  if (validationErrors) return { validationErrors }
+
+  if (!submissionId) {
+    let newSubmissionId: string
+    try {
+      const created = await submissionsService.create(data)
+      newSubmissionId = created.$id
+    } catch (error) {
+      return { error: (error as Error).message }
+    }
+    redirect(`/innovations/requests/${data.requestId}/submissions/${newSubmissionId}`)
+  } else {
+    return {
+      submission: await submissionsService.update(submissionId, data),
+    }
   }
 }
 
 export async function deleteSubmission(submissionId: string, requestId: string) {
   try {
     await submissionsService.deleteOne(submissionId)
-    redirect(`/requests/${requestId}/submissions`)
   } catch (error) {
     console.error(error)
     return { error: true, message: String(error) }
+  } finally {
+    revalidatePath(`/innovations/requests/${requestId}`)
+    redirect(`/innovations/requests/${requestId}`)
   }
 }
 
@@ -161,7 +178,7 @@ export async function getRequestsChecks(requestIds: string[]) {
 export async function getRequestCheck(requestId: string) {
   try {
     const checksMap = await getRequestsChecks([requestId])
-  return checksMap[requestId]
+    return checksMap[requestId]
   } catch (error) {
     console.error(error)
     throw error

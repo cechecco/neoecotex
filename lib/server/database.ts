@@ -1,6 +1,6 @@
 import { createDatabaseAdminClient, getUserEmail } from '@/lib/server/appwrite'
 import { getLoggedInUser } from '@/app/actions/auth'
-import { Request, RequestCreateInput, RequestData, requestSchema, Submission } from '@/lib/types'
+import { Request, RequestChecksMap, RequestCreateInput, RequestData, Submission, SubmissionCreateInput } from '@/lib/types'
 import { ID, Models, Query } from 'node-appwrite'
 
 const DATABASE_ID = '67aa7414000f83ae7018'
@@ -17,7 +17,6 @@ async function getCurrentUser() {
 
 export const requestsService = {
   async create(data: RequestData) {
-
     const { databases } = await createDatabaseAdminClient()
     const user = await getCurrentUser()
     const newId = ID.unique()
@@ -30,57 +29,34 @@ export const requestsService = {
     }
 
     try {
-      const created = await databases.createDocument(
-        DATABASE_ID,
-        REQUESTS_COLLECTION_ID,
-        newId,
-        docToCreate
-      )
+      const created = await databases.createDocument(DATABASE_ID, REQUESTS_COLLECTION_ID, newId, docToCreate)
       return created as Request
     } catch (error) {
       console.error(error)
-      throw new Error('Failed to create request')
+      throw new Error('Failed to create request') // TODO: test this
     }
   },
 
   async update(requestId: string, requestData: Partial<Request>) {
-
-    ///
-    // const hasAlreadyWinner = await this.getOne(id).then((req) => req.winner !== null)
-
-    // if (hasAlreadyWinner) {
-    //   throw new Error('A winner has already been selected.')
-    // }
-    ///
-
     const { databases } = await createDatabaseAdminClient()
 
     try {
-      const updated = await databases.updateDocument(
-        DATABASE_ID,
-        REQUESTS_COLLECTION_ID,
-        requestId,
-        requestData
-      )
+      const updated = await databases.updateDocument(DATABASE_ID, REQUESTS_COLLECTION_ID, requestId, requestData)
       return updated as Request
     } catch (error) {
       console.error(error)
-      throw error // TODO: format error for frontend
+      throw new Error('Failed to update request')
     }
   },
 
   async getOne(id: string) {
     const { databases } = await createDatabaseAdminClient()
     try {
-      const doc = await databases.getDocument(
-        DATABASE_ID,
-        REQUESTS_COLLECTION_ID,
-        id
-      )
+      const doc = await databases.getDocument(DATABASE_ID, REQUESTS_COLLECTION_ID, id)
       return doc as Request
     } catch (error) {
       console.error(error)
-      throw error // TODO: format error for frontend
+      throw new Error('Failed to get request')
     }
   },
 
@@ -88,15 +64,11 @@ export const requestsService = {
     const { databases } = await createDatabaseAdminClient()
     const { page, limit } = pagination
     try {
-      const list = await databases.listDocuments(DATABASE_ID, REQUESTS_COLLECTION_ID, [
-        Query.orderDesc('$createdAt'),
-        Query.limit(limit),
-        Query.offset((page - 1) * limit),
-      ])
+      const list = await databases.listDocuments(DATABASE_ID, REQUESTS_COLLECTION_ID, [Query.orderDesc('$createdAt'), Query.limit(limit), Query.offset((page - 1) * limit)])
       return list as Models.DocumentList<Request>
     } catch (error) {
       console.error(error)
-      throw error // TODO: format error for frontend
+      throw new Error('Failed to list requests')
     }
   },
 
@@ -108,7 +80,7 @@ export const requestsService = {
       return true
     } catch (error) {
       console.error(error)
-      throw error // TODO: format error for frontend
+      throw new Error('Failed to delete request')
     }
   },
 
@@ -124,78 +96,68 @@ export const requestsService = {
       })
     } catch (error) {
       console.error(error)
-      throw error
+      throw new Error('Failed to select winner')
     }
   },
 }
 
 export const submissionsService = {
-  async create(data: Omit<Submission, '$id'|'$createdAt'|'$updatedAt'>) {
+  async create(data: Omit<Submission, '$id' | '$createdAt' | '$updatedAt'>) {
     const { databases } = await createDatabaseAdminClient()
-    await getCurrentUser()
+    const user = await getCurrentUser()
     const newId = ID.unique()
+
     try {
-      const created = await databases.createDocument(
-        DATABASE_ID,
-        SUBMISSIONS_COLLECTION_ID,
-        newId,
-        data
-      )
-      // Aggiorniamo la Request per aggiungere la submissionId
+      const created = await databases.createDocument(DATABASE_ID, SUBMISSIONS_COLLECTION_ID, newId, {
+        ...data,
+        owner: user.$id,
+      })
+
       const reqDoc = await databases.getDocument(DATABASE_ID, REQUESTS_COLLECTION_ID, data.requestId)
       const oldSubIds = reqDoc.submissionsId || []
       await databases.updateDocument(DATABASE_ID, REQUESTS_COLLECTION_ID, data.requestId, {
         submissionsId: [...oldSubIds, created.$id],
       })
+
       return created
     } catch (error) {
       console.error(error)
-      throw error
+      throw new Error('Failed to create submission')
     }
   },
 
-  async update(id: string, partialData: Partial<Submission>) {
+  async update(id: string, partialData: Partial<SubmissionCreateInput>) {
     const { databases } = await createDatabaseAdminClient()
     try {
-      const updated = await databases.updateDocument(
-        DATABASE_ID,
-        SUBMISSIONS_COLLECTION_ID,
-        id,
-        partialData
-      )
-      return updated
+      const updated = await databases.updateDocument(DATABASE_ID, SUBMISSIONS_COLLECTION_ID, id, partialData)
+      return updated as Submission
     } catch (error) {
       console.error(error)
-      throw error
+      throw new Error('Failed to update submission')
     }
   },
 
   async getOne(id: string) {
     const { databases } = await createDatabaseAdminClient()
     try {
-      const doc = await databases.getDocument(
-        DATABASE_ID,
-        SUBMISSIONS_COLLECTION_ID,
-        id
-      )
-      // Se vuoi validare con Zod:
-      // return submissionSchema.parse(doc)
-      return doc
+      console.log('getOne', id)
+      const doc = await databases.getDocument(DATABASE_ID, SUBMISSIONS_COLLECTION_ID, id)
+      return doc as Submission
     } catch (error) {
+      console.log('getOne error', id)
       console.error(error)
-      throw error
+      throw new Error('Failed to get submission')
     }
   },
 
   async listByRequest(requestId: string) {
     const { databases } = await createDatabaseAdminClient()
     try {
-      return await databases.listDocuments(DATABASE_ID, SUBMISSIONS_COLLECTION_ID, [
-        Query.equal('requestId', requestId),
-      ])
+      const list = await databases.listDocuments(DATABASE_ID, SUBMISSIONS_COLLECTION_ID, [Query.equal('requestId', requestId)])
+      return list as Models.DocumentList<Submission>
     } catch (error) {
       console.error(error)
-      throw error
+      throw new Error('Failed to list submissions by request')
     }
   },
 
@@ -207,30 +169,16 @@ export const submissionsService = {
       return true
     } catch (error) {
       console.error(error)
-      throw error
+      throw new Error('Failed to delete submission')
     }
   },
 }
 
-/** Esempio di checks per Request */
-export type RequestCheck = {
-  iAmOwner: boolean
-  iAmWinner: boolean
-  iHaveSubmitted: boolean
-  thereIsWinner: boolean
-  winnerEmail: string | undefined
-  requestId: string
-}
-
-export type RequestChecksMap = Record<string, RequestCheck>
-
 async function getRequestsByIds(ids: string[]) {
   if (!ids.length) return []
   const { databases } = await createDatabaseAdminClient()
-  const result = await databases.listDocuments(DATABASE_ID, REQUESTS_COLLECTION_ID, [
-    Query.equal('$id', ids),
-  ])
-  return result.documents
+  const result = await databases.listDocuments(DATABASE_ID, REQUESTS_COLLECTION_ID, [Query.equal('$id', ids)])
+  return result.documents as Request[]
 }
 
 export async function computeRequestChecks(requestIds: string[]) {
@@ -240,7 +188,7 @@ export async function computeRequestChecks(requestIds: string[]) {
   const checksMap: RequestChecksMap = {}
 
   await Promise.all(
-    docs.map(async (reqDoc: any) => {
+    docs.map(async (reqDoc) => {
       const iAmOwner = reqDoc.owner === user.$id
       let iAmWinner = false
       let winnerEmail = ''
@@ -251,9 +199,7 @@ export async function computeRequestChecks(requestIds: string[]) {
           iAmWinner = true
         }
         if (winnerSub.owner) {
-          winnerEmail = iAmWinner || iAmOwner
-            ? await getUserEmail(winnerSub.owner)
-            : '****@****.***'
+          winnerEmail = iAmWinner || iAmOwner ? await getUserEmail(winnerSub.owner) : '****@****.***'
         }
       }
 

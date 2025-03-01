@@ -1,6 +1,7 @@
 import RequestSkeleton from '@/components/innovations/requestSkeleton'
 import { RequestForm } from '@/components/innovations/requestForm'
 import { Suspense } from 'react'
+import Header from '@/components/innovations/Header'
 
 interface Props {
   params: Promise<{
@@ -10,15 +11,13 @@ interface Props {
 
 export default async function InnovationRequestPage(props: Props) {
   const params = await props.params
+  const requestId = params.id
   return (
     <main>
-      <div className='flex justify-between items-center mb-4'>
-        <p className='text-3xl font-bold'>Innovation Request editor</p>
-        <div className='flex items-center justify-end gap-2'>{/* ... */}</div>
-      </div>
+      <Header title='Innovation Request Editor'>{requestId}</Header>
 
       <Suspense fallback={<RequestSkeleton />}>
-        <RequestForm id={params.id} />
+        <RequestForm id={requestId} />
       </Suspense>
     </main>
   )

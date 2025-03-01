@@ -1,30 +1,43 @@
-import { getSubmissionData } from '@/app/actions/actions'
+import { getOneSubmission } from '@/app/actions/actions'
 import SubmissionFormClient from './submissionFormClient'
-import { Submission } from '@/lib/types'
-import { SubmissionProvider } from '@/contexts/submissionContext'
+import { SubmissionData } from '@/lib/types'
 
 interface Props {
   submissionId: string
   requestId: string
 }
 
-export async function SubmissionForm({ submissionId, requestId }: Props) {
-  const submission = await getSubmissionData(submissionId, requestId)
-  if ('error' in submission) {
-    return (
-      <div className='flex items-center justify-center h-full'>
-        <p className='text-red-500'>{submission.message}</p>
-      </div>
-    )
+const getDefaultSubmission = (requestId: string): SubmissionData => {
+  return {
+    title: '',
+    briefDescription: '',
+    requestId: requestId,
   }
+}
+
+export async function SubmissionForm({ submissionId, requestId }: Props) {
+  let submissionData: SubmissionData | undefined
+  if (submissionId === 'new') {
+    submissionData = getDefaultSubmission(requestId)
+  } else {
+    const submission = await getOneSubmission(submissionId)
+    if (submission && 'error' in submission) {
+      return (
+        <div className='flex items-center justify-center h-full'>
+          <p className='text-red-500'>{submission.message}</p>
+        </div>
+      )
+    }
+    submissionData = submission as SubmissionData
+  }
+
   return (
     <div>
-      {JSON.stringify(submission)}
-      
-      <SubmissionProvider initialSubmission={submission as unknown as Submission}>
-        aa
-        <SubmissionFormClient />
-      </SubmissionProvider>
+      <SubmissionFormClient
+        initialSubmission={submissionData}
+        submissionId={submissionId === 'new' ? undefined : submissionId}
+        requestId={requestId}
+      />
     </div>
   )
 }

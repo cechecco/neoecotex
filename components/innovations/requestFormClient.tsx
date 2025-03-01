@@ -14,7 +14,7 @@ import { AlertCircle } from 'lucide-react'
 import { Separator } from '@/components/ui/separator'
 import { Request, RequestData } from '@/lib/types'
 
-export default function RequestFormClient({initialRequest, requestId}: {initialRequest: RequestData, requestId: string | undefined}) {
+export default function RequestFormClient({ initialRequest, requestId }: { initialRequest: RequestData; requestId: string | undefined }) {
   const [request, setRequest] = useState<RequestData>(initialRequest)
   const [validationError, setValidationError] = useState<Partial<Record<keyof Request, string[]>> | false>(false)
   const [fetchError, setFetchError] = useState<string | false>(false)
@@ -25,7 +25,7 @@ export default function RequestFormClient({initialRequest, requestId}: {initialR
     setValidationError(false)
     setFetchError(false)
     setPending(true)
-    
+
     const formData = new FormData(e.target as HTMLFormElement)
     const result = await updateRequest(requestId, formData)
 
@@ -50,12 +50,12 @@ export default function RequestFormClient({initialRequest, requestId}: {initialR
 
   return (
     <>
-      <form
-        id='innovation-form'
-        onSubmit={handleSubmit}
-      >
-        <Card>
-          <CardHeader>
+      <Card>
+        <CardHeader>
+          <form
+            id='innovation-form'
+            onSubmit={handleSubmit}
+          >
             <CardTitle>
               <div className='flex items-center justify-between gap-2 w-full border border-secondary bg-secondary/20 p-4 rounded-md'>
                 <p className='flex items-center gap-2 font-bold'>Apply changes</p>
@@ -466,46 +466,38 @@ export default function RequestFormClient({initialRequest, requestId}: {initialR
                 </Label>
               </div>
             </div>
-          </CardHeader>
-          <CardFooter className='w-full flex flex-col gap-4'>
-            {'$id' in request && (
-              <>
-                <Separator />
-                <div className='flex justify-between items-center gap-2 w-full border border-destructive bg-destructive/10 p-4 rounded-md'>
-                  <div className='flex flex-col gap-2'>
-                    <p className='flex items-center gap-2 text-destructive font-bold'>
-                      <AlertCircle className='w-4 h-4' /> Danger: Delete this request
-                    </p>
-                    <p className='text-destructive text-sm'>Once you delete a request, there is no going back. Please be certain.</p>
-                  </div>
-                  <Button
-                    variant='destructive'
-                    onClick={async () => {
-                      if ('$id' in request && requestId) {
-                        setPending(true);
-                        try {
-                          await deleteRequest(requestId);
-                          // Redirect could be handled here or in deleteRequest
-                          window.location.href = '/innovations/requests/dashboard';
-                        } catch (error) {
-                          console.error('Error deleting request:', error);
-                          const errorMsg = error instanceof Error ? error.message : 'Si è verificato un errore durante l\'eliminazione';
-                          setFetchError(errorMsg);
-                        } finally {
-                          setPending(false);
-                        }
-                      }
-                    }}
-                    size='sm'
-                  >
-                    Delete
-                  </Button>
+          </form>
+        </CardHeader>
+        <CardFooter className='w-full flex flex-col gap-4'>
+          {requestId && (
+            <>
+              <Separator />
+              <div className='flex justify-between items-center gap-2 w-full border border-destructive bg-destructive/10 p-4 rounded-md'>
+                <div className='flex flex-col gap-2'>
+                  <p className='flex items-center gap-2 text-destructive font-bold'>
+                    <AlertCircle className='w-4 h-4' /> Danger: Delete this request
+                  </p>
+                  <p className='text-destructive text-sm'>Once you delete a request, there is no going back. Please be certain.</p>
                 </div>
-              </>
-            )}
-          </CardFooter>
-        </Card>
-      </form>
+                <Button
+                  type='button'
+                  variant='destructive'
+                  onClick={async () => {
+                    if (requestId) {
+                      setPending(true)
+                      await deleteRequest(requestId)
+                      setPending(false)
+                    }
+                  }}
+                  size='sm'
+                >
+                  Delete
+                </Button>
+              </div>
+            </>
+          )}
+        </CardFooter>
+      </Card>
     </>
   )
 }

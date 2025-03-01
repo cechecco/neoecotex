@@ -2,18 +2,20 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Submission } from '@/lib/types'
+import RequestStatus from '../requestStatus'
+import { RequestCheck } from '@/lib/types'
 
 interface Props {
   submission: Submission
-  children: React.ReactNode
+  check: RequestCheck
 }
 
-export function SubmissionViewClient({ submission, children }: Props) {
+export function SubmissionViewClient({ submission, check }: Props) {
   return (
     <>
       <Card>
         <CardHeader className='flex flex-col items-left gap-2'>
-          {children}
+          <RequestStatus check={check} />
           <CardTitle>{submission.title}</CardTitle>
         </CardHeader>
         <CardContent>

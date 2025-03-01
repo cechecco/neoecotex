@@ -10,7 +10,7 @@ export default async function RequestsListServer() {
 
     const { documents } = result
     if (!documents || !documents.length) {
-      return <div className="text-sm text-muted-foreground">No requests found.</div>
+      return <div className='text-sm text-muted-foreground'>No requests found.</div>
     }
 
     const requestIds = documents.map((r) => r.$id)
@@ -26,7 +26,7 @@ export default async function RequestsListServer() {
     )
   } catch (error) {
     return (
-      <div className="text-red-500">
+      <div className='text-red-500'>
         <h1>Errore durante il caricamento</h1>
         <p>{String(error)}</p>
       </div>

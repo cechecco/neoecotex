@@ -1,9 +1,9 @@
 import RequestSkeleton from '@/components/innovations/requestSkeleton'
-import { SubmissionView } from '@/components/innovations/submissions/submissionView'
+import SubmissionViewServer from '@/components/innovations/submissions/submissionViewServer'
 import { Suspense } from 'react'
-import { Button } from '@/components/ui/button'
-import Link from 'next/link'
-import { Eye, Pencil } from 'lucide-react'
+import Header from '@/components/innovations/Header'
+import ViewSubmissionsButton from '@/components/innovations/submissions/ViewSubmissionsButton'
+import EditSubmissionButton from '@/components/innovations/submissions/EditSubmissionButton'
 
 interface Props {
   params: Promise<{
@@ -18,33 +18,15 @@ export default async function SubmissionPage(props: Props) {
   const submissionId = params.submissionId
   return (
     <main>
-      <div className='flex flex-col md:flex-row gap-2 justify-between mb-4'>
-        <p className='text-3xl font-bold'>Submission</p>
-        <div className='flex items-center justify-end gap-2'>
-          <Button size='sm'>
-            <Link
-              href={`/innovations/requests/${params.id}/submissions`}
-              className='flex items-center gap-2'
-            >
-              <Eye />
-              View Submissions
-            </Link>
-          </Button>
-          <Button size='sm'>
-            <Link
-              href={`/innovations/requests/${requestId}/submissions/${submissionId}/edit`}
-              className='flex items-center gap-2'
-            >
-              <Pencil /> Edit
-            </Link>
-          </Button>
-        </div>
-      </div>
-      <Suspense fallback={<RequestSkeleton />}>
-        <SubmissionView
-          submissionId={submissionId}
+      <Header title='Submission'>
+        <ViewSubmissionsButton requestId={requestId} />
+        <EditSubmissionButton
           requestId={requestId}
+          submissionId={submissionId}
         />
+      </Header>
+      <Suspense fallback={<RequestSkeleton />}>
+        <SubmissionViewServer submissionId={submissionId} />
       </Suspense>
     </main>
   )

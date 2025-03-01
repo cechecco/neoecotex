@@ -8,7 +8,7 @@ interface Props {
 
 const getDefaultRequest = (): RequestData => {
   return {
-    title: '',  
+    title: '',
     company: '',
     briefDescription: '',
     detailedDescription: '',
@@ -52,7 +52,10 @@ export async function RequestForm({ id }: Props) {
 
   return (
     <div>
-      <RequestFormClient initialRequest={requestData} requestId={id === 'new' ? undefined : id} />
+      <RequestFormClient
+        initialRequest={requestData}
+        requestId={id === 'new' ? undefined : id}
+      />
     </div>
   )
 }

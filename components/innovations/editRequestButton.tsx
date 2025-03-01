@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button'
-import { RequestCheck } from '@/lib/server/database'
+import { RequestCheck } from '@/lib/types'
 import { Pencil } from 'lucide-react'
 import Link from 'next/link'
 
@@ -23,4 +23,4 @@ export default function EditRequestButton({ requestId, check }: EditRequestButto
       </Link>
     </Button>
   )
-} 
+}

@@ -1,12 +1,12 @@
+import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Eye } from 'lucide-react'
-import Link from 'next/link'
 
-interface ViewSubmissionsButtonProps {
+interface Props {
   requestId: string
 }
 
-export default function ViewSubmissionsButton({ requestId }: ViewSubmissionsButtonProps) {
+export default function ViewSubmissionsButton({ requestId }: Props) {
   return (
     <Button size='sm'>
       <Link

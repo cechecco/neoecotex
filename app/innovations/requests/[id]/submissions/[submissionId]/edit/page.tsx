@@ -1,6 +1,7 @@
 import RequestSkeleton from '@/components/innovations/requestSkeleton'
 import { Suspense } from 'react'
 import { SubmissionForm } from '@/components/innovations/submissions/submissionForm'
+import Header from '@/components/innovations/Header'
 interface Props {
   params: Promise<{
     id: string
@@ -14,9 +15,7 @@ export default async function SubmissionEditorPage(props: Props) {
   const submissionId = params.submissionId // could be 'new'
   return (
     <main>
-      <div className='flex flex-col md:flex-row gap-2 justify-between mb-4'>
-        <p className='text-3xl font-bold'>Submission editor</p>
-      </div>
+      <Header title='Submission Editor'>{submissionId}</Header>
 
       <Suspense fallback={<RequestSkeleton />}>
         <SubmissionForm

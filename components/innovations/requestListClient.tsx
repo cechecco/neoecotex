@@ -1,8 +1,7 @@
 'use client'
 
 import { useEffect } from 'react'
-import { Request } from '@/lib/types'
-import { RequestChecksMap } from '@/lib/server/database'
+import { Request, RequestChecksMap } from '@/lib/types'
 import { useStore } from '@/contexts/store'
 import RequestsListView from './requestsListView'
 
@@ -12,16 +11,8 @@ interface RequestsListClientProps {
   checksPage: RequestChecksMap
 }
 
-export default function RequestsListClient({
-  pageNumber,
-  requestsPage,
-  checksPage,
-}: RequestsListClientProps) {
-  const {
-    setRequestsPages,
-    setChecksPages,
-    setCurrentPage,
-  } = useStore()
+export default function RequestsListClient({ pageNumber, requestsPage, checksPage }: RequestsListClientProps) {
+  const { setRequestsPages, setChecksPages, setCurrentPage } = useStore()
 
   useEffect(() => {
     setRequestsPages((prev) => ({ ...prev, [pageNumber]: requestsPage }))

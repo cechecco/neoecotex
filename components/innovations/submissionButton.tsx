@@ -1,7 +1,7 @@
 import { Plus } from 'lucide-react'
 import { Button } from '../ui/button'
 import Link from 'next/link'
-import { RequestCheck } from '@/lib/server/database'
+import { RequestCheck } from '@/lib/types'
 
 export default function SubmitSolutionButton({ check }: { check: RequestCheck }) {
   return (

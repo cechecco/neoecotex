@@ -1,17 +1,16 @@
 'use client'
 
 import React, { createContext, useContext, useState } from 'react'
-import { Request } from '@/lib/types'
-import { RequestChecksMap } from '@/lib/server/database'
+import { Request, RequestChecksMap } from '@/lib/types'
 
 // Mappa: numero di pagina -> array di Request
 type RequestsPagesMap = {
-  [page: number]: Request[];
+  [page: number]: Request[]
 }
 
 // Mappa: numero di pagina -> checks per quella pagina
 type ChecksPagesMap = {
-  [page: number]: RequestChecksMap;
+  [page: number]: RequestChecksMap
 }
 
 type StoreState = {
