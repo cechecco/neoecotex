@@ -3,10 +3,10 @@
 import Link from 'next/link'
 import { Models } from 'node-appwrite'
 
+import { signOut } from '@/app/actions/auth'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
-import { signOut } from '@/app/actions/auth'
 
 export default function UserMenu({ user }: { user: Models.User<Models.Preferences> | null }) {
   if (!user) {
@@ -52,7 +52,7 @@ export default function UserMenu({ user }: { user: Models.User<Models.Preference
           className='cursor-pointer'
           onSelect={async (event) => {
             event.preventDefault()
-            // await signOut()
+            await signOut()
           }}
         >
           Logout

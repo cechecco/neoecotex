@@ -1,5 +1,6 @@
 'use client'
 import Link from 'next/link'
+import * as React from 'react'
 
 import { NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger, navigationMenuTriggerStyle } from '@/components/ui/navigation-menu'
 import { cn } from '@/lib/utils'
@@ -34,13 +35,11 @@ export default function SiteMenu() {
   return (
     <div>
       <NavigationMenu className='flex flex-row justify-around'>
-        <NavigationMenuList className='flex flex-row justify-around'>
+        <NavigationMenuList className='flex flex-row justify-around gap-4'>
           {menuItems.map((item) =>
             item.type === 'dropdown' ? (
               <NavigationMenuItem key={item.label}>
-                <NavigationMenuTrigger className={cn(navigationMenuTriggerStyle(), 'bg-transparent hover:bg-fuchsia-500 data-[state=open]:bg-fuchsia-500')}>
-                  {item.label.toUpperCase()}
-                </NavigationMenuTrigger>
+                <NavigationMenuTrigger>{item.label.toUpperCase()}</NavigationMenuTrigger>
                 <NavigationMenuContent>
                   <ul className='grid gap-3 p-6 md:w-[400px] lg:w-[500px] lg:grid-cols-[.75fr_1fr]'>
                     {item.items.map((subItem) => (
@@ -62,9 +61,7 @@ export default function SiteMenu() {
                   legacyBehavior
                   passHref
                 >
-                  <NavigationMenuLink className={cn(navigationMenuTriggerStyle(), 'bg-transparent hover:bg-fuchsia-500 data-[state=open]:bg-fuchsia-500')}>
-                    {item.label.toUpperCase()}
-                  </NavigationMenuLink>
+                  <NavigationMenuLink className={navigationMenuTriggerStyle()}>{item.label.toUpperCase()}</NavigationMenuLink>
                 </Link>
               </NavigationMenuItem>
             )
@@ -75,11 +72,12 @@ export default function SiteMenu() {
   )
 }
 
-const ListItem = ({ className, title, children, ...props }: React.ComponentPropsWithoutRef<'a'> & { title: string }) => {
+const ListItem = React.forwardRef<React.ElementRef<'a'>, React.ComponentPropsWithoutRef<'a'> & { title: string }>(({ className, title, children, ...props }, ref) => {
   return (
     <li>
       <NavigationMenuLink asChild>
         <a
+          ref={ref}
           className={cn(
             'block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground',
             className
@@ -92,4 +90,5 @@ const ListItem = ({ className, title, children, ...props }: React.ComponentProps
       </NavigationMenuLink>
     </li>
   )
-}
+})
+ListItem.displayName = 'ListItem'

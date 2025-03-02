@@ -1,4 +1,4 @@
-import { listRequests, getRequestsChecks } from '@/app/actions/actions'
+import { listRequests, getRequestsChecks } from '@/app/actions/innovations'
 import ListClient from '@/components/innovations/requests/listClient'
 
 export default async function ListServer() {

@@ -1,6 +1,6 @@
 import { redirect } from 'next/navigation'
 
-import { getLoggedInUser } from '@/app/actions'
+import { getLoggedInUser } from '@/app/actions/auth'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 
 export default async function HomePage() {

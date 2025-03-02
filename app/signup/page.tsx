@@ -1,6 +1,6 @@
 import { redirect } from 'next/navigation'
 
-import { signUpWithGoogle, signUpWithEmail, getLoggedInUser } from '@/app/actions'
+import { signUpWithGoogle, signUpWithEmail, getLoggedInUser } from '@/app/actions/auth'
 import { Button } from '@/components/ui/button'
 import { Card, CardHeader, CardContent, CardFooter } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'

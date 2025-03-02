@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { listSubmissions, getRequestsChecks } from '@/app/actions/actions'
+import { listSubmissions, getRequestsChecks } from '@/app/actions/innovations'
 import ListClient from '@/components/innovations/submissions/listClient'
 
 interface Props {

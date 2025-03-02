@@ -1,6 +1,6 @@
 import { Suspense } from 'react'
 
-import { getRequestCheck } from '@/app/actions/actions'
+import { getRequestCheck } from '@/app/actions/innovations'
 import OpenListButton from '@/components/innovations/openListButton'
 import EditButton from '@/components/innovations/requests/editButton'
 import Header from '@/components/innovations/requests/header'

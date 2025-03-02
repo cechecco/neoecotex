@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation'
 
-import { getOneRequest, getRequestCheck } from '@/app/actions/actions'
+import { getOneRequest, getRequestCheck } from '@/app/actions/innovations'
 import ViewClient from '@/components/innovations/requests/viewClient'
 
 interface RequestViewServerProps {

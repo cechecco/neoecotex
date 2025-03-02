@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation'
 
-import { getOneSubmission, getRequestCheck } from '@/app/actions/actions'
+import { getOneSubmission, getRequestCheck } from '@/app/actions/innovations'
 
 import ViewClient from './viewClient'
 

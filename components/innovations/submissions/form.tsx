@@ -1,4 +1,4 @@
-import { getOneSubmission } from '@/app/actions/actions'
+import { getOneSubmission } from '@/app/actions/innovations'
 import FormClient from '@/components/innovations/submissions/formClient'
 import { SubmissionData } from '@/lib/types'
 

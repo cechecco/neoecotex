@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation'
 
-import { selectWinner } from '@/app/actions/actions'
+import { selectWinner } from '@/app/actions/innovations'
 import { Button } from '@/components/ui/button'
 import { RequestCheck } from '@/lib/types'
 export default function SelectWinnerButton({ submissionId, check }: { submissionId: string; check: RequestCheck }) {

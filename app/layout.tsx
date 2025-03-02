@@ -24,7 +24,7 @@ export default async function RootLayout({
 }>) {
   return (
     <html lang='en'>
-      <body className={`${albertSans.variable} relative antialiased bg-gradient-to-b from-violet-500 to-fuchsia-500 h-full flex flex-col`}>
+      <body className={`${albertSans.variable} relative antialiased h-full flex flex-col`}>
         <StoreProvider>
           <div className='h-5 md:h-16'>
             <MenuServer />

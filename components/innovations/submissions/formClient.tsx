@@ -4,7 +4,7 @@ import { AlertCircle } from 'lucide-react'
 import Link from 'next/link'
 import { useState } from 'react'
 
-import { deleteSubmission, updateSubmission } from '@/app/actions/actions'
+import { deleteSubmission, updateSubmission } from '@/app/actions/innovations'
 import { Button } from '@/components/ui/button'
 import { Card, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
