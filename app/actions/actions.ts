@@ -161,7 +161,7 @@ export async function deleteSubmission(submissionId: string, requestId: string) 
     console.error(error)
     return { error: true, message: String(error) }
   } finally {
-    revalidatePath(`/innovations/requests/${requestId}`)
+    revalidatePath(`/innovations/requests`)
     redirect(`/innovations/requests/${requestId}`)
   }
 }

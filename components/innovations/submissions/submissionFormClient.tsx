@@ -55,12 +55,12 @@ export default function SubmissionFormClient({ initialSubmission, submissionId, 
 
   return (
     <>
-      <form
-        id='innovation-form'
-        onSubmit={handleSubmit}
-      >
-        <Card>
-          <CardHeader>
+      <Card>
+        <CardHeader>
+          <form
+            id='innovation-form'
+            onSubmit={handleSubmit}
+          >
             <CardTitle>
               <div className='flex items-center justify-between gap-2 w-full border border-secondary bg-secondary/20 p-4 rounded-md'>
                 <p className='flex items-center gap-2 font-bold'>Apply changes</p>
@@ -168,44 +168,37 @@ export default function SubmissionFormClient({ initialSubmission, submissionId, 
 
               {/* Add more fields as needed, following the same pattern */}
             </div>
-          </CardHeader>
-          <CardFooter className='w-full flex flex-col gap-4'>
-            {submissionId && (
-              <>
-                <Separator />
-                <div className='flex justify-between items-center gap-2 w-full border border-destructive bg-destructive/10 p-4 rounded-md'>
-                  <div className='flex flex-col gap-2'>
-                    <p className='flex items-center gap-2 text-destructive font-bold'>
-                      <AlertCircle className='w-4 h-4' /> Danger: Delete this request
-                    </p>
-                    <p className='text-destructive text-sm'>Once you delete a request, there is no going back. Please be certain.</p>
-                  </div>
-                  <Button
-                    variant='destructive'
-                    onClick={async () => {
-                      if (submissionId) {
-                        setPending(true)
-                        try {
-                          await deleteSubmission(submissionId, requestId)
-                        } catch (error) {
-                          console.error('Error deleting submission:', error)
-                          const errorMsg = error instanceof Error ? error.message : 'An error occurred while deleting'
-                          setFetchError(errorMsg)
-                        } finally {
-                          setPending(false)
-                        }
-                      }
-                    }}
-                    size='sm'
-                  >
-                    Delete
-                  </Button>
+          </form>
+        </CardHeader>
+        <CardFooter className='w-full flex flex-col gap-4'>
+          {submissionId && (
+            <>
+              <Separator />
+              <div className='flex justify-between items-center gap-2 w-full border border-destructive bg-destructive/10 p-4 rounded-md'>
+                <div className='flex flex-col gap-2'>
+                  <p className='flex items-center gap-2 text-destructive font-bold'>
+                    <AlertCircle className='w-4 h-4' /> Danger: Delete this request
+                  </p>
+                  <p className='text-destructive text-sm'>Once you delete a request, there is no going back. Please be certain.</p>
                 </div>
-              </>
-            )}
-          </CardFooter>
-        </Card>
-      </form>
+                <Button
+                  variant='destructive'
+                  onClick={async () => {
+                    if (submissionId) {
+                      setPending(true)
+                      await deleteSubmission(submissionId, requestId)
+                      setPending(false)
+                    }
+                  }}
+                  size='sm'
+                >
+                  Delete
+                </Button>
+              </div>
+            </>
+          )}
+        </CardFooter>
+      </Card>
     </>
   )
 }

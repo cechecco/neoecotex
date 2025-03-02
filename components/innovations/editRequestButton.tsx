@@ -18,8 +18,8 @@ export default function EditRequestButton({ requestId, check }: EditRequestButto
         href={`/innovations/requests/${requestId}/edit`}
         className='flex items-center gap-2'
       >
-        Edit
         <Pencil />
+        Edit
       </Link>
     </Button>
   )
