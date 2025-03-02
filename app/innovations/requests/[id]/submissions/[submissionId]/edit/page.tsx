@@ -1,7 +1,8 @@
-import RequestSkeleton from '@/components/innovations/requests/skeleton'
 import { Suspense } from 'react'
-import Form from '@/components/innovations/submissions/form'
+
 import Header from '@/components/innovations/requests/header'
+import RequestSkeleton from '@/components/innovations/requests/skeleton'
+import Form from '@/components/innovations/submissions/form'
 interface Props {
   params: Promise<{
     id: string

@@ -1,6 +1,6 @@
 'use server'
-import { Client, Account, Databases, Users } from 'node-appwrite'
 import { cookies } from 'next/headers'
+import { Client, Account, Databases, Users } from 'node-appwrite'
 
 const APPWRITE_ENDPOINT = process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT!
 const APPWRITE_PROJECT = process.env.NEXT_PUBLIC_APPWRITE_PROJECT!

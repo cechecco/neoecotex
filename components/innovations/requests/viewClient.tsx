@@ -1,9 +1,10 @@
 'use client'
 
 import React from 'react'
+
+import StatusBadges from '@/components/innovations/requests/statusBadges'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Request, RequestCheck } from '@/lib/types'
-import StatusBadges from '@/components/innovations/requests/statusBadges'
 
 interface Props {
   request: Request

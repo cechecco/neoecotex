@@ -1,6 +1,7 @@
-import { createAdminClient } from '@/lib/server/appwrite'
 import { cookies } from 'next/headers'
 import { NextRequest, NextResponse } from 'next/server'
+
+import { createAdminClient } from '@/lib/server/appwrite'
 
 export async function GET(request: NextRequest) {
   const userId = request.nextUrl.searchParams.get('userId')

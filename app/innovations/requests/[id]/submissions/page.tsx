@@ -1,7 +1,8 @@
+import { Suspense } from 'react'
+
 import Header from '@/components/innovations/requests/header'
 import ListServer from '@/components/innovations/submissions/listServer'
 import ListSkeleton from '@/components/innovations/submissions/listSkeleton'
-import { Suspense } from 'react'
 
 interface Props {
   params: Promise<{

@@ -1,12 +1,13 @@
 'use client'
 
+import Link from 'next/link'
 import { useState } from 'react'
+
 import { listRequests, getRequestsChecks } from '@/app/actions/actions'
-import { useStore } from '@/contexts/store'
+import Card from '@/components/innovations/requests/card'
 import Loader from '@/components/loader'
 import { Pagination, PaginationContent, PaginationItem, PaginationNext, PaginationPrevious } from '@/components/ui/pagination'
-import Card from '@/components/innovations/requests/card'
-import Link from 'next/link'
+import { useStore } from '@/contexts/store'
 
 export default function ListView() {
   const { requestsPages, checksPages, setRequestsPages, setChecksPages, currentPage, setCurrentPage } = useStore()

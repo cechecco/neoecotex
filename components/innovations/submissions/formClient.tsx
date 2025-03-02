@@ -1,16 +1,17 @@
 'use client'
 
-import { Card, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
-import { deleteSubmission, updateSubmission } from '@/app/actions/actions'
-import { Button } from '@/components/ui/button'
+import { AlertCircle } from 'lucide-react'
 import Link from 'next/link'
 import { useState } from 'react'
-import { Skeleton } from '@/components/ui/skeleton'
+
+import { deleteSubmission, updateSubmission } from '@/app/actions/actions'
+import { Button } from '@/components/ui/button'
+import { Card, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
-import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
-import { AlertCircle } from 'lucide-react'
 import { Separator } from '@/components/ui/separator'
+import { Skeleton } from '@/components/ui/skeleton'
+import { Textarea } from '@/components/ui/textarea'
 import { SubmissionData } from '@/lib/types'
 
 interface Props {

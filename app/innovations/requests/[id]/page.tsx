@@ -1,11 +1,12 @@
-import Skeleton from '@/components/innovations/requests/skeleton'
-import ViewServer from '@/components/innovations/requests/viewServer'
 import { Suspense } from 'react'
-import SubmitSolutionButton from '@/components/innovations/requests/submissionButton'
+
 import { getRequestCheck } from '@/app/actions/actions'
 import OpenListButton from '@/components/innovations/openListButton'
 import EditButton from '@/components/innovations/requests/editButton'
 import Header from '@/components/innovations/requests/header'
+import Skeleton from '@/components/innovations/requests/skeleton'
+import SubmitSolutionButton from '@/components/innovations/requests/submissionButton'
+import ViewServer from '@/components/innovations/requests/viewServer'
 
 export const dynamic = 'force-dynamic'
 

@@ -1,8 +1,9 @@
 import { redirect } from 'next/navigation'
+
 import { signUpWithGoogle, signUpWithEmail, getLoggedInUser } from '@/app/actions'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
 import { Card, CardHeader, CardContent, CardFooter } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
 
 export default async function SignUpPage() {
   const user = await getLoggedInUser()

@@ -2,8 +2,9 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Submission } from '@/lib/types'
-import StatusBadges from '../requests/statusBadges'
 import { RequestCheck } from '@/lib/types'
+
+import StatusBadges from '../requests/statusBadges'
 
 interface Props {
   submission: Submission

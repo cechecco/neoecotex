@@ -1,11 +1,12 @@
 'use client'
 
 import Link from 'next/link'
+import { Models } from 'node-appwrite'
+
+import { signOut } from '@/app/actions'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
-import { Models } from 'node-appwrite'
-import { signOut } from '@/app/actions'
 
 export default function UserMenu({ user }: { user: Models.User<Models.Preferences> | null }) {
   if (!user) {

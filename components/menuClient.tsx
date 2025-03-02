@@ -1,13 +1,15 @@
 'use client'
 
-import { Sheet, SheetContent, SheetTrigger, SheetTitle } from '@/components/ui/sheet'
 import { Menu } from 'lucide-react'
-import SiteMenu from '@/components/siteMenu'
-import LogoMenu from '@/components/logoMenu'
-import { useMediaQuery } from 'react-responsive'
 import { Models } from 'node-appwrite'
-import UserMenu from './userMenu'
 import React from 'react'
+import { useMediaQuery } from 'react-responsive'
+
+import LogoMenu from '@/components/logoMenu'
+import SiteMenu from '@/components/siteMenu'
+import { Sheet, SheetContent, SheetTrigger, SheetTitle } from '@/components/ui/sheet'
+
+import UserMenu from './userMenu'
 
 export default function MenuClient({ user }: { user: Models.User<Models.Preferences> | null }) {
   const isMobileOrTablet = useMediaQuery({ maxWidth: 768 })

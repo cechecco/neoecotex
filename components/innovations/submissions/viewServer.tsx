@@ -1,5 +1,7 @@
 import { notFound } from 'next/navigation'
+
 import { getOneSubmission, getRequestCheck } from '@/app/actions/actions'
+
 import ViewClient from './viewClient'
 
 interface SubmissionViewServerProps {

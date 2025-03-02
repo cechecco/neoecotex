@@ -1,7 +1,8 @@
-import { Button } from '@/components/ui/button'
-import { RequestCheck } from '@/lib/types'
 import { Pencil } from 'lucide-react'
 import Link from 'next/link'
+
+import { Button } from '@/components/ui/button'
+import { RequestCheck } from '@/lib/types'
 
 interface EditRequestButtonProps {
   requestId: string

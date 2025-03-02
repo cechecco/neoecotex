@@ -1,9 +1,10 @@
 'use client'
 
 import { useEffect } from 'react'
-import { Request, RequestChecksMap } from '@/lib/types'
-import { useStore } from '@/contexts/store'
+
 import ListView from '@/components/innovations/requests/listView'
+import { useStore } from '@/contexts/store'
+import { Request, RequestChecksMap } from '@/lib/types'
 
 interface RequestsListClientProps {
   pageNumber: number

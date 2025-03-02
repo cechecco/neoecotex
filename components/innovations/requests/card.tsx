@@ -1,8 +1,9 @@
 'use client'
 
+import { formatDistance } from 'date-fns'
+
 import { Card as CardUI, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
-import { formatDistance } from 'date-fns'
 import { Request, RequestCheck } from '@/lib/types'
 
 interface Props {

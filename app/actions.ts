@@ -1,11 +1,12 @@
 'use server'
 
-import { createAdminClient, createSessionClient } from '@/lib/server/appwrite'
-import { redirect } from 'next/navigation'
 import { headers } from 'next/headers'
-import { OAuthProvider } from 'node-appwrite'
 import { cookies } from 'next/headers'
+import { redirect } from 'next/navigation'
+import { OAuthProvider } from 'node-appwrite'
 import { ID } from 'node-appwrite'
+
+import { createAdminClient, createSessionClient } from '@/lib/server/appwrite'
 
 export async function signUpWithGoogle() {
   const { account } = await createAdminClient()

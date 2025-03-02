@@ -1,9 +1,10 @@
 'use server'
 
+import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
+
 import { requestsService, submissionsService, computeRequestChecks } from '@/lib/server/database'
 import { Request, RequestData, requestSchema, Submission, SubmissionData, submissionSchema } from '@/lib/types'
-import { revalidatePath } from 'next/cache'
 
 export async function listRequests(page: number, limit: number) {
   try {

@@ -1,9 +1,11 @@
 import React from 'react'
-import { Submission, RequestChecksMap } from '@/lib/types'
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
-import { Card, CardContent } from '@/components/ui/card'
+
 import OpenButton from '@/components/innovations/submissions/openButton'
 import SelectWinnerButton from '@/components/innovations/submissions/selectWinnerButton'
+import { Card, CardContent } from '@/components/ui/card'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import { Submission, RequestChecksMap } from '@/lib/types'
+
 import StatusBadges from '../requests/statusBadges'
 
 interface Props {

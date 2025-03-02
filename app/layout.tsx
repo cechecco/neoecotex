@@ -1,10 +1,12 @@
+import { Mail, Linkedin } from 'lucide-react'
 import type { Metadata } from 'next'
 import { Albert_Sans } from 'next/font/google'
-import './globals.css'
-import { Mail, Linkedin } from 'lucide-react'
-import { Button } from '@/components/ui/button'
+
 import MenuServer from '@/components/menuServer'
+import { Button } from '@/components/ui/button'
 import { StoreProvider } from '@/contexts/store'
+import './globals.css'
+
 const albertSans = Albert_Sans({
   variable: '--font-albert-sans',
   subsets: ['latin'],

@@ -1,9 +1,10 @@
-import RequestSkeleton from '@/components/innovations/requests/skeleton'
-import ViewServer from '@/components/innovations/submissions/viewServer'
 import { Suspense } from 'react'
-import Header from '@/components/innovations/requests/header'
+
 import OpenListButton from '@/components/innovations/openListButton'
+import Header from '@/components/innovations/requests/header'
+import RequestSkeleton from '@/components/innovations/requests/skeleton'
 import EditButton from '@/components/innovations/submissions/editButton'
+import ViewServer from '@/components/innovations/submissions/viewServer'
 
 interface Props {
   params: Promise<{
