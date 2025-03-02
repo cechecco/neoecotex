@@ -204,7 +204,9 @@ export async function computeRequestChecks(requestIds: string[]) {
         }
       }
 
-      const iHaveSubmitted = (reqDoc.submissionsId || []).includes(user.$id)
+      const requestSubmissions = await submissionsService.listByRequest(reqDoc.$id)
+
+      const iHaveSubmitted = requestSubmissions.documents.some((sub) => sub.owner === user.$id)
       const thereIsWinner = !!reqDoc.winner
 
       checksMap[reqDoc.$id] = {

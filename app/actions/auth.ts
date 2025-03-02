@@ -1,4 +1,3 @@
-import { revalidatePath } from 'next/cache'
 import { headers } from 'next/headers'
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
@@ -18,11 +17,8 @@ export async function signUpWithGoogle() {
 
 export async function signOut() {
   const { account } = await createSessionClient()
-
   ;(await cookies()).delete('user-session')
   await account.deleteSession('current')
-
-  revalidatePath('/')
   redirect('/signup')
 }
 
