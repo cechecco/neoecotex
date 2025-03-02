@@ -1,6 +1,6 @@
 'use client'
 
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card as CardUI, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
 import { formatDistance } from 'date-fns'
 import { Request, RequestCheck } from '@/lib/types'
@@ -10,9 +10,9 @@ interface Props {
   check: RequestCheck
 }
 
-export function RequestCard({ request, check }: Props) {
+export default function Card({ request, check }: Props) {
   return (
-    <Card className={`h-full transition-all duration-300 flex flex-col justify-start ${check.thereIsWinner ? 'opacity-70' : ''}`}>
+    <CardUI className={`h-full transition-all duration-300 flex flex-col justify-start ${check.thereIsWinner ? 'opacity-70' : ''}`}>
       <CardHeader>
         <CardTitle className='line-clamp-1'>{request.title}</CardTitle>
       </CardHeader>
@@ -27,6 +27,6 @@ export function RequestCard({ request, check }: Props) {
           {check.thereIsWinner && <p>Winner Selected</p>}
         </div>
       </CardFooter>
-    </Card>
+    </CardUI>
   )
 }

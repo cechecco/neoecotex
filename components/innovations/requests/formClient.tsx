@@ -14,7 +14,7 @@ import { AlertCircle } from 'lucide-react'
 import { Separator } from '@/components/ui/separator'
 import { Request, RequestData } from '@/lib/types'
 
-export default function RequestFormClient({ initialRequest, requestId }: { initialRequest: RequestData; requestId: string | undefined }) {
+export default function FormClient({ initialRequest, requestId }: { initialRequest: RequestData; requestId: string | undefined }) {
   const [request, setRequest] = useState<RequestData>(initialRequest)
   const [validationError, setValidationError] = useState<Partial<Record<keyof Request, string[]>> | false>(false)
   const [fetchError, setFetchError] = useState<string | false>(false)

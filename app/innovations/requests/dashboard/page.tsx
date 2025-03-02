@@ -1,7 +1,7 @@
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 import { Plus } from 'lucide-react'
-import Header from '@/components/innovations/Header'
+import Header from '@/components/innovations/requests/header'
 export default function InnovationRequestDashboardPage() {
   return (
     <main>

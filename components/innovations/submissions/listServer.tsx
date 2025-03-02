@@ -1,12 +1,12 @@
 import React from 'react'
 import { listSubmissions, getRequestsChecks } from '@/app/actions/actions'
-import SubmissionsListClient from './submissionsListClient'
+import ListClient from '@/components/innovations/submissions/listClient'
 
 interface Props {
   requestId: string
 }
 
-export default async function SubmissionsListServer({ requestId }: Props) {
+export default async function ListServer({ requestId }: Props) {
   try {
     const result = await listSubmissions(requestId)
     if ('error' in result) {
@@ -21,7 +21,7 @@ export default async function SubmissionsListServer({ requestId }: Props) {
     const checks = await getRequestsChecks([requestId])
 
     return (
-      <SubmissionsListClient
+      <ListClient
         requestId={requestId}
         submissions={documents}
         checks={checks}

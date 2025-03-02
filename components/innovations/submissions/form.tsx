@@ -1,5 +1,5 @@
 import { getOneSubmission } from '@/app/actions/actions'
-import SubmissionFormClient from './submissionFormClient'
+import FormClient from '@/components/innovations/submissions/formClient'
 import { SubmissionData } from '@/lib/types'
 
 interface Props {
@@ -15,7 +15,7 @@ const getDefaultSubmission = (requestId: string): SubmissionData => {
   }
 }
 
-export async function SubmissionForm({ submissionId, requestId }: Props) {
+export default async function Form({ submissionId, requestId }: Props) {
   let submissionData: SubmissionData | undefined
   if (submissionId === 'new') {
     submissionData = getDefaultSubmission(requestId)
@@ -33,7 +33,7 @@ export async function SubmissionForm({ submissionId, requestId }: Props) {
 
   return (
     <div>
-      <SubmissionFormClient
+      <FormClient
         initialSubmission={submissionData}
         submissionId={submissionId === 'new' ? undefined : submissionId}
         requestId={requestId}

@@ -1,6 +1,6 @@
-import Header from '@/components/innovations/Header'
-import SubmissionsListServer from '@/components/innovations/submissions/submissionsListServer'
-import SubmissionsListSkeleton from '@/components/innovations/submissions/submissionsListSkeleton'
+import Header from '@/components/innovations/requests/header'
+import ListServer from '@/components/innovations/submissions/listServer'
+import ListSkeleton from '@/components/innovations/submissions/listSkeleton'
 import { Suspense } from 'react'
 
 interface Props {
@@ -15,8 +15,8 @@ export default async function SubmissionsPage(props: Props) {
   return (
     <main>
       <Header title='Submissions'>{requestId}</Header>
-      <Suspense fallback={<SubmissionsListSkeleton />}>
-        <SubmissionsListServer requestId={requestId} />
+      <Suspense fallback={<ListSkeleton />}>
+        <ListServer requestId={requestId} />
       </Suspense>
     </main>
   )

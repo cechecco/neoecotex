@@ -1,5 +1,5 @@
 import { getOneRequest } from '@/app/actions/actions'
-import RequestFormClient from './requestFormClient'
+import FormClient from '@/components/innovations/requests/formClient'
 import { RequestData } from '@/lib/types'
 
 interface Props {
@@ -22,7 +22,7 @@ const getDefaultRequest = (): RequestData => {
   }
 }
 
-export async function RequestForm({ id }: Props) {
+export default async function Form({ id }: Props) {
   let requestData: RequestData | undefined
   if (id === 'new') {
     requestData = getDefaultRequest()
@@ -52,7 +52,7 @@ export async function RequestForm({ id }: Props) {
 
   return (
     <div>
-      <RequestFormClient
+      <FormClient
         initialRequest={requestData}
         requestId={id === 'new' ? undefined : id}
       />

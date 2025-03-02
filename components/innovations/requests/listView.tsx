@@ -5,10 +5,10 @@ import { listRequests, getRequestsChecks } from '@/app/actions/actions'
 import { useStore } from '@/contexts/store'
 import Loader from '@/components/loader'
 import { Pagination, PaginationContent, PaginationItem, PaginationNext, PaginationPrevious } from '@/components/ui/pagination'
-import { RequestCard } from '@/components/innovations/requestCard'
+import Card from '@/components/innovations/requests/card'
 import Link from 'next/link'
 
-export default function RequestsListView() {
+export default function ListView() {
   const { requestsPages, checksPages, setRequestsPages, setChecksPages, currentPage, setCurrentPage } = useStore()
 
   const [isLoading, setIsLoading] = useState(false)
@@ -86,7 +86,7 @@ export default function RequestsListView() {
               href={`requests/${req.$id}`}
               className='cursor-pointer'
             >
-              <RequestCard
+              <Card
                 request={req}
                 check={check}
               />

@@ -1,12 +1,12 @@
 import { notFound } from 'next/navigation'
 import { getOneRequest, getRequestCheck } from '@/app/actions/actions'
-import { RequestViewClient } from './requestViewClient'
+import ViewClient from '@/components/innovations/requests/viewClient'
 
 interface RequestViewServerProps {
   requestId: string
 }
 
-export default async function RequestViewServer({ requestId }: RequestViewServerProps) {
+export default async function ViewServer({ requestId }: RequestViewServerProps) {
   try {
     const request = await getOneRequest(requestId)
     if ('error' in request) {
@@ -17,7 +17,7 @@ export default async function RequestViewServer({ requestId }: RequestViewServer
 
     return (
       <div>
-        <RequestViewClient
+        <ViewClient
           request={request}
           check={check}
         />

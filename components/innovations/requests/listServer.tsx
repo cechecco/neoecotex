@@ -1,7 +1,7 @@
 import { listRequests, getRequestsChecks } from '@/app/actions/actions'
-import RequestsListClient from './requestListClient'
+import ListClient from '@/components/innovations/requests/listClient'
 
-export default async function RequestsListServer() {
+export default async function ListServer() {
   try {
     const result = await listRequests(1, 3)
     if ('error' in result) {
@@ -18,7 +18,7 @@ export default async function RequestsListServer() {
 
     // Passiamo la prima pagina come "page 1"
     return (
-      <RequestsListClient
+      <ListClient
         pageNumber={1}
         requestsPage={documents}
         checksPage={checks}

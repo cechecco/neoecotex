@@ -2,9 +2,9 @@ import { Suspense } from 'react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { LayoutDashboard } from 'lucide-react'
-import RequestsListServer from '@/components/innovations/requestsListServer'
-import RequestsListSkeleton from '@/components/innovations/requestsListSkeleton'
-import Header from '@/components/innovations/Header'
+import ListServer from '@/components/innovations/requests/listServer'
+import Skeleton from '@/components/innovations/requests/skeleton'
+import Header from '@/components/innovations/requests/header'
 
 export const dynamic = 'force-dynamic'
 
@@ -23,8 +23,8 @@ export default function RequestsPage() {
         </Button>
       </Header>
 
-      <Suspense fallback={<RequestsListSkeleton />}>
-        <RequestsListServer />
+      <Suspense fallback={<Skeleton />}>
+        <ListServer />
       </Suspense>
     </main>
   )

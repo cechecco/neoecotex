@@ -19,7 +19,7 @@ interface Props {
   requestId: string
 }
 
-export default function SubmissionFormClient({ initialSubmission, submissionId, requestId }: Props) {
+export default function FormClient({ initialSubmission, submissionId, requestId }: Props) {
   const [submission, setSubmission] = useState<SubmissionData>(initialSubmission)
   const [fetchError, setFetchError] = useState<string | undefined>(undefined)
   const [validationError, setValidationError] = useState<Partial<Record<keyof SubmissionData, string[]>> | false>(false)

@@ -6,7 +6,7 @@ interface Props {
   size?: 'sm' | 'md'
 }
 
-export default function RequestStatus({ check }: Props) {
+export default function StatusBadges({ check }: Props) {
   return (
     <>
       {check.iAmOwner ? <p>You are the owner of this request</p> : null}

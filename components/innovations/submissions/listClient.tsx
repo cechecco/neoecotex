@@ -2,9 +2,9 @@ import React from 'react'
 import { Submission, RequestChecksMap } from '@/lib/types'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Card, CardContent } from '@/components/ui/card'
-import OpenButton from './openButton'
-import WinButton from '../winButton'
-import RequestStatus from '../requestStatus'
+import OpenButton from '@/components/innovations/submissions/openButton'
+import SelectWinnerButton from '@/components/innovations/submissions/selectWinnerButton'
+import StatusBadges from '../requests/statusBadges'
 
 interface Props {
   requestId: string
@@ -12,12 +12,12 @@ interface Props {
   checks: RequestChecksMap
 }
 
-export default function SubmissionsListClient({ requestId, submissions, checks }: Props) {
+export default function ListClient({ requestId, submissions, checks }: Props) {
   const check = checks[requestId]
 
   return (
     <Card>
-      <RequestStatus check={check} />
+      <StatusBadges check={check} />
       <CardContent>
         <Table>
           <TableHeader>
@@ -35,7 +35,7 @@ export default function SubmissionsListClient({ requestId, submissions, checks }
                     submissionId={submission.$id}
                     requestId={submission.requestId}
                   />
-                  <WinButton
+                  <SelectWinnerButton
                     submissionId={submission.$id}
                     check={check}
                   />

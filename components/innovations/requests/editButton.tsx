@@ -8,7 +8,7 @@ interface EditRequestButtonProps {
   check: RequestCheck
 }
 
-export default function EditRequestButton({ requestId, check }: EditRequestButtonProps) {
+export default function EditButton({ requestId, check }: EditRequestButtonProps) {
   return (
     <Button
       size='sm'

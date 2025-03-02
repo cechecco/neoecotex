@@ -1,9 +1,9 @@
-import RequestSkeleton from '@/components/innovations/requestSkeleton'
-import SubmissionViewServer from '@/components/innovations/submissions/submissionViewServer'
+import RequestSkeleton from '@/components/innovations/requests/skeleton'
+import ViewServer from '@/components/innovations/submissions/viewServer'
 import { Suspense } from 'react'
-import Header from '@/components/innovations/Header'
-import ViewSubmissionsButton from '@/components/innovations/submissions/ViewSubmissionsButton'
-import EditSubmissionButton from '@/components/innovations/submissions/EditSubmissionButton'
+import Header from '@/components/innovations/requests/header'
+import OpenListButton from '@/components/innovations/openListButton'
+import EditButton from '@/components/innovations/submissions/editButton'
 
 interface Props {
   params: Promise<{
@@ -19,14 +19,14 @@ export default async function SubmissionPage(props: Props) {
   return (
     <main>
       <Header title='Submission'>
-        <ViewSubmissionsButton requestId={requestId} />
-        <EditSubmissionButton
+        <OpenListButton requestId={requestId} />
+        <EditButton
           requestId={requestId}
           submissionId={submissionId}
         />
       </Header>
       <Suspense fallback={<RequestSkeleton />}>
-        <SubmissionViewServer submissionId={submissionId} />
+        <ViewServer submissionId={submissionId} />
       </Suspense>
     </main>
   )

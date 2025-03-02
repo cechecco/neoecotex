@@ -1,7 +1,7 @@
-import RequestSkeleton from '@/components/innovations/requestSkeleton'
-import { RequestForm } from '@/components/innovations/requestForm'
+import RequestSkeleton from '@/components/innovations/requests/skeleton'
+import Form from '@/components/innovations/requests/form'
 import { Suspense } from 'react'
-import Header from '@/components/innovations/Header'
+import Header from '@/components/innovations/requests/header'
 
 interface Props {
   params: Promise<{
@@ -17,7 +17,7 @@ export default async function InnovationRequestPage(props: Props) {
       <Header title='Innovation Request Editor'>{requestId}</Header>
 
       <Suspense fallback={<RequestSkeleton />}>
-        <RequestForm id={requestId} />
+        <Form id={requestId} />
       </Suspense>
     </main>
   )

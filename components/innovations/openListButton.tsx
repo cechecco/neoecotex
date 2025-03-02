@@ -6,7 +6,7 @@ interface Props {
   requestId: string
 }
 
-export default function ViewSubmissionsButton({ requestId }: Props) {
+export default function OpenListButton({ requestId }: Props) {
   return (
     <Button size='sm'>
       <Link

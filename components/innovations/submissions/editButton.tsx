@@ -7,7 +7,7 @@ interface Props {
   submissionId: string
 }
 
-export default function EditSubmissionButton({ requestId, submissionId }: Props) {
+export default function EditButton({ requestId, submissionId }: Props) {
   return (
     <Button size='sm'>
       <Link

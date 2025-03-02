@@ -3,7 +3,7 @@
 import { useEffect } from 'react'
 import { Request, RequestChecksMap } from '@/lib/types'
 import { useStore } from '@/contexts/store'
-import RequestsListView from './requestsListView'
+import ListView from '@/components/innovations/requests/listView'
 
 interface RequestsListClientProps {
   pageNumber: number
@@ -11,7 +11,7 @@ interface RequestsListClientProps {
   checksPage: RequestChecksMap
 }
 
-export default function RequestsListClient({ pageNumber, requestsPage, checksPage }: RequestsListClientProps) {
+export default function ListClient({ pageNumber, requestsPage, checksPage }: RequestsListClientProps) {
   const { setRequestsPages, setChecksPages, setCurrentPage } = useStore()
 
   useEffect(() => {
@@ -20,5 +20,5 @@ export default function RequestsListClient({ pageNumber, requestsPage, checksPag
     setCurrentPage(pageNumber)
   }, [pageNumber, requestsPage, checksPage, setRequestsPages, setChecksPages, setCurrentPage])
 
-  return <RequestsListView />
+  return <ListView />
 }

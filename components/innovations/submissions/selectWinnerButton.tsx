@@ -1,10 +1,10 @@
 'use client'
 
-import { Button } from '../ui/button'
+import { Button } from '@/components/ui/button'
 import { selectWinner } from '@/app/actions/actions'
 import { useRouter } from 'next/navigation'
 import { RequestCheck } from '@/lib/types'
-export default function WinButton({ submissionId, check }: { submissionId: string; check: RequestCheck }) {
+export default function SelectWinnerButton({ submissionId, check }: { submissionId: string; check: RequestCheck }) {
   const router = useRouter()
 
   return (

@@ -7,7 +7,7 @@ import { usePathname } from 'next/navigation'
 
 // TODO improve this
 
-export default function InnovationHubHeader() {
+export default function Breadcrumb() {
   const pathname = usePathname()
   const id = pathname?.match(/\/innovations\/requests\/([^\/]+)/)?.[1]
   const dashboard = pathname?.match(/\/innovations\/requests\/dashboard/)

@@ -1,11 +1,11 @@
-import RequestSkeleton from '@/components/innovations/requestSkeleton'
-import RequestViewServer from '@/components/innovations/requestViewServer'
+import Skeleton from '@/components/innovations/requests/skeleton'
+import ViewServer from '@/components/innovations/requests/viewServer'
 import { Suspense } from 'react'
-import SubmitSolutionButton from '@/components/innovations/submissionButton'
+import SubmitSolutionButton from '@/components/innovations/requests/submissionButton'
 import { getRequestCheck } from '@/app/actions/actions'
-import ViewSubmissionsButton from '@/components/innovations/viewSubmissionsButton'
-import EditRequestButton from '@/components/innovations/editRequestButton'
-import Header from '@/components/innovations/Header'
+import OpenListButton from '@/components/innovations/openListButton'
+import EditButton from '@/components/innovations/requests/editButton'
+import Header from '@/components/innovations/requests/header'
 
 export const dynamic = 'force-dynamic'
 
@@ -24,14 +24,14 @@ export default async function InnovationRequestPage(props: Props) {
     <main>
       <Header title='Innovation Request'>
         <SubmitSolutionButton check={check} />
-        <ViewSubmissionsButton requestId={requestId} />
-        <EditRequestButton
+        <OpenListButton requestId={requestId} />
+        <EditButton
           requestId={requestId}
           check={check}
         />
       </Header>
-      <Suspense fallback={<RequestSkeleton />}>
-        <RequestViewServer requestId={requestId} />
+      <Suspense fallback={<Skeleton />}>
+        <ViewServer requestId={requestId} />
       </Suspense>
     </main>
   )

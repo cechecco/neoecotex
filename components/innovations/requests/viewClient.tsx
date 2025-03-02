@@ -1,77 +1,76 @@
 'use client'
 
+import React from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Submission } from '@/lib/types'
-import RequestStatus from '../requestStatus'
-import { RequestCheck } from '@/lib/types'
+import { Request, RequestCheck } from '@/lib/types'
+import StatusBadges from '@/components/innovations/requests/statusBadges'
 
 interface Props {
-  submission: Submission
+  request: Request
   check: RequestCheck
 }
 
-export function SubmissionViewClient({ submission, check }: Props) {
+export default function ViewClient({ request, check }: Props) {
   return (
     <>
       <Card>
         <CardHeader className='flex flex-col items-left gap-2'>
-          <RequestStatus check={check} />
-          <CardTitle>{submission.title}</CardTitle>
+          <StatusBadges check={check} />
+          <CardTitle>{request.title}</CardTitle>
         </CardHeader>
         <CardContent>
           <p>
             <span className='text-xs text-muted-foreground'>Brief Description</span>
-            <br /> {submission.briefDescription}
+            <br /> {request.briefDescription}
           </p>
-          {/*
           <p>
             <span className='text-xs text-muted-foreground'>Detailed Description</span>
-            <br /> {submission.detailedDescription}
+            <br /> {request.detailedDescription}
           </p>
           <p>
             <span className='text-xs text-muted-foreground'>Expected Expertise</span>
-            <br /> {submission.expectedExpertise}
+            <br /> {request.expectedExpertise}
           </p>
           <p>
             <span className='text-xs text-muted-foreground'>Expected Timeline</span>
-            <br /> {submission.expectedTimeline}
+            <br /> {request.expectedTimeline}
           </p>
           <p>
             <span className='text-xs text-muted-foreground'>Company</span>
-            <br /> {submission.company}
+            <br /> {request.company}
           </p>
           <p>
             <span className='text-xs text-muted-foreground'>Budget</span>
-            <br /> {submission.budget}
+            <br /> {request.budget}
           </p>
           <p>
             <span className='text-xs text-muted-foreground'>Concept</span>
-            <br /> {submission.concept}
+            <br /> {request.concept}
           </p>
           <p>
             <span className='text-xs text-muted-foreground'>Field</span>
-            <br /> {submission.field}
+            <br /> {request.field}
           </p>
           <p>
             <span className='text-xs text-muted-foreground'>Marketing Consent</span>
-            <br /> {submission.marketingConsent ? 'Yes' : 'No'}
+            <br /> {request.marketingConsent ? 'Yes' : 'No'}
           </p>
           <p>
             <span className='text-xs text-muted-foreground'>Ecology Consent</span>
-            <br /> {submission.ecologyConsent ? 'Yes' : 'No'}
+            <br /> {request.ecologyConsent ? 'Yes' : 'No'}
           </p>
           <p>
             <span className='text-xs text-muted-foreground'>Created At</span>
-            <br /> {submission.$createdAt}
+            <br /> {request.$createdAt}
           </p>
           <p>
             <span className='text-xs text-muted-foreground'>Updated At</span>
-            <br /> {submission.$updatedAt}
+            <br /> {request.$updatedAt}
           </p>
           <p>
             <span className='text-xs text-muted-foreground'>ID</span>
-            <br /> {submission.$id}
-          </p> */}
+            <br /> {request.$id}
+          </p>
         </CardContent>
       </Card>
     </>
