@@ -3,7 +3,7 @@ import ListClient from '@/components/innovations/requests/listClient'
 
 export default async function ListServer() {
   try {
-    const result = await listRequests(1, 3)
+    const result = await listRequests(1, 6)
     if ('error' in result) {
       throw new Error(result.message)
     }

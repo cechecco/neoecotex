@@ -62,17 +62,30 @@ export async function updateRequest(requestId: string | undefined, formData: For
   const validationErrors = validateRequest(request)
   if (validationErrors) return { validationErrors }
   if (!requestId) {
-    let newRequestId: string
+    let newRequestId: string = ''
     try {
       const created = await requestsService.create(request)
       newRequestId = created.$id
+      return {
+        request: created,
+      }
     } catch (error) {
       return { error: (error as Error).message }
+    } finally {
+      revalidatePath('/innovations/requests')
+      redirect(`/innovations/requests/${newRequestId}`)
     }
-    redirect(`/innovations/requests/${newRequestId}`)
   } else {
-    return {
-      request: await requestsService.update(requestId, request),
+    try {
+      const updated = await requestsService.update(requestId, request)
+      return {
+        request: updated,
+      }
+    } catch (error) {
+      return { error: (error as Error).message }
+    } finally {
+      revalidatePath('/innovations/requests')
+      redirect(`/innovations/requests/${requestId}`)
     }
   }
 }

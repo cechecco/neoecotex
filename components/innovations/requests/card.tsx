@@ -13,7 +13,7 @@ interface Props {
 
 export default function Card({ request, check }: Props) {
   return (
-    <CardUI className={`h-full transition-all duration-300 flex flex-col justify-start ${check.thereIsWinner ? 'opacity-70' : ''}`}>
+    <CardUI className={`h-full transition-all duration-300 flex flex-col justify-start ${check.thereIsWinner ? 'opacity-50' : ''}`}>
       <CardHeader>
         <CardTitle className='line-clamp-1'>{request.title}</CardTitle>
       </CardHeader>
