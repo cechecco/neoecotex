@@ -26,7 +26,7 @@ export default async function RootLayout({
     <html lang='en'>
       <body className={`${albertSans.variable} relative antialiased h-full flex flex-col`}>
         <StoreProvider>
-          <div className='h-5 md:h-16'>
+          <div className='sticky top-0 z-50 mb-2'>
             <MenuServer />
           </div>
           <div className='min-h-screen'>{children}</div>

@@ -6,8 +6,6 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Submission, RequestChecksMap } from '@/lib/types'
 
-import StatusBadges from '../requests/statusBadges'
-
 interface Props {
   requestId: string
   submissions: Submission[]
@@ -19,7 +17,6 @@ export default function ListClient({ requestId, submissions, checks }: Props) {
 
   return (
     <Card>
-      <StatusBadges check={check} />
       <CardContent>
         <Table>
           <TableHeader>

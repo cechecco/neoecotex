@@ -2,7 +2,6 @@
 
 import React from 'react'
 
-import StatusBadges from '@/components/innovations/requests/statusBadges'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Request, RequestCheck } from '@/lib/types'
 
@@ -11,12 +10,11 @@ interface Props {
   check: RequestCheck
 }
 
-export default function ViewClient({ request, check }: Props) {
+export default function ViewClient({ request }: Props) {
   return (
     <>
       <Card>
         <CardHeader className='flex flex-col items-left gap-2'>
-          <StatusBadges check={check} />
           <CardTitle>{request.title}</CardTitle>
         </CardHeader>
         <CardContent>

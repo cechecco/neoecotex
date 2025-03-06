@@ -9,7 +9,7 @@ import Loader from '@/components/loader'
 import { Pagination, PaginationContent, PaginationItem, PaginationNext, PaginationPrevious } from '@/components/ui/pagination'
 import { useStore } from '@/contexts/store'
 
-export default function ListView() {
+export default function ListView({ filterField, filterValue }: { filterField: string; filterValue: string | number | boolean }) {
   const { requestsPages, checksPages, setRequestsPages, setChecksPages, currentPage, setCurrentPage } = useStore()
 
   const [isLoading, setIsLoading] = useState(false)
@@ -27,7 +27,7 @@ export default function ListView() {
         return
       }
 
-      const res = await listRequests(nextPage, itemsPerPage)
+      const res = await listRequests(nextPage, itemsPerPage, filterField, filterValue)
       if ('error' in res) {
         throw new Error(res.message)
       }
@@ -84,7 +84,7 @@ export default function ListView() {
           return (
             <Link
               key={req.$id}
-              href={`requests/${req.$id}`}
+              href={`/innovations/requests/${req.$id}`}
               className='cursor-pointer'
             >
               <Card

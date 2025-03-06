@@ -1,4 +1,4 @@
-import { ID, Models, Query } from 'node-appwrite'
+import { ID, Models, Query, QueryTypes } from 'node-appwrite'
 
 import { getLoggedInUser } from '@/app/actions/auth'
 import { createDatabaseAdminClient, getUserEmail } from '@/lib/server/appwrite'
@@ -61,11 +61,18 @@ export const requestsService = {
     }
   },
 
-  async list(pagination: { page: number; limit: number }) {
+  async list(pagination: { page: number; limit: number }, filterField: string, filterValue: QueryTypes) {
     const { databases } = await createDatabaseAdminClient()
     const { page, limit } = pagination
+    const user = await getCurrentUser()
     try {
-      const list = await databases.listDocuments(DATABASE_ID, REQUESTS_COLLECTION_ID, [Query.orderDesc('$createdAt'), Query.limit(limit), Query.offset((page - 1) * limit)])
+      const query = [
+        filterField === 'winner' ? Query.isNull(filterField) : filterField === 'owner' ? Query.equal(filterField, user.$id) : Query.equal(filterField, filterValue),
+        Query.orderDesc('$createdAt'),
+        Query.limit(limit),
+        Query.offset((page - 1) * limit),
+      ]
+      const list = await databases.listDocuments(DATABASE_ID, REQUESTS_COLLECTION_ID, query)
       return list as Models.DocumentList<Request>
     } catch (error) {
       console.error(error)
@@ -216,6 +223,7 @@ export async function computeRequestChecks(requestIds: string[]) {
         thereIsWinner,
         winnerEmail,
         requestId: reqDoc.$id,
+        requestTitle: reqDoc.title,
       }
     })
   )

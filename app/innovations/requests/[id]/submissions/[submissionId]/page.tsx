@@ -19,7 +19,10 @@ export default async function SubmissionPage(props: Props) {
   const submissionId = params.submissionId
   return (
     <main>
-      <Header title='Submission'>
+      <Header
+        title='Submission Editor'
+        requestId={requestId}
+      >
         <OpenListButton requestId={requestId} />
         <EditButton
           requestId={requestId}

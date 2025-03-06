@@ -23,7 +23,10 @@ export default async function InnovationRequestPage(props: Props) {
 
   return (
     <main>
-      <Header title='Innovation Request'>
+      <Header
+        title={`Request - ${check?.requestTitle}`}
+        requestId={requestId}
+      >
         <SubmitSolutionButton check={check} />
         <OpenListButton requestId={requestId} />
         <EditButton

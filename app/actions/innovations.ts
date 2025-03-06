@@ -6,9 +6,9 @@ import { redirect } from 'next/navigation'
 import { requestsService, submissionsService, computeRequestChecks } from '@/lib/server/database'
 import { Request, RequestData, requestSchema, Submission, SubmissionData, submissionSchema } from '@/lib/types'
 
-export async function listRequests(page: number, limit: number) {
+export async function listRequests(page: number, limit: number, filterField: string, filterValue: string | number | boolean) {
   try {
-    const result = await requestsService.list({ page, limit })
+    const result = await requestsService.list({ page, limit }, filterField, filterValue)
     return result // { total, documents: Request[] ... }
   } catch (error) {
     console.error(error)

@@ -1,9 +1,9 @@
 import { listRequests, getRequestsChecks } from '@/app/actions/innovations'
 import ListClient from '@/components/innovations/requests/listClient'
 
-export default async function ListServer() {
+export default async function ListServer({ filterField, filterValue }: { filterField: string; filterValue: string | number | boolean }) {
   try {
-    const result = await listRequests(1, 6)
+    const result = await listRequests(1, 6, filterField, filterValue)
     if ('error' in result) {
       throw new Error(result.message)
     }
@@ -22,6 +22,8 @@ export default async function ListServer() {
         pageNumber={1}
         requestsPage={documents}
         checksPage={checks}
+        filterField={filterField}
+        filterValue={filterValue}
       />
     )
   } catch (error) {

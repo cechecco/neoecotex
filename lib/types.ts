@@ -54,6 +54,7 @@ export type RequestCheck = {
   thereIsWinner: boolean
   winnerEmail: string | undefined
   requestId: string
+  requestTitle: string
 }
 
 export type RequestChecksMap = Record<string, RequestCheck>
