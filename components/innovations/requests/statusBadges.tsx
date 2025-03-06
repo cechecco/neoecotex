@@ -24,7 +24,7 @@ export default function StatusBadges({ check }: Props) {
         </p>
       )}
       {check.iAmWinner && (
-        <p className='flex items-center gap-1 shadow-sm bg-gradient-to-r from-fuchsia-700 to-fuchsia-500 text-white px-2 py-1 rounded-md'>
+        <p className='flex items-center gap-1 shadow-sm bg-gradient-to-r from-primary to-primary/80 text-white px-2 py-1 rounded-md'>
           <Award className='w-4 h-4' /> You are the winner
         </p>
       )}

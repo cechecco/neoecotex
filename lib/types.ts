@@ -55,6 +55,7 @@ export type RequestCheck = {
   winnerEmail: string | undefined
   requestId: string
   requestTitle: string
+  submissionsTitles: Record<string, string>
 }
 
 export type RequestChecksMap = Record<string, RequestCheck>

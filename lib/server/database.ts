@@ -216,6 +216,11 @@ export async function computeRequestChecks(requestIds: string[]) {
       const iHaveSubmitted = requestSubmissions.documents.some((sub) => sub.owner === user.$id)
       const thereIsWinner = !!reqDoc.winner
 
+      const submissionsTitles: Record<string, string> = {}
+      requestSubmissions.documents.forEach((sub) => {
+        submissionsTitles[sub.$id] = sub.title
+      })
+
       checksMap[reqDoc.$id] = {
         iAmOwner,
         iAmWinner,
@@ -224,6 +229,7 @@ export async function computeRequestChecks(requestIds: string[]) {
         winnerEmail,
         requestId: reqDoc.$id,
         requestTitle: reqDoc.title,
+        submissionsTitles,
       }
     })
   )
