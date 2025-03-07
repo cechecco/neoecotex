@@ -53,17 +53,18 @@ export const requestsService = {
     }
   },
 
-  async update(requestId: string, requestData: { data: RequestData, images: File[] }) {
+  async update(requestId: string, requestData: { data: RequestData, images: File[], imagesToRemove: string[] }) {
     const { databases } = await createDatabaseAdminClient()
 
     try {
-      console.log('images', requestData.images)
+      await Promise.all(requestData.imagesToRemove.map(async (imageId) => {
+        await storageService.deleteImage(imageId).catch(console.error)
+      }))
       const imagesUrl = await Promise.all(requestData.images.map(async (image) => {
         return await storageService.uploadImage(image)
       }))
-      console.log('imagesUrl', imagesUrl, requestData.data.imagesUrl)
       const updated = await databases.updateDocument(DATABASE_ID, REQUESTS_COLLECTION_ID, requestId, { ...requestData.data, imagesUrl: requestData.data.imagesUrl.concat(imagesUrl) })
-      console.log('updated', updated)
+
       return updated as Request
     } catch (error) {
       console.error(error)
@@ -193,7 +194,6 @@ export const submissionsService = {
       const doc = await databases.getDocument(DATABASE_ID, SUBMISSIONS_COLLECTION_ID, id)
       return doc as Submission
     } catch (error) {
-      console.log('getOne error', id)
       console.error(error)
       throw new Error('Failed to get submission')
     }
@@ -311,7 +311,7 @@ export const storageService = {
       return true
     } catch (error) {
       console.error(error)
-      throw new Error('Failed to delete image')
+      throw new Error('Failed to delete image' + error)
     }
   }
 }

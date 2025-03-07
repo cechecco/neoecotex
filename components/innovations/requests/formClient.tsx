@@ -2,7 +2,7 @@
 
 import { AlertCircle } from 'lucide-react'
 import Link from 'next/link'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import { deleteRequest, updateRequest } from '@/app/actions/innovations'
 import { Button } from '@/components/ui/button'
@@ -14,11 +14,12 @@ import { Separator } from '@/components/ui/separator'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Textarea } from '@/components/ui/textarea'
 import { Request, RequestData } from '@/lib/types'
+import { getImagesUrl } from '@/lib/client/appwrite'
 
 export default function FormClient({ 
   initialRequest, 
   requestId, 
-  maxImages = 5 // Default max images if not specified
+  maxImages = 2 // Default max images if not specified
 }: { 
   initialRequest: RequestData; 
   requestId: string | undefined;
@@ -34,8 +35,7 @@ export default function FormClient({
 
   const handleImageRemove = (imageUrl: string | undefined) => {
     if (!imageUrl) return
-    setImagesToRemove([...imagesToRemove, imageUrl]);
-    
+    setImagesToRemove(prev => [...prev, imageUrl]);
     setRequest({
       ...request,
       imagesUrl: request.imagesUrl.filter(url => url !== imageUrl)
@@ -49,11 +49,6 @@ export default function FormClient({
     setPending(true)
 
     const formData = new FormData(e.target as HTMLFormElement)
-    
-    // Add the images to remove to the form data
-    if (imagesToRemove.length > 0) {
-      formData.append('imagesToRemove', JSON.stringify(imagesToRemove));
-    }
     
     const result = await updateRequest(requestId, formData)
 
@@ -78,11 +73,15 @@ export default function FormClient({
     )
   }
 
+  const [images, setImages] = useState<Record<string, string>>({})
+  useEffect(() => {
+    getImagesUrl(request.imagesUrl).then(setImages)
+  }, [request.imagesUrl])
+
   return (
     <>
       <Card>
         <CardHeader>
-          aa{JSON.stringify(request)}
           <form
             id='innovation-form'
             onSubmit={handleSubmit}
@@ -455,20 +454,17 @@ export default function FormClient({
                   className='flex items-center justify-between'
                 >
                   <div className='flex items-center gap-2 text-sm text-muted-foreground'>
-                    Images
+                    Image
                     {validationError && validationError.images && (
                       <>
                         <AlertCircle
                           className='w-4 h-4 text-red-500'
                           size={12}
                         />
-                        <p className='text-red-500 text-sm'>{validationError.images}</p>
+                        <p className='text-red-500 text-sm line-clamp-1'>{validationError.images.join(' ')}</p>
                       </>
                     )}
                   </div>
-                  <p className='text-xs text-muted-foreground'>
-                    {request?.imagesUrl?.length || 0} / {maxImages} images
-                  </p>
                 </Label>
                 <div className='relative'>
                   <Input
@@ -481,6 +477,14 @@ export default function FormClient({
                   />
                   {pending && <Skeleton className='absolute inset-0 z-20 h-full' />}
                 </div>
+                {imagesToRemove.map((imageUrl, index) => (
+                        <input
+                          key={index}
+                          type="hidden"
+                          name="imagesToRemove"
+                          value={imageUrl}
+                          />
+                      ))}
                 {request?.imagesUrl && request.imagesUrl.length > 0 && (
                   <div className='mt-2'>
                     <p className='text-xs text-muted-foreground mb-1'>Current images:</p>
@@ -493,7 +497,7 @@ export default function FormClient({
                             value={imageUrl} 
                           />
                           <img 
-                            src={imageUrl} 
+                            src={images[imageUrl]} 
                             alt={`Request image ${index + 1}`} 
                             className='object-contain w-full h-full'
                           />
@@ -503,6 +507,7 @@ export default function FormClient({
                             className='absolute top-2 right-2 bg-black/70 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity'
                             aria-label="Remove image"
                           >
+                            <p>{imageUrl}</p>
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                               <line x1="18" y1="6" x2="6" y2="18"></line>
                               <line x1="6" y1="6" x2="18" y2="18"></line>

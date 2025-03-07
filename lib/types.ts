@@ -1,6 +1,9 @@
 import { Models } from 'node-appwrite'
 import { z } from 'zod'
 
+const MAX_FILE_SIZE = 5000000; // 5MB
+const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
+
 export const requestSchema = z
   .object({
     title: z.string().min(1, 'Title is required').max(64, 'Title must be less than 64 characters'),
@@ -14,7 +17,16 @@ export const requestSchema = z
     field: z.string().min(1, 'Field is required').max(140, 'Field must be less than 140 characters'),
     marketingConsent: z.boolean(),
     ecologyConsent: z.boolean(),
-    imagesUrl: z.array(z.string())
+    imagesUrl: z.array(z.string()),
+    imagesToRemove: z.array(z.string()).optional(),
+    images: z.array(
+      z.any()
+        // .refine((file) => file?.size <= MAX_FILE_SIZE, `Max image size is 5MB.`)
+        // .refine(
+        //   (file) => ACCEPTED_IMAGE_TYPES.includes(file?.type),
+        //   "Only .jpg, .jpeg, .png and .webp formats are supported."
+        // )
+    )
   })
   .strict()
 
@@ -24,9 +36,9 @@ export interface RequestMetadata {
   submissionsId: string[]
 }
 
-export type RequestData = z.infer<typeof requestSchema>
+export type RequestData = Omit<z.infer<typeof requestSchema>, 'images' | 'imagesToRemove'>
 
-export type RequestCreateInput = Omit<RequestData, 'images'> & RequestMetadata
+export type RequestCreateInput = RequestData & RequestMetadata
 
 export type Request = RequestData & RequestMetadata & Models.Document
 

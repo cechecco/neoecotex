@@ -25,8 +25,8 @@ export async function getOneRequest(requestId: string) {
   }
 }
 
-const validateRequest = (data: Partial<Request>) => {
-  const validatedFields = requestSchema.safeParse(data)
+const validateRequest = (data: RequestData & { images: File[], imagesToRemove?: string[] }) => {
+  const validatedFields = requestSchema.safeParse({ ...data, images: data.images.map(image => image.name), imagesToRemove: data.imagesToRemove })
   if (!validatedFields.success) {
     return validatedFields.error.flatten().fieldErrors
   }
@@ -34,7 +34,6 @@ const validateRequest = (data: Partial<Request>) => {
 }
 
 const getRequestsData = (formData: FormData) => {
-  console.log('formData', formData)
   const data: RequestData = {
     title: formData.get('title') as string,
     briefDescription: formData.get('briefDescription') as string,
@@ -50,7 +49,8 @@ const getRequestsData = (formData: FormData) => {
     imagesUrl: formData.getAll('imagesUrl').map(entry => entry.toString()),
   }
   const images = formData.getAll('images').filter(image => (image as File).size > 0) as File[]
-  return { data, images }
+  const imagesToRemove = formData.getAll('imagesToRemove').map(entry => entry.toString())
+  return { data, images, imagesToRemove }
 }
 
 // export async function createRequest(formData: FormData) {
@@ -61,8 +61,9 @@ const getRequestsData = (formData: FormData) => {
 // }
 
 export async function updateRequest(requestId: string | undefined, formData: FormData) {
-  const { data, images } = getRequestsData(formData)
-  const validationErrors = validateRequest(data)
+  console.log('formData', formData)
+  const { data, images, imagesToRemove } = getRequestsData(formData)
+  const validationErrors = validateRequest({ ...data, images })
   if (validationErrors) return { validationErrors }
   if (!requestId) {
     let newRequestId: string = ''
@@ -80,7 +81,7 @@ export async function updateRequest(requestId: string | undefined, formData: For
     }
   } else {
     try {
-      const updated = await requestsService.update(requestId, { data, images })
+      const updated = await requestsService.update(requestId, { data, images, imagesToRemove })
       return {
         request: updated,
       }

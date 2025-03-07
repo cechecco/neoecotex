@@ -12,7 +12,7 @@ interface Props {
 }
 
 export default function ViewClient({ request }: Props) {
-  const [images, setImages] = useState<string[]>([])
+  const [images, setImages] = useState<Record<string, string>>({})
   useEffect(() => {
     getImagesUrl(request.imagesUrl).then(setImages)
   }, [request.imagesUrl])
@@ -20,13 +20,14 @@ export default function ViewClient({ request }: Props) {
     <>
       <Card>
         <CardHeader className='flex flex-col items-left gap-2'>
-          {images.map((image) => (
+          {(Object.keys(images).length > 0) && request.imagesUrl.map((imageUrl) => (
             <Image
-              key={image}
-              src={image}
+              key={imageUrl}
+              src={images[imageUrl]}
               alt={request.title}
-              width={100}
-              height={100}
+              width={1000}
+              height={400}
+              className="w-full h-[300px] object-cover rounded-md"
             />
           ))}
           <CardTitle>{request.title}</CardTitle>
