@@ -1,12 +1,12 @@
 import { Suspense } from 'react'
 
+import { getRequestCheck } from '@/app/actions/innovations'
 import OpenListButton from '@/components/innovations/openListButton'
 import Header from '@/components/innovations/requests/header'
 import RequestSkeleton from '@/components/innovations/requests/skeleton'
 import EditButton from '@/components/innovations/submissions/editButton'
-import ViewServer from '@/components/innovations/submissions/viewServer'
 import SelectWinnerButton from '@/components/innovations/submissions/selectWinnerButton'
-import { getRequestCheck } from '@/app/actions/innovations'
+import ViewServer from '@/components/innovations/submissions/viewServer'
 
 interface Props {
   params: Promise<{

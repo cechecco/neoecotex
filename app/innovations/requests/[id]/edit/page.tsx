@@ -15,7 +15,7 @@ export default async function InnovationRequestPage(props: Props) {
   const requestId = params.id
   return (
     <main>
-      <Header title='Innovation Request Editor'>{requestId}</Header>
+      <Header title='Innovation Request Editor' />
 
       <Suspense fallback={<RequestSkeleton />}>
         <Form id={requestId} />

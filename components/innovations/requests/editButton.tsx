@@ -1,6 +1,6 @@
 import { Pencil } from 'lucide-react'
-import Link from 'next/link'
 
+import LoadingLink from '@/components/innovations/LoadingLink'
 import { Button } from '@/components/ui/button'
 import { RequestCheck } from '@/lib/types'
 
@@ -11,17 +11,17 @@ interface EditRequestButtonProps {
 
 export default function EditButton({ requestId, check }: EditRequestButtonProps) {
   return (
-    <Button
-      size='sm'
-      disabled={check.thereIsWinner}
+    <LoadingLink
+      href={`/innovations/requests/${requestId}/edit`}
+      className='flex items-center gap-2'
     >
-      <Link
-        href={`/innovations/requests/${requestId}/edit`}
-        className='flex items-center gap-2'
+      <Button
+        size='sm'
+        disabled={check.thereIsWinner}
       >
         <Pencil />
         Edit
-      </Link>
-    </Button>
+      </Button>
+    </LoadingLink>
   )
 }

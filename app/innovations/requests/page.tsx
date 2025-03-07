@@ -9,7 +9,7 @@ export const dynamic = 'force-dynamic'
 export default function RequestsPage() {
   return (
     <main>
-      <Header title='Requests' />
+      <Header title='Active Innovations Requests' />
 
       <Suspense fallback={<Skeleton />}>
         <ListServer

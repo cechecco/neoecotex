@@ -16,7 +16,7 @@ export default async function SubmissionEditorPage(props: Props) {
   const submissionId = params.submissionId // could be 'new'
   return (
     <main>
-      <Header title='Submission Editor'>{submissionId}</Header>
+      <Header title='Submission Editor' />
 
       <Suspense fallback={<RequestSkeleton />}>
         <Form

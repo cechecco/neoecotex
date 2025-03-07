@@ -9,14 +9,14 @@ interface ViewSubmissionsButtonProps {
 
 export default function ViewSubmissionsButton({ requestId }: ViewSubmissionsButtonProps) {
   return (
-    <Button size='sm'>
-      <Link
-        href={`/innovations/requests/${requestId}/submissions`}
-        className='flex items-center gap-2'
-      >
+    <Link
+      href={`/innovations/requests/${requestId}/submissions`}
+      className='flex items-center gap-2'
+    >
+      <Button size='sm'>
         <Eye />
         View Submissions
-      </Link>
-    </Button>
+      </Button>
+    </Link>
   )
 }

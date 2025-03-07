@@ -1,6 +1,6 @@
 import { Pencil } from 'lucide-react'
-import Link from 'next/link'
 
+import LoadingLink from '@/components/innovations/LoadingLink'
 import { Button } from '@/components/ui/button'
 
 interface Props {
@@ -10,14 +10,14 @@ interface Props {
 
 export default function EditButton({ requestId, submissionId }: Props) {
   return (
-    <Button size='sm'>
-      <Link
-        href={`/innovations/requests/${requestId}/submissions/${submissionId}/edit`}
-        className='flex items-center gap-2'
-      >
+    <LoadingLink
+      href={`/innovations/requests/${requestId}/submissions/${submissionId}/edit`}
+      className='flex items-center gap-2'
+    >
+      <Button size='sm'>
         <Pencil />
         Edit
-      </Link>
-    </Button>
+      </Button>
+    </LoadingLink>
   )
 }

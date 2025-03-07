@@ -1,6 +1,6 @@
 import { Eye } from 'lucide-react'
-import Link from 'next/link'
 
+import LoadingLink from '@/components/innovations/LoadingLink'
 import { Button } from '@/components/ui/button'
 
 interface Props {
@@ -9,14 +9,14 @@ interface Props {
 
 export default function OpenListButton({ requestId }: Props) {
   return (
-    <Button size='sm'>
-      <Link
-        href={`/innovations/requests/${requestId}/submissions`}
-        className='flex items-center gap-2'
-      >
+    <LoadingLink
+      href={`/innovations/requests/${requestId}/submissions`}
+      className='flex items-center gap-2'
+    >
+      <Button size='sm'>
         <Eye />
         View Submissions
-      </Link>
-    </Button>
+      </Button>
+    </LoadingLink>
   )
 }
