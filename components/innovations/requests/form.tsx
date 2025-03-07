@@ -19,6 +19,7 @@ const getDefaultRequest = (): RequestData => {
     field: '',
     marketingConsent: false,
     ecologyConsent: false,
+    imagesUrl: [],
   }
 }
 
@@ -47,6 +48,7 @@ export default async function Form({ id }: Props) {
       field: request.field,
       marketingConsent: request.marketingConsent,
       ecologyConsent: request.ecologyConsent,
+      imagesUrl: request.imagesUrl,
     }
   }
 

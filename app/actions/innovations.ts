@@ -3,7 +3,7 @@
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 
-import { requestsService, submissionsService, computeRequestChecks } from '@/lib/server/database'
+import { requestsService, submissionsService, computeRequestChecks, storageService } from '@/lib/server/database'
 import { Request, RequestData, requestSchema, Submission, SubmissionData, submissionSchema } from '@/lib/types'
 
 export async function listRequests(page: number, limit: number, filterField: string, filterValue: string | number | boolean) {
@@ -34,6 +34,7 @@ const validateRequest = (data: Partial<Request>) => {
 }
 
 const getRequestsData = (formData: FormData) => {
+  console.log('formData', formData)
   const data: RequestData = {
     title: formData.get('title') as string,
     briefDescription: formData.get('briefDescription') as string,
@@ -46,8 +47,10 @@ const getRequestsData = (formData: FormData) => {
     field: (formData.get('field') as string) || '',
     marketingConsent: !!formData.get('marketingConsent'),
     ecologyConsent: !!formData.get('ecologyConsent'),
+    imagesUrl: formData.getAll('imagesUrl').map(entry => entry.toString()),
   }
-  return data
+  const images = formData.getAll('images').filter(image => (image as File).size > 0) as File[]
+  return { data, images }
 }
 
 // export async function createRequest(formData: FormData) {
@@ -58,13 +61,13 @@ const getRequestsData = (formData: FormData) => {
 // }
 
 export async function updateRequest(requestId: string | undefined, formData: FormData) {
-  const request = getRequestsData(formData)
-  const validationErrors = validateRequest(request)
+  const { data, images } = getRequestsData(formData)
+  const validationErrors = validateRequest(data)
   if (validationErrors) return { validationErrors }
   if (!requestId) {
     let newRequestId: string = ''
     try {
-      const created = await requestsService.create(request)
+      const created = await requestsService.create({ data, images })
       newRequestId = created.$id
       return {
         request: created,
@@ -77,7 +80,7 @@ export async function updateRequest(requestId: string | undefined, formData: For
     }
   } else {
     try {
-      const updated = await requestsService.update(requestId, request)
+      const updated = await requestsService.update(requestId, { data, images })
       return {
         request: updated,
       }

@@ -15,11 +15,32 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { Textarea } from '@/components/ui/textarea'
 import { Request, RequestData } from '@/lib/types'
 
-export default function FormClient({ initialRequest, requestId }: { initialRequest: RequestData; requestId: string | undefined }) {
+export default function FormClient({ 
+  initialRequest, 
+  requestId, 
+  maxImages = 5 // Default max images if not specified
+}: { 
+  initialRequest: RequestData; 
+  requestId: string | undefined;
+  maxImages?: number;
+}) {
   const [request, setRequest] = useState<RequestData>(initialRequest)
   const [validationError, setValidationError] = useState<Partial<Record<keyof Request, string[]>> | false>(false)
   const [fetchError, setFetchError] = useState<string | false>(false)
   const [pending, setPending] = useState(false)
+  
+  // Track images that should be removed
+  const [imagesToRemove, setImagesToRemove] = useState<string[]>([])
+
+  const handleImageRemove = (imageUrl: string | undefined) => {
+    if (!imageUrl) return
+    setImagesToRemove([...imagesToRemove, imageUrl]);
+    
+    setRequest({
+      ...request,
+      imagesUrl: request.imagesUrl.filter(url => url !== imageUrl)
+    });
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -28,6 +49,12 @@ export default function FormClient({ initialRequest, requestId }: { initialReque
     setPending(true)
 
     const formData = new FormData(e.target as HTMLFormElement)
+    
+    // Add the images to remove to the form data
+    if (imagesToRemove.length > 0) {
+      formData.append('imagesToRemove', JSON.stringify(imagesToRemove));
+    }
+    
     const result = await updateRequest(requestId, formData)
 
     if (result.error) {
@@ -36,6 +63,8 @@ export default function FormClient({ initialRequest, requestId }: { initialReque
       setValidationError(result.validationErrors)
     } else if (result.request) {
       setRequest(result.request)
+      // Reset images to remove after successful update
+      setImagesToRemove([]);
     }
 
     setPending(false)
@@ -53,6 +82,7 @@ export default function FormClient({ initialRequest, requestId }: { initialReque
     <>
       <Card>
         <CardHeader>
+          aa{JSON.stringify(request)}
           <form
             id='innovation-form'
             onSubmit={handleSubmit}
@@ -417,6 +447,72 @@ export default function FormClient({ initialRequest, requestId }: { initialReque
                   />
                   {pending && <Skeleton className='absolute inset-0 z-20 h-full' />}
                 </div>
+              </div>
+
+              <div className='grid w-full items-center gap-1.5'>
+                <Label
+                  htmlFor='images'
+                  className='flex items-center justify-between'
+                >
+                  <div className='flex items-center gap-2 text-sm text-muted-foreground'>
+                    Images
+                    {validationError && validationError.images && (
+                      <>
+                        <AlertCircle
+                          className='w-4 h-4 text-red-500'
+                          size={12}
+                        />
+                        <p className='text-red-500 text-sm'>{validationError.images}</p>
+                      </>
+                    )}
+                  </div>
+                  <p className='text-xs text-muted-foreground'>
+                    {request?.imagesUrl?.length || 0} / {maxImages} images
+                  </p>
+                </Label>
+                <div className='relative'>
+                  <Input
+                    type='file'
+                    name='images'
+                    accept='image/*'
+                    multiple
+                    className={pending ? 'invisible' : ''}
+                    disabled={request?.imagesUrl?.length >= maxImages}
+                  />
+                  {pending && <Skeleton className='absolute inset-0 z-20 h-full' />}
+                </div>
+                {request?.imagesUrl && request.imagesUrl.length > 0 && (
+                  <div className='mt-2'>
+                    <p className='text-xs text-muted-foreground mb-1'>Current images:</p>
+                    <div className='grid grid-cols-2 md:grid-cols-3 gap-4'>
+                      {request.imagesUrl.map((imageUrl, index) => (
+                        <div key={index} className='relative w-full h-48 rounded-md overflow-hidden border border-border group'>
+                          <input
+                            type="hidden" 
+                            name="imagesUrl" 
+                            value={imageUrl} 
+                          />
+                          <img 
+                            src={imageUrl} 
+                            alt={`Request image ${index + 1}`} 
+                            className='object-contain w-full h-full'
+                          />
+                          <button
+                            type="button"
+                            onClick={() => handleImageRemove(imageUrl)}
+                            className='absolute top-2 right-2 bg-black/70 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity'
+                            aria-label="Remove image"
+                          >
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                              <line x1="18" y1="6" x2="6" y2="18"></line>
+                              <line x1="6" y1="6" x2="18" y2="18"></line>
+                            </svg>
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
 
               <div className='flex items-center space-x-2'>

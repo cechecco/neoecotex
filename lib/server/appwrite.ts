@@ -1,6 +1,6 @@
 'use server'
 import { cookies } from 'next/headers'
-import { Client, Account, Databases, Users } from 'node-appwrite'
+import { Client, Account, Databases, Users, Storage } from 'node-appwrite'
 
 const APPWRITE_ENDPOINT = process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT!
 const APPWRITE_PROJECT = process.env.NEXT_PUBLIC_APPWRITE_PROJECT!
@@ -59,4 +59,10 @@ export async function getUserEmail(userId: string) {
   const users = new Users(client)
   const user = await users.get(userId)
   return user.email
+}
+
+export async function createStorageAdminClient() {
+  const client = new Client().setEndpoint(APPWRITE_ENDPOINT).setProject(APPWRITE_PROJECT).setKey(APPWRITE_KEY)
+  const storage = new Storage(client)
+  return { storage, client }
 }

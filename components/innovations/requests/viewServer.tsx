@@ -15,15 +15,19 @@ export default async function ViewServer({ requestId }: RequestViewServerProps) 
     }
 
     const check = await getRequestCheck(requestId)
-
-    return (
-      <div>
-        <ViewClient
-          request={request}
-          check={check}
-        />
-      </div>
-    )
+    try {
+      return (
+        <div>
+          <ViewClient
+            request={request}
+            check={check}
+          />
+        </div>
+      )
+    } catch (error) {
+      console.error(error)
+      return notFound()
+    }
   } catch (error) {
     console.error(error)
     return notFound()

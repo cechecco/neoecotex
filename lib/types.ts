@@ -14,6 +14,7 @@ export const requestSchema = z
     field: z.string().min(1, 'Field is required').max(140, 'Field must be less than 140 characters'),
     marketingConsent: z.boolean(),
     ecologyConsent: z.boolean(),
+    imagesUrl: z.array(z.string())
   })
   .strict()
 
@@ -25,7 +26,7 @@ export interface RequestMetadata {
 
 export type RequestData = z.infer<typeof requestSchema>
 
-export type RequestCreateInput = RequestData & RequestMetadata
+export type RequestCreateInput = Omit<RequestData, 'images'> & RequestMetadata
 
 export type Request = RequestData & RequestMetadata & Models.Document
 

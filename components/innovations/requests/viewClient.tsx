@@ -1,20 +1,34 @@
 'use client'
 
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Request, RequestCheck } from '@/lib/types'
-
+import Image from 'next/image'
+import { getImagesUrl } from '@/lib/client/appwrite'
 interface Props {
-  request: Request
+  request: Request,
   check: RequestCheck
 }
 
 export default function ViewClient({ request }: Props) {
+  const [images, setImages] = useState<string[]>([])
+  useEffect(() => {
+    getImagesUrl(request.imagesUrl).then(setImages)
+  }, [request.imagesUrl])
   return (
     <>
       <Card>
         <CardHeader className='flex flex-col items-left gap-2'>
+          {images.map((image) => (
+            <Image
+              key={image}
+              src={image}
+              alt={request.title}
+              width={100}
+              height={100}
+            />
+          ))}
           <CardTitle>{request.title}</CardTitle>
         </CardHeader>
         <CardContent>
