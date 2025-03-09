@@ -1,7 +1,7 @@
 import { Models } from 'node-appwrite'
 import { optional, z } from 'zod'
 
-const MAX_FILE_SIZE = 5000000; // 5MB
+const MAX_FILE_SIZE = 5000; // 5
 const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png"];
 
 export const requestSchema = z

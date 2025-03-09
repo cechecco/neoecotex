@@ -13,6 +13,7 @@ import { Label } from '@/components/ui/label'
 import { Separator } from '@/components/ui/separator'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Textarea } from '@/components/ui/textarea'
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { Request, RequestData } from '@/lib/types'
 import { getImagesUrl } from '@/lib/client/appwrite'
 
@@ -36,6 +37,34 @@ export default function FormClient({
   // Track new images previews
   const [newImagePreviews, setNewImagePreviews] = useState<{file: File, preview: string}[]>([])
 
+  // Scroll to error when validation errors are set
+  useEffect(() => {
+    if (validationError) {
+      // Get the first field with an error
+      const firstErrorField = Object.keys(validationError)[0] as keyof Request;
+      if (firstErrorField) {
+        // Find the DOM element for that field
+        const errorElement = document.getElementById(firstErrorField as string);
+        if (errorElement) {
+          // Scroll to the element with smooth behavior
+          errorElement.scrollIntoView({ 
+            behavior: 'smooth', 
+            block: 'center' 
+          });
+        }
+      }
+    } else if (imagesValidationErrors) {
+      // If there are only image validation errors
+      const imagesInput = document.getElementById('images-input');
+      if (imagesInput) {
+        imagesInput.scrollIntoView({ 
+          behavior: 'smooth', 
+          block: 'center' 
+        });
+      }
+    }
+  }, [validationError, imagesValidationErrors]);
+
   const handleImageRemove = (imageUrl: string | undefined) => {
     if (!imageUrl) return
     setImagesToRemove(prev => [...prev, imageUrl]);
@@ -53,10 +82,15 @@ export default function FormClient({
     const files = e.target.files;
     if (!files) return;
 
-    console.log(files)
-       
+    // Limit the number of new images to maxImages - existing images
+    const availableSlots = maxImages - request.imagesUrl.length - newImagePreviews.length;
+    if (availableSlots <= 0) return;
+    
+    // Only process files up to the available slots
+    const filesToProcess = Array.from(files).slice(0, availableSlots);
+    
     // Create previews for new images
-    const newPreviews = Array.from(files).map(file => ({
+    const newPreviews = filesToProcess.map(file => ({
       file,
       preview: URL.createObjectURL(file)
     }));
@@ -85,18 +119,21 @@ export default function FormClient({
     })
     
     const result = await updateRequest(requestId, formData)
-
     if (result.error) {
       setFetchError(result.error)
-    } else if (result.validationErrors) {
-      setValidationError(result.validationErrors)
-    } else if (result.imagesValidationErrors) {
-      setImagesValidationErrors(result.imagesValidationErrors)
-    } else if (result.request) {
+    }  else if (result.request) {
       setRequest(result.request)
       // Reset images to remove and new previews after successful update
       setImagesToRemove([]);
       setNewImagePreviews([]);
+    }
+    
+    if (result.validationErrors) {
+      setValidationError(result.validationErrors)
+    }
+    
+    if (result.imagesValidationErrors) {
+      setImagesValidationErrors(result.imagesValidationErrors)
     }
 
     setPending(false)
@@ -155,13 +192,17 @@ export default function FormClient({
                   <div className='flex items-center gap-2 text-sm text-muted-foreground'>
                     Title
                     {validationError && validationError.title && (
-                      <>
-                        <AlertCircle
-                          className='w-4 h-4 text-red-500'
-                          size={12}
-                        />
-                        <p className='text-red-500 text-sm'>{validationError.title}</p>
-                      </>
+                      <Popover>
+                        <PopoverTrigger>
+                          <AlertCircle
+                            className='w-4 h-4 text-red-500'
+                            size={12}
+                          />
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-2">
+                          <p className='text-red-500 text-sm'>{validationError.title}</p>
+                        </PopoverContent>
+                      </Popover>
                     )}
                   </div>
                   <p className='text-xs text-muted-foreground'>{request?.title?.length || 0} / 64</p>
@@ -193,13 +234,17 @@ export default function FormClient({
                   <div className='flex items-center gap-2 text-sm text-muted-foreground'>
                     Brief Description
                     {validationError && validationError.briefDescription && (
-                      <>
-                        <AlertCircle
-                          className='w-4 h-4 text-red-500'
-                          size={12}
-                        />
-                        <p className='text-red-500 text-sm'>{validationError.briefDescription}</p>
-                      </>
+                      <Popover>
+                        <PopoverTrigger>
+                          <AlertCircle
+                            className='w-4 h-4 text-red-500'
+                            size={12}
+                          />
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-2">
+                          <p className='text-red-500 text-sm'>{validationError.briefDescription}</p>
+                        </PopoverContent>
+                      </Popover>
                     )}
                   </div>
                   <p className='text-xs text-muted-foreground'>{request?.briefDescription?.length || 0} / 140</p>
@@ -230,13 +275,17 @@ export default function FormClient({
                   <div className='flex items-center gap-2 text-sm text-muted-foreground'>
                     Detailed Description
                     {validationError && validationError.detailedDescription && (
-                      <>
-                        <AlertCircle
-                          className='w-4 h-4 text-red-500'
-                          size={12}
-                        />
-                        <p className='text-red-500 text-sm'>{validationError.detailedDescription}</p>
-                      </>
+                      <Popover>
+                        <PopoverTrigger>
+                          <AlertCircle
+                            className='w-4 h-4 text-red-500'
+                            size={12}
+                          />
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-2">
+                          <p className='text-red-500 text-sm'>{validationError.detailedDescription}</p>
+                        </PopoverContent>
+                      </Popover>
                     )}
                   </div>
                   <p className='text-xs text-muted-foreground'>{request?.detailedDescription?.length || 0} / 1000</p>
@@ -267,13 +316,17 @@ export default function FormClient({
                   <div className='flex items-center gap-2 text-sm text-muted-foreground'>
                     Expected Expertise
                     {validationError && validationError.expectedExpertise && (
-                      <>
-                        <AlertCircle
-                          className='w-4 h-4 text-red-500'
-                          size={12}
-                        />
-                        <p className='text-red-500 text-sm'>{validationError.expectedExpertise}</p>
-                      </>
+                      <Popover>
+                        <PopoverTrigger>
+                          <AlertCircle
+                            className='w-4 h-4 text-red-500'
+                            size={12}
+                          />
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-2">
+                          <p className='text-red-500 text-sm'>{validationError.expectedExpertise}</p>
+                        </PopoverContent>
+                      </Popover>
                     )}
                   </div>
                   <p className='text-xs text-muted-foreground'>{request?.expectedExpertise?.length || 0} / 140</p>
@@ -305,13 +358,17 @@ export default function FormClient({
                   <div className='flex items-center gap-2 text-sm text-muted-foreground'>
                     Expected Timeline
                     {validationError && validationError.expectedTimeline && (
-                      <>
-                        <AlertCircle
-                          className='w-4 h-4 text-red-500'
-                          size={12}
-                        />
-                        <p className='text-red-500 text-sm'>{validationError.expectedTimeline}</p>
-                      </>
+                      <Popover>
+                        <PopoverTrigger>
+                          <AlertCircle
+                            className='w-4 h-4 text-red-500'
+                            size={12}
+                          />
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-2">
+                          <p className='text-red-500 text-sm'>{validationError.expectedTimeline}</p>
+                        </PopoverContent>
+                      </Popover>
                     )}
                   </div>
                   <p className='text-xs text-muted-foreground'>{request?.expectedTimeline?.length || 0} / 140</p>
@@ -343,13 +400,17 @@ export default function FormClient({
                   <div className='flex items-center gap-2 text-sm text-muted-foreground'>
                     Company
                     {validationError && validationError.company && (
-                      <>
-                        <AlertCircle
-                          className='w-4 h-4 text-red-500'
-                          size={12}
-                        />
-                        <p className='text-red-500 text-sm'>{validationError.company}</p>
-                      </>
+                      <Popover>
+                        <PopoverTrigger>
+                          <AlertCircle
+                            className='w-4 h-4 text-red-500'
+                            size={12}
+                          />
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-2">
+                          <p className='text-red-500 text-sm'>{validationError.company}</p>
+                        </PopoverContent>
+                      </Popover>
                     )}
                   </div>
                   <p className='text-xs text-muted-foreground'>{request?.company?.length || 0} / 64</p>
@@ -381,13 +442,17 @@ export default function FormClient({
                   <div className='flex items-center gap-2 text-sm text-muted-foreground'>
                     Budget
                     {validationError && validationError.budget && (
-                      <>
-                        <AlertCircle
-                          className='w-4 h-4 text-red-500'
-                          size={12}
-                        />
-                        <p className='text-red-500 text-sm'>{validationError.budget}</p>
-                      </>
+                      <Popover>
+                        <PopoverTrigger>
+                          <AlertCircle
+                            className='w-4 h-4 text-red-500'
+                            size={12}
+                          />
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-2">
+                          <p className='text-red-500 text-sm'>{validationError.budget}</p>
+                        </PopoverContent>
+                      </Popover>
                     )}
                   </div>
                 </Label>
@@ -417,13 +482,17 @@ export default function FormClient({
                   <div className='flex items-center gap-2 text-sm text-muted-foreground'>
                     Concept
                     {validationError && validationError.concept && (
-                      <>
-                        <AlertCircle
-                          className='w-4 h-4 text-red-500'
-                          size={12}
-                        />
-                        <p className='text-red-500 text-sm'>{validationError.concept}</p>
-                      </>
+                      <Popover>
+                        <PopoverTrigger>
+                          <AlertCircle
+                            className='w-4 h-4 text-red-500'
+                            size={12}
+                          />
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-2">
+                          <p className='text-red-500 text-sm'>{validationError.concept}</p>
+                        </PopoverContent>
+                      </Popover>
                     )}
                   </div>
                   <p className='text-xs text-muted-foreground'>{request?.concept?.length || 0} / 140</p>
@@ -455,13 +524,17 @@ export default function FormClient({
                   <div className='flex items-center gap-2 text-sm text-muted-foreground'>
                     Field
                     {validationError && validationError.field && (
-                      <>
-                        <AlertCircle
-                          className='w-4 h-4 text-red-500'
-                          size={12}
-                        />
-                        <p className='text-red-500 text-sm'>{validationError.field}</p>
-                      </>
+                      <Popover>
+                        <PopoverTrigger>
+                          <AlertCircle
+                            className='w-4 h-4 text-red-500'
+                            size={12}
+                          />
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-2">
+                          <p className='text-red-500 text-sm'>{validationError.field}</p>
+                        </PopoverContent>
+                      </Popover>
                     )}
                   </div>
                   <p className='text-xs text-muted-foreground'>{request?.field?.length || 0} / 140</p>
@@ -493,13 +566,19 @@ export default function FormClient({
                   <div className='flex items-center gap-2 text-sm text-muted-foreground'>
                     Image
                     {imagesValidationErrors && imagesValidationErrors.images && (
-                      <>
-                        <AlertCircle
-                          className='w-4 h-4 text-red-500'
-                          size={12}
-                        />
-                        <p className='text-red-500 text-sm line-clamp-1'>{imagesValidationErrors.images.join(' ')}</p>
-                      </>
+                      <Popover>
+                        <PopoverTrigger>
+                          <AlertCircle
+                            className='w-4 h-4 text-red-500'
+                            size={12}
+                          />
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-2">
+                          {imagesValidationErrors.images.map((error, index) => (
+                            <p key={index} className='text-red-500 text-sm'>{error}</p>
+                          ))}
+                        </PopoverContent>
+                      </Popover>
                     )}
                   </div>
                   <p className='text-xs text-muted-foreground'>
@@ -507,15 +586,95 @@ export default function FormClient({
                   </p>
                 </Label>
                 <div className='relative'>
-                  <Input
-                    type='file'
-                    name='images'
-                    accept='image/*'
-                    multiple
-                    className={pending ? 'invisible' : ''}
-                    disabled={request.imagesUrl.length + newImagePreviews.length >= maxImages}
-                    onChange={handleImageUpload}
-                  />
+                  <div 
+                    className={`border-2 border-dashed rounded-md p-6 ${pending ? 'invisible' : ''} 
+                               flex flex-col items-center justify-center cursor-pointer
+                               ${request.imagesUrl.length + newImagePreviews.length >= maxImages ? 'opacity-50 cursor-not-allowed' : 'hover:border-primary hover:bg-secondary/20'}`}
+                    onDragOver={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      if (request.imagesUrl.length + newImagePreviews.length < maxImages) {
+                        e.currentTarget.classList.add('border-primary', 'bg-secondary/20');
+                      }
+                    }}
+                    onDragLeave={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      e.currentTarget.classList.remove('border-primary', 'bg-secondary/20');
+                    }}
+                    onDrop={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      e.currentTarget.classList.remove('border-primary', 'bg-secondary/20');
+                      
+                      const availableSlots = maxImages - request.imagesUrl.length - newImagePreviews.length;
+                      if (availableSlots <= 0) return;
+                      
+                      const files = Array.from(e.dataTransfer.files).filter(file => 
+                        file.type.startsWith('image/')
+                      );
+                      
+                      if (files.length > 0) {
+                        const allowedFiles = files.slice(0, availableSlots);
+                        
+                        const newPreviews = allowedFiles.map(file => ({
+                          file,
+                          preview: URL.createObjectURL(file)
+                        }));
+                        
+                        setNewImagePreviews(prev => [...prev, ...newPreviews]);
+                      }
+                    }}
+                    onClick={() => {
+                      if (request.imagesUrl.length + newImagePreviews.length < maxImages) {
+                        document.getElementById('images-input')?.click();
+                      }
+                    }}
+                    onPaste={(e) => {
+                      e.preventDefault();
+                      const availableSlots = maxImages - request.imagesUrl.length - newImagePreviews.length;
+                      if (availableSlots <= 0) return;
+                      
+                      const items = e.clipboardData.items;
+                      let addedImages = 0;
+                      
+                      for (let i = 0; i < items.length && addedImages < availableSlots; i++) {
+                        if (items[i].type.indexOf('image') !== -1) {
+                          const file = items[i].getAsFile();
+                          if (file) {
+                            const newPreview = {
+                              file,
+                              preview: URL.createObjectURL(file)
+                            };
+                            setNewImagePreviews(prev => [...prev, newPreview]);
+                            addedImages++;
+                          }
+                        }
+                      }
+                    }}
+                    tabIndex={0}
+                  >
+                    <div className="flex flex-col items-center justify-center gap-2">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                      </svg>
+                      <p className="text-sm text-muted-foreground font-medium">
+                        Click to upload, drag and drop, or paste images
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        PNG, JPG, GIF up to 10MB
+                      </p>
+                    </div>
+                    <Input
+                      id="images-input"
+                      type='file'
+                      name='images'
+                      multiple
+                      className='sr-only'
+                      disabled={request.imagesUrl.length + newImagePreviews.length >= maxImages}
+                      onChange={handleImageUpload}
+                    />
+                  </div>
                   {pending && <Skeleton className='absolute inset-0 z-20 h-full' />}
                 </div>
                 {imagesToRemove.map((imageUrl, index) => (

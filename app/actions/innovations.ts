@@ -77,15 +77,19 @@ const validateImages = (images: File[]) => {
 //   return await requestsService.create(request)
 // }
 
+
 export async function updateRequest(requestId: string | undefined, formData: FormData) {
   const data = getRequestsData(formData)
   const images = getImages(formData)
   const imagesToRemove = getImagesToRemove(formData)
   const validationErrors = validateRequest(data)
   const imagesValidationErrors = validateImages(images)
-  if (validationErrors) return { validationErrors }
-  console.log(imagesValidationErrors)
-  if (imagesValidationErrors) return { imagesValidationErrors }
+  if (validationErrors || imagesValidationErrors) {
+    return {
+      validationErrors,
+      imagesValidationErrors,
+    }
+  }
   if (!requestId) {
     let newRequestId: string = ''
     try {
