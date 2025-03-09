@@ -1,8 +1,8 @@
 import { Models } from 'node-appwrite'
-import { optional, z } from 'zod'
+import { z } from 'zod'
 
-const MAX_FILE_SIZE = 5000; // 5
-const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png"];
+const MAX_FILE_SIZE = 5000000 // 5
+const ACCEPTED_IMAGE_TYPES = ['image/jpeg', 'image/jpg', 'image/png']
 
 export const requestSchema = z
   .object({
@@ -17,37 +17,43 @@ export const requestSchema = z
     field: z.string().min(1, 'Field is required').max(140, 'Field must be less than 140 characters'),
     marketingConsent: z.boolean(),
     ecologyConsent: z.boolean(),
-    imagesUrl: z.array(z.string()),
+    imagesIds: z.array(z.string()),
   })
   .strict()
 
-interface File {
-  size: number
-  type: string
-}
+const maxImages = 1
 
 export const imageSchema = z.object({
   images: z
-  .array(
-    z.custom<File>().refine((val) => {
-      if (!val || typeof val !== 'object' || !('size' in val) || !('type' in val)) {
-        return false
-      }
-      return true;
-    }, "Please provide a valid file")
-    .refine((val) => {
-      if (val.size > MAX_FILE_SIZE) {
-        return false
-      }
-      return true;
-    }, `File size must be less than ${MAX_FILE_SIZE / 1000000}MB`)
-    .refine((val) => {
-      if (!ACCEPTED_IMAGE_TYPES.includes(val.type)) {
-        return false
-      }
-      return true;
-    }, `File must be one of ${ACCEPTED_IMAGE_TYPES.join(', ')}`)
-  )
+    .array(
+      z
+        .any()
+        .refine((val) => {
+          if (!val || typeof val !== 'object' || !('size' in val) || !('type' in val)) {
+            return false
+          }
+          return true
+        }, 'Please provide a valid file')
+        .refine(
+          (val) => {
+            if (val.size > MAX_FILE_SIZE) {
+              return false
+            }
+            return true
+          },
+          `File size must be less than ${MAX_FILE_SIZE / 1000000}MB`
+        )
+        .refine(
+          (val) => {
+            if (!ACCEPTED_IMAGE_TYPES.includes(val.type)) {
+              return false
+            }
+            return true
+          },
+          `File must be one of ${ACCEPTED_IMAGE_TYPES.join(', ')}`
+        )
+    )
+    .max(maxImages, `You can upload a maximum of ${maxImages} images`),
 })
 
 export interface RequestMetadata {

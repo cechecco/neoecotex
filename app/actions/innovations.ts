@@ -4,12 +4,12 @@ import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 
 import { requestsService, submissionsService, computeRequestChecks, storageService } from '@/lib/server/database'
-import { imageSchema, Request, RequestData, requestSchema, Submission, SubmissionData, submissionSchema } from '@/lib/types'
+import { imageSchema, RequestData, requestSchema, Submission, SubmissionData, submissionSchema } from '@/lib/types'
 
 export async function listRequests(page: number, limit: number, filterField: string, filterValue: string | number | boolean) {
   try {
     const result = await requestsService.list({ page, limit }, filterField, filterValue)
-    return result // { total, documents: Request[] ... }
+    return result
   } catch (error) {
     console.error(error)
     return { error: true, message: String(error) }
@@ -46,20 +46,15 @@ const getRequestsData = (formData: FormData) => {
     field: (formData.get('field') as string) || '',
     marketingConsent: !!formData.get('marketingConsent'),
     ecologyConsent: !!formData.get('ecologyConsent'),
-    imagesUrl: formData.getAll('imagesUrl').map(entry => entry.toString()),
+    imagesIds: formData.getAll('imagesIds').map((entry) => entry.toString()),
   }
 
   return data
 }
 
 const getImages = (formData: FormData) => {
-  const images = formData.getAll('images').filter(image => (image as File).size > 0) as File[]
+  const images = formData.getAll('images').filter((image) => (image as File).size > 0) as File[]
   return images
-}
-
-const getImagesToRemove = (formData: FormData) => {
-  const imagesToRemove = formData.getAll('imagesToRemove').map(entry => entry.toString())
-  return imagesToRemove
 }
 
 const validateImages = (images: File[]) => {
@@ -77,11 +72,9 @@ const validateImages = (images: File[]) => {
 //   return await requestsService.create(request)
 // }
 
-
 export async function updateRequest(requestId: string | undefined, formData: FormData) {
   const data = getRequestsData(formData)
   const images = getImages(formData)
-  const imagesToRemove = getImagesToRemove(formData)
   const validationErrors = validateRequest(data)
   const imagesValidationErrors = validateImages(images)
   if (validationErrors || imagesValidationErrors) {
@@ -106,7 +99,7 @@ export async function updateRequest(requestId: string | undefined, formData: For
     }
   } else {
     try {
-      const updated = await requestsService.update(requestId, { data, images, imagesToRemove })
+      const updated = await requestsService.update(requestId, { data, images })
       return {
         request: updated,
       }

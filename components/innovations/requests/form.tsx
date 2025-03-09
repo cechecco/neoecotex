@@ -19,15 +19,13 @@ const getDefaultRequest = (): RequestData => {
     field: '',
     marketingConsent: false,
     ecologyConsent: false,
-    imagesUrl: [],
+    imagesIds: [],
   }
 }
 
 export default async function Form({ id }: Props) {
-  let requestData: RequestData | undefined
-  if (id === 'new') {
-    requestData = getDefaultRequest()
-  } else {
+  let requestData: RequestData = getDefaultRequest()
+  if (id !== 'new') {
     const request = await getOneRequest(id)
     if (request && 'error' in request) {
       return (
@@ -36,20 +34,7 @@ export default async function Form({ id }: Props) {
         </div>
       )
     }
-    requestData = {
-      title: request.title,
-      company: request.company,
-      briefDescription: request.briefDescription,
-      detailedDescription: request.detailedDescription,
-      expectedExpertise: request.expectedExpertise,
-      expectedTimeline: request.expectedTimeline,
-      budget: request.budget,
-      concept: request.concept,
-      field: request.field,
-      marketingConsent: request.marketingConsent,
-      ecologyConsent: request.ecologyConsent,
-      imagesUrl: request.imagesUrl,
-    }
+    requestData = request
   }
 
   return (

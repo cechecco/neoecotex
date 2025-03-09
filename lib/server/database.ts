@@ -1,4 +1,4 @@
-import { ID, Models, Query, QueryTypes, Storage } from 'node-appwrite'
+import { ID, Models, Query, QueryTypes } from 'node-appwrite'
 
 import { getLoggedInUser } from '@/app/actions/auth'
 import { createDatabaseAdminClient, createStorageAdminClient, getUserEmail } from '@/lib/server/appwrite'
@@ -18,16 +18,18 @@ async function getCurrentUser() {
 }
 
 export const requestsService = {
-  async create(requestData: { data: RequestData, images: File[] }) {
+  async create(requestData: { data: RequestData; images: File[] }) {
     const { databases } = await createDatabaseAdminClient()
     const user = await getCurrentUser()
     const newId = ID.unique()
 
-    let imagesUrl: string[] = requestData.data.imagesUrl
+    let imagesIds: string[] = requestData.data.imagesIds
     if (requestData.images.length > 0) {
-      imagesUrl = await Promise.all(requestData.images.map(async (image) => {
-        return await storageService.uploadImage(image)
-      }))
+      imagesIds = await Promise.all(
+        requestData.images.map(async (image) => {
+          return await storageService.uploadImage(image)
+        })
+      )
     }
 
     const docToCreate: RequestCreateInput = {
@@ -35,7 +37,7 @@ export const requestsService = {
       owner: user.$id,
       winner: null,
       submissionsId: [],
-      imagesUrl: imagesUrl,
+      imagesIds: imagesIds,
     }
 
     try {
@@ -43,27 +45,27 @@ export const requestsService = {
       return created as Request
     } catch (error) {
       console.error(error)
-      // If document creation fails but we uploaded an image, clean it up
-      if (requestData.images.length > 0) {
-        await Promise.all(imagesUrl.map(async (imageId) => {
-          await storageService.deleteImage(imageId).catch(console.error)
-        }))
-      }
       throw new Error('Failed to create request')
     }
   },
 
-  async update(requestId: string, requestData: { data: RequestData, images: File[], imagesToRemove: string[] }) {
+  async update(requestId: string, requestData: { data: RequestData; images: File[] }) {
     const { databases } = await createDatabaseAdminClient()
 
     try {
-      await Promise.all(requestData.imagesToRemove.map(async (imageId) => {
-        await storageService.deleteImage(imageId).catch(console.error)
-      }))
-      const imagesUrl = await Promise.all(requestData.images.map(async (image) => {
-        return await storageService.uploadImage(image)
-      }))
-      const updated = await databases.updateDocument(DATABASE_ID, REQUESTS_COLLECTION_ID, requestId, { ...requestData.data, imagesUrl: requestData.data.imagesUrl.concat(imagesUrl) })
+      const oldImagesIds = await databases.getDocument(DATABASE_ID, REQUESTS_COLLECTION_ID, requestId)
+      const imagesToRemove = oldImagesIds.imagesIds.filter((imageId: string) => !requestData.data.imagesIds.includes(imageId))
+      await Promise.all(
+        imagesToRemove.map(async (imageId: string) => {
+          await storageService.deleteImage(imageId).catch(console.error)
+        })
+      )
+      const imagesUrl = await Promise.all(
+        requestData.images.map(async (image) => {
+          return await storageService.uploadImage(image)
+        })
+      )
+      const updated = await databases.updateDocument(DATABASE_ID, REQUESTS_COLLECTION_ID, requestId, { ...requestData.data, imagesIds: requestData.data.imagesIds.concat(imagesUrl) })
 
       return updated as Request
     } catch (error) {
@@ -147,7 +149,7 @@ export const submissionsService = {
     const { databases } = await createDatabaseAdminClient()
     const user = await getCurrentUser()
     const newId = ID.unique()
-    
+
     let imageId = null
     if (image) {
       imageId = await storageService.uploadImage(image)
@@ -169,7 +171,6 @@ export const submissionsService = {
       return created
     } catch (error) {
       console.error(error)
-      // Clean up image if document creation fails
       if (imageId) {
         await storageService.deleteImage(imageId).catch(console.error)
       }
@@ -293,7 +294,7 @@ export const storageService = {
   async uploadImage(file: File) {
     const { storage } = await createStorageAdminClient()
     const newId = ID.unique()
-    
+
     try {
       const uploaded = await storage.createFile(STORAGE_BUCKET_ID, newId, file)
       return uploaded.$id
@@ -302,10 +303,10 @@ export const storageService = {
       throw new Error('Failed to upload image' + error)
     }
   },
-  
+
   async deleteImage(fileId: string) {
     const { storage } = await createStorageAdminClient()
-    
+
     try {
       await storage.deleteFile(STORAGE_BUCKET_ID, fileId)
       return true
@@ -313,6 +314,5 @@ export const storageService = {
       console.error(error)
       throw new Error('Failed to delete image' + error)
     }
-  }
+  },
 }
-
