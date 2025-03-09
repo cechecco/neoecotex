@@ -1,8 +1,8 @@
 import { Models } from 'node-appwrite'
-import { z } from 'zod'
+import { optional, z } from 'zod'
 
 const MAX_FILE_SIZE = 5000000; // 5MB
-const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
+const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png"];
 
 export const requestSchema = z
   .object({
@@ -18,17 +18,37 @@ export const requestSchema = z
     marketingConsent: z.boolean(),
     ecologyConsent: z.boolean(),
     imagesUrl: z.array(z.string()),
-    imagesToRemove: z.array(z.string()).optional(),
-    images: z.array(
-      z.any()
-        // .refine((file) => file?.size <= MAX_FILE_SIZE, `Max image size is 5MB.`)
-        // .refine(
-        //   (file) => ACCEPTED_IMAGE_TYPES.includes(file?.type),
-        //   "Only .jpg, .jpeg, .png and .webp formats are supported."
-        // )
-    )
   })
   .strict()
+
+interface File {
+  size: number
+  type: string
+}
+
+export const imageSchema = z.object({
+  images: z
+  .array(
+    z.custom<File>().refine((val) => {
+      if (!val || typeof val !== 'object' || !('size' in val) || !('type' in val)) {
+        return false
+      }
+      return true;
+    }, "Please provide a valid file")
+    .refine((val) => {
+      if (val.size > MAX_FILE_SIZE) {
+        return false
+      }
+      return true;
+    }, `File size must be less than ${MAX_FILE_SIZE / 1000000}MB`)
+    .refine((val) => {
+      if (!ACCEPTED_IMAGE_TYPES.includes(val.type)) {
+        return false
+      }
+      return true;
+    }, `File must be one of ${ACCEPTED_IMAGE_TYPES.join(', ')}`)
+  )
+})
 
 export interface RequestMetadata {
   owner: string
@@ -36,7 +56,7 @@ export interface RequestMetadata {
   submissionsId: string[]
 }
 
-export type RequestData = Omit<z.infer<typeof requestSchema>, 'images' | 'imagesToRemove'>
+export type RequestData = z.infer<typeof requestSchema>
 
 export type RequestCreateInput = RequestData & RequestMetadata
 

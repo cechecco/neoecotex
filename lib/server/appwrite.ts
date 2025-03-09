@@ -66,3 +66,17 @@ export async function createStorageAdminClient() {
   const storage = new Storage(client)
   return { storage, client }
 }
+
+// const STORAGE_BUCKET_ID = '67ca3da70007a46d3511'
+
+// export async function getImagesUrl(fileIds: string[]) {
+//   const { storage } = await createStorageAdminClient()
+//   const urls: Record<string, ArrayBuffer> = {}
+  
+//   await Promise.all(fileIds.map(async (fileId) => {
+//     const url = await storage.getFileView(STORAGE_BUCKET_ID, fileId)
+//     urls[fileId] = url
+//   }))
+  
+//   return urls
+// }

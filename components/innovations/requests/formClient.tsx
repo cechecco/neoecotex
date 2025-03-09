@@ -19,7 +19,7 @@ import { getImagesUrl } from '@/lib/client/appwrite'
 export default function FormClient({ 
   initialRequest, 
   requestId, 
-  maxImages = 2 // Default max images if not specified
+  maxImages = 1 // Default max images if not specified
 }: { 
   initialRequest: RequestData; 
   requestId: string | undefined;
@@ -27,11 +27,14 @@ export default function FormClient({
 }) {
   const [request, setRequest] = useState<RequestData>(initialRequest)
   const [validationError, setValidationError] = useState<Partial<Record<keyof Request, string[]>> | false>(false)
+  const [imagesValidationErrors, setImagesValidationErrors] = useState<Partial<Record<keyof Request, string[]>> | false>(false)
   const [fetchError, setFetchError] = useState<string | false>(false)
   const [pending, setPending] = useState(false)
   
   // Track images that should be removed
   const [imagesToRemove, setImagesToRemove] = useState<string[]>([])
+  // Track new images previews
+  const [newImagePreviews, setNewImagePreviews] = useState<{file: File, preview: string}[]>([])
 
   const handleImageRemove = (imageUrl: string | undefined) => {
     if (!imageUrl) return
@@ -41,6 +44,32 @@ export default function FormClient({
       imagesUrl: request.imagesUrl.filter(url => url !== imageUrl)
     });
   }
+  
+  const handleNewImageRemove = (index: number) => {
+    setNewImagePreviews(prev => prev.filter((_, i) => i !== index));
+  }
+
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files) return;
+
+    console.log(files)
+       
+    // Create previews for new images
+    const newPreviews = Array.from(files).map(file => ({
+      file,
+      preview: URL.createObjectURL(file)
+    }));
+    
+    setNewImagePreviews(prev => [...prev, ...newPreviews]);
+  }
+  
+  // Clean up object URLs to avoid memory leaks
+  useEffect(() => {
+    return () => {
+      newImagePreviews.forEach(preview => URL.revokeObjectURL(preview.preview));
+    };
+  }, [newImagePreviews]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -50,16 +79,24 @@ export default function FormClient({
 
     const formData = new FormData(e.target as HTMLFormElement)
     
+    // Manually append the new image files to the FormData
+    newImagePreviews.forEach(preview => {
+      formData.append('images', preview.file)
+    })
+    
     const result = await updateRequest(requestId, formData)
 
     if (result.error) {
       setFetchError(result.error)
     } else if (result.validationErrors) {
       setValidationError(result.validationErrors)
+    } else if (result.imagesValidationErrors) {
+      setImagesValidationErrors(result.imagesValidationErrors)
     } else if (result.request) {
       setRequest(result.request)
-      // Reset images to remove after successful update
+      // Reset images to remove and new previews after successful update
       setImagesToRemove([]);
+      setNewImagePreviews([]);
     }
 
     setPending(false)
@@ -455,16 +492,19 @@ export default function FormClient({
                 >
                   <div className='flex items-center gap-2 text-sm text-muted-foreground'>
                     Image
-                    {validationError && validationError.images && (
+                    {imagesValidationErrors && imagesValidationErrors.images && (
                       <>
                         <AlertCircle
                           className='w-4 h-4 text-red-500'
                           size={12}
                         />
-                        <p className='text-red-500 text-sm line-clamp-1'>{validationError.images.join(' ')}</p>
+                        <p className='text-red-500 text-sm line-clamp-1'>{imagesValidationErrors.images.join(' ')}</p>
                       </>
                     )}
                   </div>
+                  <p className='text-xs text-muted-foreground'>
+                    {request.imagesUrl.length + newImagePreviews.length}/{maxImages} images
+                  </p>
                 </Label>
                 <div className='relative'>
                   <Input
@@ -473,18 +513,50 @@ export default function FormClient({
                     accept='image/*'
                     multiple
                     className={pending ? 'invisible' : ''}
-                    disabled={request?.imagesUrl?.length >= maxImages}
+                    disabled={request.imagesUrl.length + newImagePreviews.length >= maxImages}
+                    onChange={handleImageUpload}
                   />
                   {pending && <Skeleton className='absolute inset-0 z-20 h-full' />}
                 </div>
                 {imagesToRemove.map((imageUrl, index) => (
-                        <input
-                          key={index}
-                          type="hidden"
-                          name="imagesToRemove"
-                          value={imageUrl}
+                  <input
+                    key={index}
+                    type="hidden"
+                    name="imagesToRemove"
+                    value={imageUrl}
+                  />
+                ))}
+                
+                {/* New Image Previews */}
+                {newImagePreviews.length > 0 && (
+                  <div className='mt-2'>
+                    <p className='text-xs text-muted-foreground mb-1'>New images to upload:</p>
+                    <div className='grid grid-cols-2 md:grid-cols-3 gap-4'>
+                      {newImagePreviews.map((preview, index) => (
+                        <div key={`new-${index}`} className='relative w-full h-48 rounded-md overflow-hidden border border-border group'>
+                          <img 
+                            src={preview.preview} 
+                            alt={`New image ${index + 1}`} 
+                            className='object-contain w-full h-full'
                           />
+                          <button
+                            type="button"
+                            onClick={() => handleNewImageRemove(index)}
+                            className='absolute top-2 right-2 bg-black/70 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity'
+                            aria-label="Remove image"
+                          >
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                              <line x1="18" y1="6" x2="6" y2="18"></line>
+                              <line x1="6" y1="6" x2="18" y2="18"></line>
+                            </svg>
+                          </button>
+                        </div>
                       ))}
+                    </div>
+                  </div>
+                )}
+                
+                {/* Existing Images */}
                 {request?.imagesUrl && request.imagesUrl.length > 0 && (
                   <div className='mt-2'>
                     <p className='text-xs text-muted-foreground mb-1'>Current images:</p>
