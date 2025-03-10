@@ -2,7 +2,7 @@ import { ID, Models, Query, QueryTypes } from 'node-appwrite'
 
 import { getLoggedInUser } from '@/app/actions/auth'
 import { createDatabaseAdminClient, createStorageAdminClient, getUserEmail } from '@/lib/server/appwrite'
-import { Request, RequestChecksMap, RequestCreateInput, RequestData, Submission, SubmissionCreateInput } from '@/lib/types'
+import { Request, RequestChecksMap, RequestCreateInput, RequestData, Submission, SubmissionData } from '@/lib/types'
 
 const DATABASE_ID = '67aa7414000f83ae7018'
 const REQUESTS_COLLECTION_ID = '67aa745800179944f652'
@@ -145,21 +145,26 @@ export const requestsService = {
 }
 
 export const submissionsService = {
-  async create(data: Omit<Submission, '$id' | '$createdAt' | '$updatedAt'>, image?: File) {
+  async create(data: SubmissionData, images: File[] = []) {
     const { databases } = await createDatabaseAdminClient()
     const user = await getCurrentUser()
     const newId = ID.unique()
 
-    let imageId = null
-    if (image) {
-      imageId = await storageService.uploadImage(image)
+    let imagesIds: string[] = data.imagesIds || []
+    if (images.length > 0) {
+      const uploadedImageIds = await Promise.all(
+        images.map(async (image) => {
+          return await storageService.uploadImage(image)
+        })
+      )
+      imagesIds = [...imagesIds, ...uploadedImageIds]
     }
 
     try {
       const created = await databases.createDocument(DATABASE_ID, SUBMISSIONS_COLLECTION_ID, newId, {
         ...data,
         owner: user.$id,
-        image: imageId,
+        imagesIds: imagesIds,
       })
 
       const reqDoc = await databases.getDocument(DATABASE_ID, REQUESTS_COLLECTION_ID, data.requestId)
@@ -168,20 +173,49 @@ export const submissionsService = {
         submissionsId: [...oldSubIds, created.$id],
       })
 
-      return created
+      return created as Submission
     } catch (error) {
       console.error(error)
-      if (imageId) {
-        await storageService.deleteImage(imageId).catch(console.error)
+      // Clean up any uploaded images if there's an error
+      if (imagesIds.length > data.imagesIds.length) {
+        await Promise.all(
+          imagesIds.slice(data.imagesIds.length).map(async (imageId) => {
+            await storageService.deleteImage(imageId).catch(console.error)
+          })
+        )
       }
       throw new Error('Failed to create submission')
     }
   },
 
-  async update(id: string, partialData: Partial<SubmissionCreateInput>) {
+  async update(id: string, data: SubmissionData, images: File[] = []) {
     const { databases } = await createDatabaseAdminClient()
+
     try {
-      const updated = await databases.updateDocument(DATABASE_ID, SUBMISSIONS_COLLECTION_ID, id, partialData)
+      const oldDoc = await databases.getDocument(DATABASE_ID, SUBMISSIONS_COLLECTION_ID, id)
+      const oldImagesIds = oldDoc.imagesIds || []
+
+      // Delete removed images
+      const imagesToRemove = oldImagesIds.filter((imageId: string) => !data.imagesIds.includes(imageId))
+      await Promise.all(
+        imagesToRemove.map(async (imageId: string) => {
+          await storageService.deleteImage(imageId).catch(console.error)
+        })
+      )
+
+      // Upload new images
+      const newImagesIds = await Promise.all(
+        images.map(async (image) => {
+          return await storageService.uploadImage(image)
+        })
+      )
+
+      // Update document with combined image IDs
+      const updated = await databases.updateDocument(DATABASE_ID, SUBMISSIONS_COLLECTION_ID, id, {
+        ...data,
+        imagesIds: [...data.imagesIds, ...newImagesIds],
+      })
+
       return updated as Submission
     } catch (error) {
       console.error(error)

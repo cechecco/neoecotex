@@ -1,19 +1,42 @@
 'use client'
 
+import Image from 'next/image'
+import { useState } from 'react'
+import { useEffect } from 'react'
+
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { getImagesUrl } from '@/lib/client/appwrite'
 import { Submission } from '@/lib/types'
 import { RequestCheck } from '@/lib/types'
-
 interface Props {
   submission: Submission
   check: RequestCheck
 }
 
 export default function ViewClient({ submission }: Props) {
+  const [images, setImages] = useState<Record<string, string>>({})
+
+  useEffect(() => {
+    getImagesUrl(submission.imagesIds).then(setImages)
+  }, [submission.imagesIds])
+
   return (
     <>
       <Card>
         <CardHeader className='flex flex-col items-left gap-2'>
+          <div className='flex flex-col gap-2 h-96'>
+            {Object.entries(images).map(([imageId, imageUrl]) => (
+              <Image
+                key={imageId}
+                src={imageUrl}
+                alt={submission.title}
+                width={1200}
+                height={300}
+                className='w-full h-96 object-cover object-top max-w-full'
+                priority
+              />
+            ))}
+          </div>
           <CardTitle>{submission.title}</CardTitle>
         </CardHeader>
         <CardContent>

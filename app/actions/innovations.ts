@@ -165,27 +165,49 @@ const getSubmissionData = (formData: FormData) => {
     title: formData.get('title') as string,
     briefDescription: formData.get('briefDescription') as string,
     requestId: formData.get('requestId') as string,
+    imagesIds: formData.getAll('imagesIds').map((entry) => entry.toString()),
   }
   return data
 }
 
 export async function updateSubmission(submissionId: string | undefined, formData: FormData) {
   const data = getSubmissionData(formData)
+  const images = getImages(formData)
   const validationErrors = validateSubmission(data)
-  if (validationErrors) return { validationErrors }
+  const imagesValidationErrors = validateImages(images)
+
+  if (validationErrors || imagesValidationErrors) {
+    return {
+      validationErrors,
+      imagesValidationErrors,
+    }
+  }
 
   if (!submissionId) {
-    let newSubmissionId: string
+    let newSubmissionId: string = ''
     try {
-      const created = await submissionsService.create(data)
+      const created = await submissionsService.create(data, images)
       newSubmissionId = created.$id
+      return {
+        submission: created,
+      }
     } catch (error) {
       return { error: (error as Error).message }
+    } finally {
+      revalidatePath('/innovations/requests')
+      redirect(`/innovations/requests/${data.requestId}/submissions/${newSubmissionId}`)
     }
-    redirect(`/innovations/requests/${data.requestId}/submissions/${newSubmissionId}`)
   } else {
-    return {
-      submission: await submissionsService.update(submissionId, data),
+    try {
+      const updated = await submissionsService.update(submissionId, data, images)
+      return {
+        submission: updated,
+      }
+    } catch (error) {
+      return { error: (error as Error).message }
+    } finally {
+      revalidatePath('/innovations/requests')
+      redirect(`/innovations/requests/${data.requestId}/submissions/${submissionId}`)
     }
   }
 }

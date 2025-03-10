@@ -12,6 +12,7 @@ const getDefaultSubmission = (requestId: string): SubmissionData => {
     title: '',
     briefDescription: '',
     requestId: requestId,
+    imagesIds: [],
   }
 }
 

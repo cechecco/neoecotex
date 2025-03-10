@@ -75,6 +75,7 @@ export const submissionSchema = z
     title: z.string().min(1, 'Title is required').max(64, 'Title must be less than 64 characters'),
     briefDescription: z.string().min(1, 'Brief description is required').max(140, 'Brief description must be less than 140 characters'),
     requestId: z.string().min(1, 'Request ID is required'),
+    imagesIds: z.array(z.string()),
   })
   .strict()
 

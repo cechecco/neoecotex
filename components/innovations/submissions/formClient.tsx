@@ -2,17 +2,18 @@
 
 import { AlertCircle } from 'lucide-react'
 import Link from 'next/link'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import { deleteSubmission, updateSubmission } from '@/app/actions/innovations'
+import FormField from '@/components/innovations/FormField'
+import ImageUploader from '@/components/innovations/ImageUploader'
 import { Button } from '@/components/ui/button'
 import { Card, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
 import { Separator } from '@/components/ui/separator'
-import { Skeleton } from '@/components/ui/skeleton'
-import { Textarea } from '@/components/ui/textarea'
-import { SubmissionData } from '@/lib/types'
+import { getImagesUrl } from '@/lib/client/appwrite'
+import { Submission, SubmissionData } from '@/lib/types'
+
+const maxImages = 1
 
 interface Props {
   initialSubmission: SubmissionData
@@ -24,23 +25,97 @@ export default function FormClient({ initialSubmission, submissionId, requestId 
   const [submission, setSubmission] = useState<SubmissionData>(initialSubmission)
   const [fetchError, setFetchError] = useState<string | undefined>(undefined)
   const [validationError, setValidationError] = useState<Partial<Record<keyof SubmissionData, string[]>> | false>(false)
+  const [imagesValidationErrors, setImagesValidationErrors] = useState<Partial<Record<keyof Submission, string[]>> | false>(false)
   const [pending, setPending] = useState(false)
+  const [imagesUrl, setImagesUrl] = useState<Record<string, string>>({})
+  const [newImages, setNewImages] = useState<{ file: File; preview: string }[]>([])
+
+  useEffect(() => {
+    const fetchImagesUrl = async () => {
+      const imagesUrl = await getImagesUrl(submission.imagesIds || [])
+      setImagesUrl(imagesUrl)
+    }
+    fetchImagesUrl()
+  }, [submission.imagesIds])
+
+  useEffect(() => {
+    if (validationError) {
+      const firstErrorField = Object.keys(validationError)[0] as keyof Submission
+      if (firstErrorField) {
+        const errorElement = document.getElementById(firstErrorField as string)
+        if (errorElement) {
+          errorElement.scrollIntoView({
+            behavior: 'smooth',
+            block: 'center',
+          })
+        }
+      }
+    } else if (imagesValidationErrors) {
+      const imagesInput = document.getElementById('images-input')
+      if (imagesInput) {
+        imagesInput.scrollIntoView({
+          behavior: 'smooth',
+          block: 'center',
+        })
+      }
+    }
+  }, [validationError, imagesValidationErrors])
+
+  const handleImageRemove = (imageId: string | undefined) => {
+    if (!imageId) return
+    setSubmission({
+      ...submission,
+      imagesIds: (submission.imagesIds || []).filter((id: string) => id !== imageId),
+    })
+  }
+
+  const handleNewImageRemove = (index: number) => {
+    setNewImages((prev) => prev.filter((_, i) => i !== index))
+  }
+
+  const handleImagesAdd = (files: File[]) => {
+    const _newImages = files.map((file) => ({
+      file,
+      preview: URL.createObjectURL(file),
+    }))
+
+    setNewImages((prev) => [...prev, ..._newImages])
+  }
+
+  useEffect(() => {
+    return () => {
+      newImages.forEach((image) => URL.revokeObjectURL(image.preview))
+    }
+  }, [newImages])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setValidationError(false)
     setFetchError(undefined)
+    setImagesValidationErrors(false)
     setPending(true)
 
     const formData = new FormData(e.target as HTMLFormElement)
+
+    newImages.forEach((image) => {
+      formData.append('images', image.file)
+    })
+
     const result = await updateSubmission(submissionId, formData)
 
     if (result.error) {
       setFetchError(result.error)
-    } else if (result.validationErrors) {
-      setValidationError(result.validationErrors)
     } else if (result.submission) {
       setSubmission(result.submission)
+      setNewImages([])
+    }
+
+    if (result.validationErrors) {
+      setValidationError(result.validationErrors)
+    }
+
+    if (result.imagesValidationErrors) {
+      setImagesValidationErrors(result.imagesValidationErrors)
     }
 
     setPending(false)
@@ -59,7 +134,7 @@ export default function FormClient({ initialSubmission, submissionId, requestId 
       <Card>
         <CardHeader>
           <form
-            id='innovation-form'
+            id='submission-form'
             onSubmit={handleSubmit}
           >
             <CardTitle>
@@ -80,7 +155,7 @@ export default function FormClient({ initialSubmission, submissionId, requestId 
                     <Link href={`/innovations/requests/${requestId}/submissions/${submissionId || ''}`}>Discard</Link>
                   </Button>
                   <Button
-                    form='innovation-form'
+                    form='submission-form'
                     variant='secondary'
                     type='submit'
                     disabled={pending || (submissionId ? JSON.stringify(submission) === JSON.stringify(initialSubmission) : false)}
@@ -92,82 +167,49 @@ export default function FormClient({ initialSubmission, submissionId, requestId 
               </div>
             </CardTitle>
             <div className='flex flex-col gap-4'>
-              <div className='grid w-full items-center gap-1.5'>
-                <Label
-                  htmlFor='title'
-                  className='flex items-center justify-between'
-                >
-                  <div className='flex items-center gap-2 text-sm text-muted-foreground'>
-                    Title
-                    {validationError && validationError.title && (
-                      <>
-                        <AlertCircle
-                          className='w-4 h-4 text-red-500'
-                          size={12}
-                        />
-                        <p className='text-red-500 text-sm'>{validationError.title}</p>
-                      </>
-                    )}
-                  </div>
-                  <p className='text-xs text-muted-foreground'>{submission?.title?.length || 0} / 64</p>
-                </Label>
-                <div className='relative'>
-                  <Input
-                    type='text'
-                    id='title'
-                    name='title'
-                    defaultValue={submission?.title}
-                    className={pending ? 'invisible' : ''}
-                    maxLength={64}
-                    onChange={(e) => {
-                      setSubmission({
-                        ...submission,
-                        title: e.target.value,
-                      })
-                    }}
-                  />
-                  {pending && <Skeleton className='absolute inset-0 z-20 h-full' />}
-                </div>
-              </div>
+              <FormField<Submission>
+                id='title'
+                label='Title'
+                type='text'
+                maxLength={64}
+                value={submission?.title}
+                pending={pending}
+                validationError={validationError}
+                onChange={(e) => {
+                  setSubmission({
+                    ...submission,
+                    title: e.target.value,
+                  })
+                }}
+              />
 
-              <div className='grid w-full items-center gap-1.5'>
-                <Label
-                  htmlFor='briefDescription'
-                  className='flex items-center justify-between'
-                >
-                  <div className='flex items-center gap-2 text-sm text-muted-foreground'>
-                    Brief Description
-                    {validationError && validationError.briefDescription && (
-                      <>
-                        <AlertCircle
-                          className='w-4 h-4 text-red-500'
-                          size={12}
-                        />
-                        <p className='text-red-500 text-sm'>{validationError.briefDescription}</p>
-                      </>
-                    )}
-                  </div>
-                  <p className='text-xs text-muted-foreground'>{submission?.briefDescription?.length || 0} / 140</p>
-                </Label>
-                <div className='relative'>
-                  <Textarea
-                    id='briefDescription'
-                    name='briefDescription'
-                    defaultValue={submission?.briefDescription}
-                    className={pending ? 'invisible' : ''}
-                    maxLength={140}
-                    onChange={(e) => {
-                      setSubmission({
-                        ...submission,
-                        briefDescription: e.target.value,
-                      })
-                    }}
-                  />
-                  {pending && <Skeleton className='absolute inset-0 z-20 h-full' />}
-                </div>
-              </div>
+              <FormField<Submission>
+                id='briefDescription'
+                label='Brief Description'
+                type='textarea'
+                maxLength={140}
+                value={submission?.briefDescription}
+                pending={pending}
+                validationError={validationError}
+                onChange={(e) => {
+                  setSubmission({
+                    ...submission,
+                    briefDescription: e.target.value,
+                  })
+                }}
+              />
 
-              {/* Add more fields as needed, following the same pattern */}
+              <ImageUploader
+                maxImages={maxImages}
+                imagesIds={submission.imagesIds || []}
+                imagesUrl={imagesUrl}
+                pending={pending}
+                imagesValidationErrors={imagesValidationErrors}
+                onImageRemove={handleImageRemove}
+                onNewImageRemove={handleNewImageRemove}
+                onImagesAdd={handleImagesAdd}
+                newImages={newImages}
+              />
             </div>
           </form>
         </CardHeader>
@@ -178,9 +220,9 @@ export default function FormClient({ initialSubmission, submissionId, requestId 
               <div className='flex justify-between items-center gap-2 w-full border border-destructive bg-destructive/10 p-4 rounded-md'>
                 <div className='flex flex-col gap-2'>
                   <p className='flex items-center gap-2 text-destructive font-bold'>
-                    <AlertCircle className='w-4 h-4' /> Danger: Delete this request
+                    <AlertCircle className='w-4 h-4' /> Danger: Delete this submission
                   </p>
-                  <p className='text-destructive text-sm'>Once you delete a request, there is no going back. Please be certain.</p>
+                  <p className='text-destructive text-sm'>Once you delete a submission, there is no going back. Please be certain.</p>
                 </div>
                 <Button
                   variant='destructive'

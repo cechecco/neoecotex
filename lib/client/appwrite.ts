@@ -28,7 +28,7 @@ export async function getImagesUrl(fileIds: string[]) {
 
   await Promise.all(
     fileIds.map(async (fileId) => {
-      const url = storage.getFileView(STORAGE_BUCKET_ID, fileId)
+      const url = storage.getFileDownload(STORAGE_BUCKET_ID, fileId)
       urls[fileId] = url
     })
   )

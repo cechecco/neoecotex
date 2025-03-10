@@ -12,7 +12,6 @@ import { Request, RequestCheck } from '@/lib/types'
 
 import StatusBadges from './statusBadges'
 
-
 interface Props {
   request: Request
   check: RequestCheck
