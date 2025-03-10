@@ -22,6 +22,7 @@ export const requestSchema = z
   .strict()
 
 const maxImages = 1
+const minImages = 1
 
 export const imageSchema = z.object({
   images: z
@@ -53,7 +54,8 @@ export const imageSchema = z.object({
           `File must be one of ${ACCEPTED_IMAGE_TYPES.join(', ')}`
         )
     )
-    .max(maxImages, `You can upload a maximum of ${maxImages} images`),
+    .max(maxImages, `You can upload a maximum of ${maxImages} images`)
+    .min(1, `You must upload at least ${minImages} image`),
 })
 
 export interface RequestMetadata {

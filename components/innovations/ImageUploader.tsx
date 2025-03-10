@@ -1,6 +1,7 @@
 'use client'
 
 import { AlertCircle } from 'lucide-react'
+import Image from 'next/image'
 
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -19,18 +20,7 @@ type ImageUploaderProps = {
   newImages: { file: File; preview: string }[]
 }
 
-export default function ImageUploader({
-  maxImages,
-  imagesIds,
-  imagesUrl,
-  pending = false,
-  imagesValidationErrors,
-  onImageRemove,
-  onNewImageRemove,
-  onImagesAdd,
-  newImages,
-}: ImageUploaderProps) {
-  
+export default function ImageUploader({ maxImages, imagesIds, imagesUrl, pending = false, imagesValidationErrors, onImageRemove, onNewImageRemove, onImagesAdd, newImages }: ImageUploaderProps) {
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files
     if (!files) return
@@ -130,7 +120,7 @@ export default function ImageUploader({
                 }
               }
             }
-            
+
             if (files.length > 0) {
               onImagesAdd(files)
             }
@@ -178,10 +168,12 @@ export default function ImageUploader({
                 key={`new-${index}`}
                 className='relative w-full h-48 rounded-md overflow-hidden border border-border group'
               >
-                <img
-                  src={image.preview}
+                <Image
+                  src={image.preview || '/logo.svg'}
                   alt={`New image ${index + 1}`}
                   className='object-contain w-full h-full'
+                  width={100}
+                  height={100}
                 />
                 <button
                   type='button'
@@ -235,10 +227,12 @@ export default function ImageUploader({
                   name='imagesIds'
                   value={imageId}
                 />
-                <img
-                  src={imagesUrl[imageId]}
+                <Image
+                  src={imagesUrl[imageId] || '/logo.svg'}
                   alt={`Request image ${index + 1}`}
                   className='object-contain w-full h-full'
+                  width={100}
+                  height={100}
                 />
                 <button
                   type='button'
@@ -278,4 +272,4 @@ export default function ImageUploader({
       )}
     </div>
   )
-} 
+}

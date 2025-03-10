@@ -73,10 +73,12 @@ export async function getImagesUrl(fileIds: string[]) {
   const { storage } = await createStorageAdminClient()
   const urls: Record<string, ArrayBuffer> = {}
 
-  await Promise.all(fileIds.map(async (fileId) => {
-    const url = await storage.getFilePreview(STORAGE_BUCKET_ID, fileId)
-    urls[fileId] = url
-  }))
+  await Promise.all(
+    fileIds.map(async (fileId) => {
+      const url = await storage.getFilePreview(STORAGE_BUCKET_ID, fileId)
+      urls[fileId] = url
+    })
+  )
 
   return urls
 }

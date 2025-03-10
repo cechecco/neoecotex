@@ -26,9 +26,10 @@ export default function ViewClient({ request }: Props) {
                 key={imageId}
                 src={images[imageId]}
                 alt={request.title}
-                width={1000}
-                height={400}
-                className='w-full h-[300px] object-cover rounded-md'
+                width={1200}
+                height={300}
+                className='w-full h-auto object-contain'
+                priority
               />
             ))}
           <CardTitle>{request.title}</CardTitle>

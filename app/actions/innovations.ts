@@ -3,7 +3,7 @@
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 
-import { requestsService, submissionsService, computeRequestChecks, storageService } from '@/lib/server/database'
+import { requestsService, submissionsService, computeRequestChecks } from '@/lib/server/database'
 import { imageSchema, RequestData, requestSchema, Submission, SubmissionData, submissionSchema } from '@/lib/types'
 
 export async function listRequests(page: number, limit: number, filterField: string, filterValue: string | number | boolean) {

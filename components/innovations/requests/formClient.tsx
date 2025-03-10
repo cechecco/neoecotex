@@ -5,23 +5,17 @@ import Link from 'next/link'
 import { useEffect, useState } from 'react'
 
 import { deleteRequest, updateRequest } from '@/app/actions/innovations'
+import FormField from '@/components/innovations/FormField'
+import ImageUploader from '@/components/innovations/ImageUploader'
 import { Button } from '@/components/ui/button'
 import { Card, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
 import { getImagesUrl } from '@/lib/client/appwrite'
 import { Request, RequestData } from '@/lib/types'
-import FormField from '@/components/innovations/FormField'
-import ImageUploader from '@/components/innovations/ImageUploader'
 
 const maxImages = 1
 
-export default function FormClient({
-  requestId,
-  initialRequest
-}: {
-  requestId: string | undefined
-  initialRequest: RequestData
-}) {
+export default function FormClient({ requestId, initialRequest }: { requestId: string | undefined; initialRequest: RequestData }) {
   const [request, setRequest] = useState<RequestData>(initialRequest)
   const [validationError, setValidationError] = useState<Partial<Record<keyof Request, string[]>> | false>(false)
   const [fetchError, setFetchError] = useState<string | false>(false)
@@ -37,7 +31,7 @@ export default function FormClient({
     }
     fetchImagesUrl()
   }, [request.imagesIds])
-  
+
   useEffect(() => {
     if (validationError) {
       const firstErrorField = Object.keys(validationError)[0] as keyof Request
@@ -78,7 +72,7 @@ export default function FormClient({
       file,
       preview: URL.createObjectURL(file),
     }))
-    
+
     setNewImages((prev) => [...prev, ..._newImages])
   }
 
@@ -302,7 +296,7 @@ export default function FormClient({
                 }}
               />
 
-              <ImageUploader 
+              <ImageUploader
                 maxImages={maxImages}
                 imagesIds={request.imagesIds}
                 imagesUrl={imagesUrl}
