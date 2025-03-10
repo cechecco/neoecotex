@@ -158,7 +158,6 @@ export default function ImageUploader({
           <Input
             id='images-input'
             type='file'
-            name='images'
             multiple
             accept='image/jpeg, image/png, image/jpg'
             className='sr-only'
