@@ -45,7 +45,7 @@ export default function UserMenu({ user }: { user: Models.User<Models.Preference
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild>
-          <Link href='/signup/users'>Profile</Link>
+          <Link href='/account'>Profile</Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem

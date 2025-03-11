@@ -33,7 +33,7 @@ export default function FormClient({ user }: Props) {
     } else if (result.validationErrors) {
       setValidationError(result.validationErrors)
     } else {
-      router.push(`/signup/users`)
+      router.push(`/account`)
     }
     setPending(false)
   }

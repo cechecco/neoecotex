@@ -1,29 +1,16 @@
-import { redirect } from 'next/navigation'
+import { Suspense } from 'react'
 
-import { getLoggedInUser } from '@/app/actions/auth'
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
+import Header from '@/components/innovations/requests/header' // TODO: change position
+import Skeleton from '@/components/innovations/requests/skeleton'
+import ViewServer from '@/components/users/viewServer'
 
-export default async function HomePage() {
-  const user = await getLoggedInUser()
-  if (!user) redirect('/signup')
-
+export default async function UserPage() {
   return (
-    <Card className='max-w-md mx-auto mt-8'>
-      <CardHeader>
-        <CardTitle>Account Information</CardTitle>
-      </CardHeader>
-      <CardContent className='space-y-4'>
-        <div className='grid grid-cols-[100px_1fr] gap-2'>
-          <span className='font-medium'>Email:</span>
-          <span>{user.email}</span>
-
-          <span className='font-medium'>Name:</span>
-          <span>{user.name}</span>
-
-          <span className='font-medium'>ID:</span>
-          <span>{user.$id}</span>
-        </div>
-      </CardContent>
-    </Card>
+    <main>
+      <Header title='User Details' />
+      <Suspense fallback={<Skeleton />}>
+        <ViewServer />
+      </Suspense>
+    </main>
   )
 }

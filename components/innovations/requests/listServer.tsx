@@ -16,7 +16,6 @@ export default async function ListServer({ filterField, filterValue }: { filterF
     const requestIds = documents.map((r) => r.$id)
     const checks = await getRequestsChecks(requestIds)
 
-    // Passiamo la prima pagina come "page 1"
     return (
       <ListClient
         pageNumber={1}

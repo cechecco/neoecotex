@@ -18,6 +18,7 @@ export default function ListClient({ pageNumber, requestsPage, checksPage, filte
   const { setRequestsPages, setChecksPages, setCurrentPage } = useStore()
 
   useEffect(() => {
+    console.log('useEffect', pageNumber, requestsPage, checksPage)
     setRequestsPages((prev) => ({ ...prev, [pageNumber]: requestsPage }))
     setChecksPages((prev) => ({ ...prev, [pageNumber]: checksPage }))
     setCurrentPage(pageNumber)

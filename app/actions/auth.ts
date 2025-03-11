@@ -47,7 +47,7 @@ export async function signUpWithEmail(formData: FormData) {
 
   await createUser(type as string)
 
-  redirect('/signup/users/edit')
+  redirect('/account/edit')
 }
 
 export async function getLoggedInUser() {

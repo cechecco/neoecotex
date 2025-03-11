@@ -25,5 +25,5 @@ export async function GET(request: NextRequest) {
 
   await createUser(type as string)
 
-  return NextResponse.redirect(`${request.nextUrl.origin}/signup/users/edit`)
+  return NextResponse.redirect(`${request.nextUrl.origin}/account/edit`)
 }

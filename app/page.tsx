@@ -8,10 +8,12 @@ export default async function InnovationRequestForm() {
     {
       text: 'Innovator',
       description: ['For SMEs, start-ups, and professionals', 'Connect with companies to develop innovation'],
+      type: 'innovator',
     },
     {
       text: 'Innovation Requestor',
       description: ['For companies, SMEs, non-profit initiative', 'Find innovators to create solutions'],
+      type: 'requestor',
     },
   ]
 
@@ -58,7 +60,7 @@ export default async function InnovationRequestForm() {
         {texts.map((text, index) => (
           <Link
             key={index}
-            href='/signup?type=innovator'
+            href={`/signup?type=${text.type}`}
             className='border border-fuchsia-700 w-1/2 bg-fuchsia-200 p-4 h-48 backdrop-blur-xl shadow-lg flex flex-col gap-4 justify-center items-center align-middle backdrop-blur-sm w-full hover:shadow-lg hover:translate-y-[-10px] hover:bg-white transition-all duration-300'
           >
             <div className='flex flex-col gap-0 justify-center items-end'>

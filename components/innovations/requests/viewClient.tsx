@@ -28,7 +28,7 @@ export default function ViewClient({ request }: Props) {
                 alt={request.title}
                 width={1200}
                 height={300}
-                className='w-full h-auto object-contain'
+                className='w-full h-96 object-cover object-center max-w-full'
                 priority
               />
             ))}

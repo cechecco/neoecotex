@@ -11,7 +11,7 @@ interface Props {
 
 export default async function SignUpPage(props: Props) {
   const user = await getLoggedInUser()
-  if (user) redirect('/signup/users')
+  if (user) redirect('/account')
 
   const type = (await props.searchParams).type || 'innovator'
 
