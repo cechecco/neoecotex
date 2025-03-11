@@ -2,12 +2,18 @@ import { redirect } from 'next/navigation'
 
 import { signUpWithGoogle, signUpWithEmail, getLoggedInUser } from '@/app/actions/auth'
 import { Button } from '@/components/ui/button'
-import { Card, CardHeader, CardContent, CardFooter } from '@/components/ui/card'
+import { Card, CardHeader, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 
-export default async function SignUpPage() {
+interface Props {
+  searchParams: Promise<{ type: string }>
+}
+
+export default async function SignUpPage(props: Props) {
   const user = await getLoggedInUser()
-  if (user) redirect('/account')
+  if (user) redirect('/signup/users')
+
+  const type = (await props.searchParams).type || 'innovator'
 
   return (
     <div className='flex items-start mt-8 justify-center min-h-screen'>
@@ -21,6 +27,18 @@ export default async function SignUpPage() {
             action={signUpWithEmail}
             className='space-y-4'
           >
+            <input
+              type='hidden'
+              name='type'
+              value={type}
+            />
+            <Input
+              id='name'
+              name='name'
+              placeholder='Name'
+              type='text'
+              required
+            />
             <Input
               id='email'
               name='email'
@@ -36,13 +54,6 @@ export default async function SignUpPage() {
               type='password'
               required
             />
-            <Input
-              id='name'
-              name='name'
-              placeholder='Name'
-              type='text'
-              required
-            />
             <Button
               type='submit'
               className='w-full'
@@ -50,12 +61,20 @@ export default async function SignUpPage() {
               Sign up
             </Button>
           </form>
-        </CardContent>
-        <CardFooter>
+          <div className='flex items-center justify-center'>
+            <div className='w-full h-[1px] bg-gray-200'></div>
+            <span className='mx-4 text-gray-500'>OR</span>
+            <div className='w-full h-[1px] bg-gray-200'></div>
+          </div>
           <form
             action={signUpWithGoogle}
             className='w-full'
           >
+            <input
+              type='hidden'
+              name='type'
+              value={type}
+            />
             <Button
               variant='outline'
               className='w-full'
@@ -85,7 +104,7 @@ export default async function SignUpPage() {
               Sign up with Google
             </Button>
           </form>
-        </CardFooter>
+        </CardContent>
       </Card>
     </div>
   )

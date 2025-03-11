@@ -7,12 +7,16 @@ import { OAuthProvider } from 'node-appwrite'
 import { ID } from 'node-appwrite'
 
 import { createAdminClient, createSessionClient } from '@/lib/server/appwrite'
-export async function signUpWithGoogle() {
+
+import { createUser } from './users'
+
+export async function signUpWithGoogle(formData: FormData) {
   const { account } = await createAdminClient()
 
   const origin = (await headers()).get('origin')
 
-  const redirectUrl = await account.createOAuth2Token(OAuthProvider.Google, `${origin}/oauth`, `${origin}/signup`)
+  const type = formData.get('type') as string
+  const redirectUrl = await account.createOAuth2Token(OAuthProvider.Google, `${origin}/oauth?type=${type}`, `${origin}`)
 
   redirect(redirectUrl)
 }
@@ -21,14 +25,14 @@ export async function signOut() {
   const { account } = await createSessionClient()
   ;(await cookies()).delete('user-session')
   await account.deleteSession('current')
-  redirect('/signup')
+  redirect('/')
 }
 
 export async function signUpWithEmail(formData: FormData) {
   const email = formData.get('email') as string
   const password = formData.get('password') as string
   const name = formData.get('name') as string
-
+  const type = formData.get('type') as string
   const { account } = await createAdminClient()
 
   await account.create(ID.unique(), email, password, name)
@@ -41,7 +45,9 @@ export async function signUpWithEmail(formData: FormData) {
     secure: true,
   })
 
-  redirect('/account')
+  await createUser(type as string)
+
+  redirect('/signup/users/edit')
 }
 
 export async function getLoggedInUser() {

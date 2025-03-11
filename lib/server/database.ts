@@ -2,14 +2,14 @@ import { ID, Models, Query, QueryTypes } from 'node-appwrite'
 
 import { getLoggedInUser } from '@/app/actions/auth'
 import { createDatabaseAdminClient, createStorageAdminClient, getUserEmail } from '@/lib/server/appwrite'
-import { Request, RequestChecksMap, RequestCreateInput, RequestData, Submission, SubmissionData } from '@/lib/types'
+import { InnovatorData, Request, RequestChecksMap, RequestCreateInput, RequestData, RequestorData, Submission, SubmissionData, User, UserData } from '@/lib/types'
 
 const DATABASE_ID = '67aa7414000f83ae7018'
 const REQUESTS_COLLECTION_ID = '67aa745800179944f652'
 const SUBMISSIONS_COLLECTION_ID = '67b25d700034a4bddeb1'
 const STORAGE_BUCKET_ID = '67ca3da70007a46d3511' // Add your bucket ID here
 
-async function getCurrentUser() {
+export async function getCurrentUser() {
   const user = await getLoggedInUser()
   if (!user) {
     throw new Error('User not found')
@@ -347,6 +347,84 @@ export const storageService = {
     } catch (error) {
       console.error(error)
       throw new Error('Failed to delete image' + error)
+    }
+  },
+}
+
+const USERS_COLLECTION_ID = '67cf0c29002ddc34e7a9' // da sostituire con l'ID della collezione Appwrite
+
+export const usersService = {
+  async get() {
+    const { databases } = await createDatabaseAdminClient()
+    const user = await getCurrentUser()
+    const doc = await databases.getDocument(DATABASE_ID, USERS_COLLECTION_ID, user.$id)
+    return doc as User
+  },
+
+  async create(type: string) {
+    const { databases } = await createDatabaseAdminClient()
+    console.log('create', type)
+    const user = await getCurrentUser()
+    try {
+      const innovator = {
+        occupation: '',
+      }
+
+      const requestor = {
+        companyName: '',
+        companySize: 0,
+      }
+
+      const userData: UserData = {
+        name: user.name,
+        surname: '',
+        email: user.email,
+        type,
+        country: '',
+        city: '',
+        imagesIds: [],
+        active: false,
+        ...(type === 'innovator' ? innovator : requestor),
+      }
+
+      const created = await databases.createDocument(DATABASE_ID, USERS_COLLECTION_ID, user.$id, userData)
+      return created as User
+    } catch (error) {
+      console.error(error)
+      return { error: true, message: String(error) }
+    }
+  },
+
+  async update(data: UserData) {
+    const { databases } = await createDatabaseAdminClient()
+    const user = await getCurrentUser()
+    const userDoc = await databases.getDocument(DATABASE_ID, USERS_COLLECTION_ID, user.$id)
+    try {
+      const userSpecificData =
+        userDoc.type === 'innovator'
+          ? {
+              occupation: (data as InnovatorData).occupation,
+            }
+          : {
+              companyName: (data as RequestorData).companyName,
+              companySize: (data as RequestorData).companySize,
+            }
+      const userData: UserData = {
+        email: data.email || '',
+        name: data.name || '',
+        surname: data.surname || '',
+        country: data.country || '',
+        city: data.city || '',
+        imagesIds: data.imagesIds || [],
+        type: userDoc.type || '',
+        active: true,
+        ...userSpecificData,
+      }
+      const updated = await databases.updateDocument(DATABASE_ID, USERS_COLLECTION_ID, user.$id, userData)
+      return updated as User
+    } catch (error) {
+      console.error(error)
+      return { error: true, message: String(error) }
     }
   },
 }

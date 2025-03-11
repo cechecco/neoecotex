@@ -101,3 +101,66 @@ export type RequestCheck = {
 }
 
 export type RequestChecksMap = Record<string, RequestCheck>
+
+export const userSchema = z.object({
+  name: z.string(),
+  surname: z.string(),
+  email: z.string(),
+  type: z.string(), // innovator or requestor
+  country: z.string(),
+  city: z.string(),
+  imagesIds: z.array(z.string()),
+})
+
+export const requestorSchema = userSchema.extend({
+  companyName: z.string(),
+  companySize: z.number(),
+})
+
+export const innovatorSchema = userSchema.extend({
+  occupation: z.string(),
+})
+
+export const userImageSchema = z.object({
+  images: z
+    .array(
+      z
+        .any()
+        .refine((val) => {
+          if (!val || typeof val !== 'object' || !('size' in val) || !('type' in val)) {
+            return false
+          }
+          return true
+        }, 'Please provide a valid file')
+        .refine(
+          (val) => {
+            if (val.size > MAX_FILE_SIZE) {
+              return false
+            }
+            return true
+          },
+          `File size must be less than ${MAX_FILE_SIZE / 1000000}MB`
+        )
+        .refine(
+          (val) => {
+            if (!ACCEPTED_IMAGE_TYPES.includes(val.type)) {
+              return false
+            }
+            return true
+          },
+          `File must be one of ${ACCEPTED_IMAGE_TYPES.join(', ')}`
+        )
+    )
+    .max(maxImages, `You can upload a maximum of ${maxImages} images`)
+    .min(1, `You must upload at least ${minImages} image`),
+})
+
+export type BaseUserData = z.infer<typeof userSchema>
+
+export type RequestorData = z.infer<typeof requestorSchema>
+
+export type InnovatorData = z.infer<typeof innovatorSchema>
+
+export type UserData = BaseUserData & (RequestorData | InnovatorData) & { active: boolean }
+
+export type User = UserData & Models.Document
