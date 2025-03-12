@@ -102,10 +102,18 @@ export type RequestCheck = {
 
 export type RequestChecksMap = Record<string, RequestCheck>
 
-export const userSchema = z.object({
+export const baseUserSchema = z.object({
   name: z.string().min(1, 'Name is required').max(100, 'Name must be less than 100 characters'),
-  surname: z.string().min(1, 'Surname is required').max(100, 'Surname must be less than 100 characters'),
+})
+
+export const loginUserSchema = baseUserSchema.extend({
   email: z.string().email('Invalid email address'),
+  password: z.string().min(1, 'Password is required').max(100, 'Password must be less than 100 characters'),
+})
+
+export const userSchema = baseUserSchema.extend({
+  email: z.string().email('Invalid email address'),
+  surname: z.string().min(1, 'Surname is required').max(100, 'Surname must be less than 100 characters'),
   type: z.enum(['innovator', 'requester']),
   country: z.string().min(1, 'Country is required').max(100, 'Country must be less than 100 characters'),
   city: z.string().min(1, 'City is required').max(100, 'City must be less than 100 characters'),
@@ -155,7 +163,7 @@ export const userImageSchema = z.object({
     .min(1, `You must upload at least ${minImages} image`),
 })
 
-export type BaseUserData = z.infer<typeof userSchema>
+export type BaseUserData = z.infer<typeof userSchema> & z.infer<typeof baseUserSchema>
 
 export type RequesterData = z.infer<typeof requesterSchema>
 

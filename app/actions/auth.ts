@@ -7,6 +7,7 @@ import { OAuthProvider } from 'node-appwrite'
 import { ID } from 'node-appwrite'
 
 import { createAdminClient, createSessionClient } from '@/lib/server/appwrite'
+import { baseUserSchema, loginUserSchema } from '@/lib/types'
 
 import { createUser, getUser } from './users'
 
@@ -28,16 +29,40 @@ export async function signOut() {
   redirect('/')
 }
 
-export async function signUpWithEmail(formData: FormData) {
-  console.log('signUpWithEmail')
+const getUserData = (formData: FormData) => {
   const email = formData.get('email') as string
   const password = formData.get('password') as string
   const name = formData.get('name') as string
   const type = formData.get('type') as string
+  return { email, password, name, type }
+}
+
+const validateUser = (userData: { email: string; password: string; name: string; type: string }) => {
+  const validatedFields = baseUserSchema.safeParse(userData)
+  if (!validatedFields.success) {
+    return validatedFields.error.flatten().fieldErrors
+  }
+  return null
+}
+
+export async function signUpWithEmail(formData: FormData) {
+  console.log('signUpWithEmail')
+  const userData = getUserData(formData)
+  if (!userData) {
+    return { error: true, message: 'User not found' }
+  }
+  const validationErrors = validateUser(userData)
+
+  if (validationErrors) {
+    return {
+      validationErrors,
+    }
+  }
+
   const { account } = await createAdminClient()
 
-  await account.create(ID.unique(), email, password, name)
-  const session = await account.createEmailPasswordSession(email, password)
+  await account.create(ID.unique(), userData.email, userData.password, userData.name)
+  const session = await account.createEmailPasswordSession(userData.email, userData.password)
 
   ;(await cookies()).set('user-session', session.secret, {
     path: '/',
@@ -46,18 +71,38 @@ export async function signUpWithEmail(formData: FormData) {
     secure: true,
   })
 
-  if (!(await getUser())) await createUser(type as string)
+  if (!(await getUser())) await createUser(userData.type as string)
 
   redirect('/account/edit')
 }
 
-export async function signInWithEmail(formData: FormData) {
+const getUserDataLogin = (formData: FormData) => {
   const email = formData.get('email') as string
   const password = formData.get('password') as string
+  return { email, password }
+}
+
+const validateUserLogin = (userData: { email: string; password: string }) => {
+  const validatedFields = loginUserSchema.safeParse(userData)
+  if (!validatedFields.success) {
+    return validatedFields.error.flatten().fieldErrors
+  }
+  return null
+}
+
+export async function signInWithEmail(formData: FormData) {
+  const userData = getUserDataLogin(formData)
+  const validationErrors = validateUserLogin(userData)
+
+  if (validationErrors) {
+    return {
+      validationErrors,
+    }
+  }
   const { account } = await createAdminClient()
 
   try {
-    const session = await account.createEmailPasswordSession(email, password)
+    const session = await account.createEmailPasswordSession(userData.email, userData.password)
 
     ;(await cookies()).set('user-session', session.secret, {
       path: '/',

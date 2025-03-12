@@ -14,7 +14,7 @@ import { cn } from '@/lib/utils'
 interface FormFieldProps<T> {
   id: keyof T
   label: string
-  type?: 'text' | 'number' | 'textarea' | 'checkbox' | 'list'
+  type?: 'text' | 'number' | 'textarea' | 'checkbox' | 'list' | 'password'
   maxLength?: number
   value: string | number | boolean | CheckedState | { value: string; label: string }
   pending: boolean
@@ -25,6 +25,7 @@ interface FormFieldProps<T> {
 
 export default function FormField<T>({ id, label, type = 'text', maxLength, value, pending, validationError, onChange, disabled }: FormFieldProps<T>) {
   const InputComponent = type === 'textarea' ? Textarea : Input
+  const inputProps = type === 'password' ? { type: 'password' } : { type }
   const stringValue = typeof value === 'string' ? value : ''
 
   return (
@@ -82,7 +83,7 @@ export default function FormField<T>({ id, label, type = 'text', maxLength, valu
       ) : (
         <div className='relative'>
           <InputComponent
-            type={type !== 'textarea' ? type : undefined}
+            {...inputProps}
             id={id.toString()}
             name={id.toString()}
             defaultValue={value as string}

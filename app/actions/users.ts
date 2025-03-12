@@ -70,7 +70,7 @@ const getUserData = async (data: FormData) => {
     return {
       ...requesterData,
       active: user.active,
-    }
+    } as UserData
   }
 
   const innovatorData: InnovatorData = {
@@ -81,7 +81,7 @@ const getUserData = async (data: FormData) => {
   return {
     ...innovatorData,
     active: user.active,
-  }
+  } as UserData
 }
 
 const getImages = (formData: FormData) => {
