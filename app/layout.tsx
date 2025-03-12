@@ -2,6 +2,7 @@ import { Mail, Linkedin, Twitter, Instagram, Youtube } from 'lucide-react'
 import type { Metadata } from 'next'
 import { Albert_Sans } from 'next/font/google'
 import Image from 'next/image'
+import Link from 'next/link'
 
 import MenuServer from '@/components/menuServer'
 import { StoreProvider } from '@/contexts/store'
@@ -41,53 +42,110 @@ export default async function RootLayout({
                     </div>
                     <span className='font-semibold text-xl'>neoecotex</span>
                   </div>
-                  
-                  <p className='text-sm text-gray-600'>
-                    Transform the fashion and textile industry for the better through open innovation.
-                  </p>
-                  
+
+                  <p className='text-sm text-gray-600'>Transform the fashion and textile industry for the better through open innovation.</p>
+
                   <div className='flex items-center gap-2'>
                     <Mail className='h-4 w-4 text-gray-600' />
-                    <a href='mailto:connect@neoecotex.com' className='text-sm text-gray-600 hover:text-purple-600'>
+                    <a
+                      href='mailto:connect@neoecotex.com'
+                      className='text-sm text-gray-600 hover:text-purple-600'
+                    >
                       connect@neoecotex.com
                     </a>
                   </div>
-                  
+
                   <div className='flex gap-2'>
-                    <a href='https://www.linkedin.com/company/neoecotex_01' target='_blank' rel='noopener noreferrer' className='text-purple-500 hover:text-purple-700'>
+                    <a
+                      href='https://www.linkedin.com/company/neoecotex_01'
+                      target='_blank'
+                      rel='noopener noreferrer'
+                      className='text-purple-500 hover:text-purple-700'
+                    >
                       <Linkedin className='h-5 w-5' />
                     </a>
-                    <a href='#' target='_blank' rel='noopener noreferrer' className='text-purple-500 hover:text-purple-700'>
+                    <a
+                      href='#'
+                      target='_blank'
+                      rel='noopener noreferrer'
+                      className='text-purple-500 hover:text-purple-700'
+                    >
                       <Twitter className='h-5 w-5' />
                     </a>
-                    <a href='#' target='_blank' rel='noopener noreferrer' className='text-purple-500 hover:text-purple-700'>
+                    <a
+                      href='#'
+                      target='_blank'
+                      rel='noopener noreferrer'
+                      className='text-purple-500 hover:text-purple-700'
+                    >
                       <Instagram className='h-5 w-5' />
                     </a>
-                    <a href='#' target='_blank' rel='noopener noreferrer' className='text-purple-500 hover:text-purple-700'>
+                    <a
+                      href='#'
+                      target='_blank'
+                      rel='noopener noreferrer'
+                      className='text-purple-500 hover:text-purple-700'
+                    >
                       <Youtube className='h-5 w-5' />
                     </a>
                   </div>
                 </div>
-                
+
                 {/* Platform Links Column */}
                 <div className='space-y-4'>
                   <h3 className='font-semibold text-lg'>Platform</h3>
                   <ul className='space-y-2'>
-                    <li><a href='/' className='text-gray-600 hover:text-purple-600'>Home</a></li>
-                    <li><a href='/how-it-works' className='text-gray-600 hover:text-purple-600'>How it works?</a></li>
-                    <li><a href='/about' className='text-gray-600 hover:text-purple-600'>About</a></li>
-                    <li><a href='/contact' className='text-gray-600 hover:text-purple-600'>Contact</a></li>
+                    <li>
+                      <Link href='/'>
+                        <span className='text-gray-600 hover:text-purple-600'>
+                          Home
+                        </span>
+                      </Link>
+                    </li>
+                    <li>
+                      <Link href='/how-it-works'>
+                        <span className='text-gray-600 hover:text-purple-600'>
+                          How it works?
+                        </span>
+                      </Link>
+                    </li>
+                    <li>
+                      <Link href='/about'>
+                        <span className='text-gray-600 hover:text-purple-600'>
+                          About
+                        </span>
+                      </Link>
+                    </li>
+                    <li>
+                      <Link href='/contact'>
+                        <span className='text-gray-600 hover:text-purple-600'>
+                          Contact
+                        </span>
+                      </Link>
+                    </li>
                   </ul>
                 </div>
               </div>
-              
+
               {/* Bottom footer */}
               <div className='mt-8 pt-4 border-t flex flex-col md:flex-row justify-between items-center'>
                 <p className='text-sm text-gray-500'>© 2023 All rights reserved.</p>
                 <div className='flex gap-4 mt-3 md:mt-0'>
-                  <a href='/terms' className='text-sm text-gray-500 hover:text-purple-600'>Terms of Use</a>
-                  <a href='/privacy' className='text-sm text-gray-500 hover:text-purple-600'>Privacy Policy</a>
-                  <a href='/cookies' className='text-sm text-gray-500 hover:text-purple-600'>Cookie Policy</a>
+                  <Link href='/terms'>
+                    <span className='text-sm text-gray-500 hover:text-purple-600'>
+                      Terms of Use
+                    </span>
+                  </Link>
+                  <Link href='/privacy'>
+                    <span className='text-sm text-gray-500 hover:text-purple-600'>
+                      Privacy Policy
+                    </span>
+                  </Link>
+                  <Link href='/cookies'>
+                    <span className='text-sm text-gray-500 hover:text-purple-600'>
+                      Cookie Policy
+                    </span>
+                  </Link>
                 </div>
               </div>
             </div>
