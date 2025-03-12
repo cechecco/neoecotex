@@ -21,9 +21,14 @@ export async function middleware(request: NextRequest) {
       return response
     }
   }
-  if (pathname.startsWith('/registration') && user) {
-    const response = NextResponse.redirect(new URL('/innovations/requests', request.url))
-    return response
+  if (pathname.startsWith('/registration')) {
+    if (user && user.active) {
+      const response = NextResponse.redirect(new URL('/innovations/requests', request.url))
+      return response
+    } else if (user) {
+      const response = NextResponse.redirect(new URL('/account/edit', request.url))
+      return response
+    }
   }
   const response = NextResponse.next()
   return response
