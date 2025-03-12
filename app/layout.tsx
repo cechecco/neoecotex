@@ -1,7 +1,6 @@
 import { Mail, Linkedin, Twitter, Instagram, Youtube } from 'lucide-react'
 import type { Metadata } from 'next'
 import { Albert_Sans } from 'next/font/google'
-import Image from 'next/image'
 import Link from 'next/link'
 
 import MenuServer from '@/components/menuServer'
@@ -97,30 +96,22 @@ export default async function RootLayout({
                   <ul className='space-y-2'>
                     <li>
                       <Link href='/'>
-                        <span className='text-gray-600 hover:text-purple-600'>
-                          Home
-                        </span>
+                        <span className='text-gray-600 hover:text-purple-600'>Home</span>
                       </Link>
                     </li>
                     <li>
                       <Link href='/how-it-works'>
-                        <span className='text-gray-600 hover:text-purple-600'>
-                          How it works?
-                        </span>
+                        <span className='text-gray-600 hover:text-purple-600'>How it works?</span>
                       </Link>
                     </li>
                     <li>
                       <Link href='/about'>
-                        <span className='text-gray-600 hover:text-purple-600'>
-                          About
-                        </span>
+                        <span className='text-gray-600 hover:text-purple-600'>About</span>
                       </Link>
                     </li>
                     <li>
                       <Link href='/contact'>
-                        <span className='text-gray-600 hover:text-purple-600'>
-                          Contact
-                        </span>
+                        <span className='text-gray-600 hover:text-purple-600'>Contact</span>
                       </Link>
                     </li>
                   </ul>
@@ -132,19 +123,13 @@ export default async function RootLayout({
                 <p className='text-sm text-gray-500'>© 2023 All rights reserved.</p>
                 <div className='flex gap-4 mt-3 md:mt-0'>
                   <Link href='/terms'>
-                    <span className='text-sm text-gray-500 hover:text-purple-600'>
-                      Terms of Use
-                    </span>
+                    <span className='text-sm text-gray-500 hover:text-purple-600'>Terms of Use</span>
                   </Link>
                   <Link href='/privacy'>
-                    <span className='text-sm text-gray-500 hover:text-purple-600'>
-                      Privacy Policy
-                    </span>
+                    <span className='text-sm text-gray-500 hover:text-purple-600'>Privacy Policy</span>
                   </Link>
                   <Link href='/cookies'>
-                    <span className='text-sm text-gray-500 hover:text-purple-600'>
-                      Cookie Policy
-                    </span>
+                    <span className='text-sm text-gray-500 hover:text-purple-600'>Cookie Policy</span>
                   </Link>
                 </div>
               </div>
