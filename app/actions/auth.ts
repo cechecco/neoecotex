@@ -38,7 +38,7 @@ const getUserData = (formData: FormData) => {
 }
 
 const validateUser = (userData: { email: string; password: string; name: string; type: string }) => {
-  const validatedFields = baseUserSchema.safeParse(userData)
+  const validatedFields = baseUserSchema.merge(loginUserSchema).safeParse(userData)
   if (!validatedFields.success) {
     return validatedFields.error.flatten().fieldErrors
   }
