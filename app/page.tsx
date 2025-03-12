@@ -1,83 +1,125 @@
 import Image from 'next/image'
 import Link from 'next/link'
-
+import { Button } from '@/components/ui/button'
 import { Card, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 
-export default async function InnovationRequestForm() {
-  const texts = [
-    {
-      text: 'Innovator',
-      description: ['For SMEs, start-ups, and professionals', 'Connect with companies to develop innovation'],
-      type: 'innovator',
-    },
-    {
-      text: 'Innovation Requester',
-      description: ['For companies, SMEs, non-profit initiative', 'Find innovators to create solutions'],
-      type: 'requester',
-    },
-  ]
-
-  const features = [
-    {
-      text: 'Blog Posts',
-      description: 'News, articles, and insights about innovation and technology',
-    },
-    {
-      text: 'Innovation Hub',
-      description: 'Match companies with innovators to solve challenges and create new solutions',
-    },
-    {
-      text: 'Generative Ai',
-      description: 'Cutting edge generative AI to help you',
-    },
-  ]
-
+export default function HomePage() {
   return (
-    <main className='flex flex-col gap-4'>
-      <div className='flex justify-center items-center py-12'>
-        <div className='flex gap-4 flex-col text-center w-full justify-center items-center'>
-          <Image
-            src='/logo.svg'
-            alt='Neoecotex'
-            width={700}
-            height={200}
-          />
-          <p className='text-2xl lg:text-3xl px-8'>Connects companies with innovators to solve challenges and create new solutions</p>
-          <div className='grid grid-cols-1 md:grid-cols-3 gap-4 w-full max-w-6xl px-4'>
-            {features.map((feature, index) => (
-              <Card key={index}>
-                <CardHeader>
-                  <CardTitle className='text-lg'>{feature.text}</CardTitle>
-                  <CardDescription>{feature.description}</CardDescription>
-                </CardHeader>
-              </Card>
-            ))}
+    <main className="flex flex-col min-h-screen">
+      {/* Hero Section */}        
+      <div className="flex justify-center">
+            <div className="relative w-full max-w-4xl aspect-[2/1]">
+              <Image
+                src="/logo.svg"
+                alt="Platform workflow showing how Innovation Requestors connect with Innovators"
+                fill
+                className="object-contain"
+              />
+            </div>
           </div>
-          <p className='font-bold text-2xl lg:text-4xl mt-8 bg-white/20 p-4 w-full'>Begin your innovation journey today!</p>
+      <section className="w-full overflow-hidden">        
+        <div className="container px-4 mx-auto">
+          <div className="flex flex-col items-center">
+            <h1 className="text-5xl md:text-6xl font-bold text-center">
+              Connect, innovate, transform
+            </h1>
+            <p className="text-xl md:text-2xl mb-8 text-center">
+              Open eco-innovation platform for fashion and textile
+            </p>
+            <Button size="lg" className="bg-black text-white hover:bg-gray-800">
+              <Link href="/registration">TRY IT FOR FREE</Link>
+            </Button>
+          </div>
         </div>
-      </div>
-      <div className='flex flex-col lg:flex-row justify-stretch mb-48 gap-4'>
-        {texts.map((text, index) => (
-          <Link
-            key={index}
-            href={`/signup?type=${text.type}`}
-            className='border border-fuchsia-700 w-1/2 bg-fuchsia-200 p-4 h-48 backdrop-blur-xl shadow-lg flex flex-col gap-4 justify-center items-center align-middle backdrop-blur-sm w-full hover:shadow-lg hover:translate-y-[-10px] hover:bg-white transition-all duration-300'
-          >
-            <div className='flex flex-col gap-0 justify-center items-end'>
-              <p className='text-xs text-center'>Register as</p>
-              <p className='text-2xl font-bold'>{text.text}</p>
+
+      </section>
+
+      {/* How It Works Section */}
+      <section className="py-10">
+        <div className="container px-4 mx-auto">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">How It Works</h2>
+            <p className="text-lg max-w-3xl mx-auto">
+              The platform serves as a co-creation space to unleash the power of creativity and ensure a positive impact on the environment through eco-innovation.
+            </p>
+          </div>
+          
+          <div className="flex justify-center">
+            <div className="relative w-full max-w-4xl aspect-[4/3]">
+              <Image
+                src="/how-it-works.png"
+                alt="Platform workflow showing how Innovation Requestors connect with Innovators"
+                fill
+                className="object-contain"
+              />
             </div>
-            <div className='text-sm text-center'>
-              {text.description.map((description, index) => (
-                <div key={index}>
-                  <span>{description}</span>
-                  <br />
-                </div>
-              ))}
+          </div>
+        </div>
+      </section>
+      
+      {/* Focus Section */}
+      <section className="py-10">
+        <div className="container px-4 mx-auto">
+          <div className="flex flex-col md:flex-row items-center gap-12">
+            <div className="w-full md:w-1/2">
+              <div className="relative w-full aspect-square">
+                <Image
+                  src="/platform-mockup.png"
+                  alt="Platform mockup showing innovation hub"
+                  fill
+                  className="object-cover rounded-lg"
+                />
+              </div>
             </div>
-          </Link>
-        ))}
-      </div>
+            
+            <div className="w-full md:w-1/2">
+              <p className="text-sm font-medium uppercase tracking-wider mb-2">WE GROW WHAT WE FOCUS ON</p>
+              <h2 className="text-3xl md:text-4xl font-bold mb-6">Discover the power of innovation</h2>
+              <p className="text-lg mb-4">
+                We aim to contribute to the acceleration of eco-innovation.
+              </p>
+              <p className="text-lg mb-8">
+                We matchmake innovators and companies to drive impactful eco-innovation.
+              </p>
+              <Button size="lg" className="bg-black text-white hover:bg-gray-800">
+                Read More
+              </Button>
+            </div>
+          </div>
+        </div>
+      </section>
+      
+      {/* Who We Are Section */}
+      <section className="py-10">
+        <div className="container px-4 mx-auto">
+          <div className="flex flex-col md:flex-row-reverse items-center gap-12">
+            <div className="w-full md:w-1/2">
+              <div className="relative w-full aspect-square">
+                <Image
+                  src="/about.png"
+                  alt="Collaborative event showing hands raised"
+                  fill
+                  className="object-cover rounded-lg"
+                />
+              </div>
+            </div>
+            
+            <div className="w-full md:w-1/2">
+              <p className="text-sm font-medium uppercase tracking-wider mb-2">ACCELERATING ECO-INNOVATION</p>
+              <h2 className="text-3xl md:text-4xl font-bold mb-6">Who we are?</h2>
+              <p className="text-lg mb-4">
+                An open eco-innovation platform for fashion and textiles.
+              </p>
+              <p className="text-lg mb-8">
+                We create a collaborative space for developing eco-innovation projects by connecting stakeholders across the industry.
+              </p>
+              <Button size="lg" className="bg-black text-white hover:bg-gray-800">
+                Read More
+              </Button>
+            </div>
+          </div>
+        </div>
+      </section>
     </main>
   )
 }
