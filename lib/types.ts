@@ -103,22 +103,22 @@ export type RequestCheck = {
 export type RequestChecksMap = Record<string, RequestCheck>
 
 export const userSchema = z.object({
-  name: z.string(),
-  surname: z.string(),
-  email: z.string(),
-  type: z.string(), // innovator or requestor
-  country: z.string(),
-  city: z.string(),
+  name: z.string().min(1, 'Name is required').max(100, 'Name must be less than 100 characters'),
+  surname: z.string().min(1, 'Surname is required').max(100, 'Surname must be less than 100 characters'),
+  email: z.string().email('Invalid email address'),
+  type: z.enum(['innovator', 'requester']),
+  country: z.string().min(1, 'Country is required').max(100, 'Country must be less than 100 characters'),
+  city: z.string().min(1, 'City is required').max(100, 'City must be less than 100 characters'),
   imagesIds: z.array(z.string()),
 })
 
-export const requestorSchema = userSchema.extend({
-  companyName: z.string(),
-  companySize: z.number(),
+export const requesterSchema = userSchema.extend({
+  companyName: z.string().min(1, 'Company name is required').max(100, 'Company name must be less than 100 characters'),
+  companySize: z.number().min(1, 'Company size must be greater than 0').max(1000000, 'Company size must be less than 1000000'),
 })
 
 export const innovatorSchema = userSchema.extend({
-  occupation: z.string(),
+  occupation: z.string().min(1, 'Occupation is required').max(100, 'Occupation must be less than 100 characters'),
 })
 
 export const userImageSchema = z.object({
@@ -157,10 +157,10 @@ export const userImageSchema = z.object({
 
 export type BaseUserData = z.infer<typeof userSchema>
 
-export type RequestorData = z.infer<typeof requestorSchema>
+export type RequesterData = z.infer<typeof requesterSchema>
 
 export type InnovatorData = z.infer<typeof innovatorSchema>
 
-export type UserData = BaseUserData & (RequestorData | InnovatorData) & { active: boolean }
+export type UserData = BaseUserData & (RequesterData | InnovatorData) & { active: boolean }
 
 export type User = UserData & Models.Document

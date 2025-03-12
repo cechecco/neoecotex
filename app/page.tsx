@@ -11,9 +11,9 @@ export default async function InnovationRequestForm() {
       type: 'innovator',
     },
     {
-      text: 'Innovation Requestor',
+      text: 'Innovation Requester',
       description: ['For companies, SMEs, non-profit initiative', 'Find innovators to create solutions'],
-      type: 'requestor',
+      type: 'requester',
     },
   ]
 

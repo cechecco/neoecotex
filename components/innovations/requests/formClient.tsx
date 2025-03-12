@@ -164,7 +164,7 @@ export default function FormClient({ requestId, initialRequest }: { requestId: s
                 onChange={(e) => {
                   setRequest({
                     ...request,
-                    title: e.target.value,
+                    title: 'target' in e ? e.target.value : e.value,
                   })
                 }}
               />
@@ -180,7 +180,7 @@ export default function FormClient({ requestId, initialRequest }: { requestId: s
                 onChange={(e) => {
                   setRequest({
                     ...request,
-                    briefDescription: e.target.value,
+                    briefDescription: 'target' in e ? e.target.value : e.value,
                   })
                 }}
               />
@@ -196,7 +196,7 @@ export default function FormClient({ requestId, initialRequest }: { requestId: s
                 onChange={(e) => {
                   setRequest({
                     ...request,
-                    detailedDescription: e.target.value,
+                    detailedDescription: 'target' in e ? e.target.value : e.value,
                   })
                 }}
               />
@@ -212,7 +212,7 @@ export default function FormClient({ requestId, initialRequest }: { requestId: s
                 onChange={(e) => {
                   setRequest({
                     ...request,
-                    expectedExpertise: e.target.value,
+                    expectedExpertise: 'target' in e ? e.target.value : e.value,
                   })
                 }}
               />
@@ -228,7 +228,7 @@ export default function FormClient({ requestId, initialRequest }: { requestId: s
                 onChange={(e) => {
                   setRequest({
                     ...request,
-                    expectedTimeline: e.target.value,
+                    expectedTimeline: 'target' in e ? e.target.value : e.value,
                   })
                 }}
               />
@@ -244,7 +244,7 @@ export default function FormClient({ requestId, initialRequest }: { requestId: s
                 onChange={(e) => {
                   setRequest({
                     ...request,
-                    company: e.target.value,
+                    company: 'target' in e ? e.target.value : e.value,
                   })
                 }}
               />
@@ -259,7 +259,7 @@ export default function FormClient({ requestId, initialRequest }: { requestId: s
                 onChange={(e) => {
                   setRequest({
                     ...request,
-                    budget: parseFloat(e.target.value) || 0,
+                    budget: parseFloat('target' in e ? e.target.value : e.value) || 0,
                   })
                 }}
               />
@@ -275,7 +275,7 @@ export default function FormClient({ requestId, initialRequest }: { requestId: s
                 onChange={(e) => {
                   setRequest({
                     ...request,
-                    concept: e.target.value,
+                    concept: 'target' in e ? e.target.value : e.value,
                   })
                 }}
               />
@@ -291,7 +291,7 @@ export default function FormClient({ requestId, initialRequest }: { requestId: s
                 onChange={(e) => {
                   setRequest({
                     ...request,
-                    field: e.target.value,
+                    field: 'target' in e ? e.target.value : e.value,
                   })
                 }}
               />
@@ -318,7 +318,7 @@ export default function FormClient({ requestId, initialRequest }: { requestId: s
                 onChange={(e) => {
                   setRequest({
                     ...request,
-                    marketingConsent: (e.target as HTMLInputElement).checked,
+                    marketingConsent: 'target' in e ? (e.target as HTMLInputElement).checked : !!e.value,
                   })
                 }}
               />
@@ -333,7 +333,7 @@ export default function FormClient({ requestId, initialRequest }: { requestId: s
                 onChange={(e) => {
                   setRequest({
                     ...request,
-                    ecologyConsent: (e.target as HTMLInputElement).checked,
+                    ecologyConsent: 'target' in e ? (e.target as HTMLInputElement).checked : !!e.value,
                   })
                 }}
               />

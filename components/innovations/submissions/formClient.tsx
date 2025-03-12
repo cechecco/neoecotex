@@ -178,7 +178,7 @@ export default function FormClient({ initialSubmission, submissionId, requestId 
                 onChange={(e) => {
                   setSubmission({
                     ...submission,
-                    title: e.target.value,
+                    title: 'target' in e ? e.target.value : e.value,
                   })
                 }}
               />
@@ -194,7 +194,7 @@ export default function FormClient({ initialSubmission, submissionId, requestId 
                 onChange={(e) => {
                   setSubmission({
                     ...submission,
-                    briefDescription: e.target.value,
+                    briefDescription: 'target' in e ? e.target.value : e.value,
                   })
                 }}
               />

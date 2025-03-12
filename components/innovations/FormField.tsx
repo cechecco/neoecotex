@@ -9,19 +9,21 @@ import { Label } from '@/components/ui/label'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Textarea } from '@/components/ui/textarea'
+import { cn } from '@/lib/utils'
 
 interface FormFieldProps<T> {
   id: keyof T
   label: string
-  type?: 'text' | 'number' | 'textarea' | 'checkbox'
+  type?: 'text' | 'number' | 'textarea' | 'checkbox' | 'list'
   maxLength?: number
-  value: string | number | boolean | CheckedState
+  value: string | number | boolean | CheckedState | { value: string; label: string }
   pending: boolean
   validationError: Partial<Record<keyof T, string[]>> | false
-  onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void
+  onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | { value: string; label: string }) => void
+  disabled?: boolean
 }
 
-export default function FormField<T>({ id, label, type = 'text', maxLength, value, pending, validationError, onChange }: FormFieldProps<T>) {
+export default function FormField<T>({ id, label, type = 'text', maxLength, value, pending, validationError, onChange, disabled }: FormFieldProps<T>) {
   const InputComponent = type === 'textarea' ? Textarea : Input
   const stringValue = typeof value === 'string' ? value : ''
 
@@ -60,12 +62,13 @@ export default function FormField<T>({ id, label, type = 'text', maxLength, valu
               id={id.toString()}
               name={id.toString()}
               defaultChecked={value as CheckedState}
-              className={pending ? 'invisible' : ''}
+              className={cn(pending && 'invisible')}
               onCheckedChange={(checked) => {
                 onChange({
                   target: { checked },
                 } as React.ChangeEvent<HTMLInputElement>)
               }}
+              disabled={disabled}
             />
             {pending && <Skeleton className='absolute inset-0 z-20 h-full' />}
           </div>
@@ -83,10 +86,11 @@ export default function FormField<T>({ id, label, type = 'text', maxLength, valu
             id={id.toString()}
             name={id.toString()}
             defaultValue={value as string}
-            className={pending ? 'invisible' : ''}
+            className={cn(pending && 'invisible')}
             maxLength={maxLength}
             onChange={onChange as (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void}
             autoComplete='off'
+            disabled={disabled}
           />
           {pending && <Skeleton className='absolute inset-0 z-20 h-full' />}
         </div>

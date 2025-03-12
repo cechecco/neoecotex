@@ -8,7 +8,7 @@ import { ID } from 'node-appwrite'
 
 import { createAdminClient, createSessionClient } from '@/lib/server/appwrite'
 
-import { createUser } from './users'
+import { createUser, getUser } from './users'
 
 export async function signUpWithGoogle(formData: FormData) {
   const { account } = await createAdminClient()
@@ -29,6 +29,7 @@ export async function signOut() {
 }
 
 export async function signUpWithEmail(formData: FormData) {
+  console.log('signUpWithEmail')
   const email = formData.get('email') as string
   const password = formData.get('password') as string
   const name = formData.get('name') as string
@@ -45,7 +46,7 @@ export async function signUpWithEmail(formData: FormData) {
     secure: true,
   })
 
-  await createUser(type as string)
+  if (!(await getUser())) await createUser(type as string)
 
   redirect('/account/edit')
 }

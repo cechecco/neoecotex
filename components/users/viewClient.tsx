@@ -6,7 +6,7 @@ import React, { useEffect, useState } from 'react'
 
 import { getUser } from '@/app/actions/users'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { InnovatorData, RequestorData, User } from '@/lib/types'
+import { InnovatorData, RequesterData, User } from '@/lib/types'
 
 export default function ViewClient({ user }: { user: User }) {
   const [userState, setUserState] = useState<User>(user)
@@ -54,34 +54,34 @@ export default function ViewClient({ user }: { user: User }) {
     )
   }
 
-  if (userState.type === 'requestor') {
-    const requestor = userState as RequestorData
+  if (userState.type === 'requester') {
+    const requester = userState as RequesterData
     return (
       <Card>
         <CardHeader>
-          <CardTitle>{requestor.name}</CardTitle>
+          <CardTitle>{requester.name}</CardTitle>
         </CardHeader>
         <CardContent>
           <p>
-            <strong>Email:</strong> {requestor.email}
+            <strong>Email:</strong> {requester.email}
           </p>
           <p>
-            <strong>Name:</strong> {requestor.name}
+            <strong>Name:</strong> {requester.name}
           </p>
           <p>
-            <strong>Surname:</strong> {requestor.surname}
+            <strong>Surname:</strong> {requester.surname}
           </p>
           <p>
-            <strong>Country:</strong> {requestor.country}
+            <strong>Country:</strong> {requester.country}
           </p>
           <p>
-            <strong>City:</strong> {requestor.city}
+            <strong>City:</strong> {requester.city}
           </p>
           <p>
-            <strong>Company Name:</strong> {requestor.companyName}
+            <strong>Company Name:</strong> {requester.companyName}
           </p>
           <p>
-            <strong>Company Size:</strong> {requestor.companySize}
+            <strong>Company Size:</strong> {requester.companySize}
           </p>
         </CardContent>
       </Card>

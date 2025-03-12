@@ -1,6 +1,6 @@
 'use client'
 
-import { House } from 'lucide-react'
+import { House, User } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useState, useEffect, useRef } from 'react'
@@ -79,17 +79,20 @@ export default function Breadcrumb() {
   const dashboard = pathname?.match(/\/innovations\/requests\/dashboard/)
   const submissionId = pathname?.match(/\/innovations\/requests\/([^\/]+)\/submissions\/([^\/]+)/)?.[2]
 
+  // Check if path is account-related
+  const isAccountPath = pathname?.includes('/account')
+
   return (
     <BreadcrumbComponent>
       <BreadcrumbList>
         <BreadcrumbItem>
           <BreadcrumbLink asChild>
             <Link
-              href='/innovations/requests'
+              href={isAccountPath ? '/account' : '/innovations/requests'}
               className='flex items-center gap-1'
             >
-              <House className='w-3 h-3 text-foreground' />
-              <span className='text-foreground'>Innovation Hub</span>
+              {isAccountPath ? <User className='w-3 h-3 text-foreground' /> : <House className='w-3 h-3 text-foreground' />}
+              <span className='text-foreground'>{isAccountPath ? 'Account' : 'Innovation Hub'}</span>
             </Link>
           </BreadcrumbLink>
         </BreadcrumbItem>

@@ -1,7 +1,7 @@
 'use server'
 
 import { usersService } from '@/lib/server/database'
-import { User, UserData, userSchema } from '@/lib/types'
+import { User, UserData, requesterSchema, innovatorSchema } from '@/lib/types'
 
 export async function getUser() {
   try {
@@ -27,7 +27,8 @@ export async function createUser(type: string) {
 }
 
 const validateUser = (data: Partial<User>) => {
-  const validatedFields = userSchema.safeParse(data)
+  const schema = data.type === 'requester' ? requesterSchema : innovatorSchema
+  const validatedFields = schema.safeParse(data)
   if (!validatedFields.success) {
     return validatedFields.error.flatten().fieldErrors
   }
@@ -36,12 +37,13 @@ const validateUser = (data: Partial<User>) => {
 
 export async function updateUser(data: UserData) {
   try {
-    const validatedFields = validateUser(data)
-    if (validatedFields) {
+    const validationErrors = validateUser(data)
+    if (validationErrors) {
       return {
-        validationErrors: validatedFields,
+        validationErrors,
       }
     }
+
     const updated = await usersService.update(data)
     return {
       user: updated,

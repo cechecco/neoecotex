@@ -2,7 +2,7 @@ import { ID, Models, Query, QueryTypes } from 'node-appwrite'
 
 import { getLoggedInUser } from '@/app/actions/auth'
 import { createDatabaseAdminClient, createStorageAdminClient, getUserEmail } from '@/lib/server/appwrite'
-import { InnovatorData, Request, RequestChecksMap, RequestCreateInput, RequestData, RequestorData, Submission, SubmissionData, User, UserData } from '@/lib/types'
+import { InnovatorData, Request, RequestChecksMap, RequestCreateInput, RequestData, RequesterData, Submission, SubmissionData, User, UserData } from '@/lib/types'
 
 const DATABASE_ID = '67aa7414000f83ae7018'
 const REQUESTS_COLLECTION_ID = '67aa745800179944f652'
@@ -370,7 +370,7 @@ export const usersService = {
         occupation: '',
       }
 
-      const requestor = {
+      const requester = {
         companyName: '',
         companySize: 0,
       }
@@ -379,12 +379,12 @@ export const usersService = {
         name: user.name,
         surname: '',
         email: user.email,
-        type,
+        type: type === 'requester' ? 'requester' : 'innovator',
         country: '',
         city: '',
         imagesIds: [],
         active: false,
-        ...(type === 'innovator' ? innovator : requestor),
+        ...(type === 'requester' ? requester : innovator),
       }
 
       const created = await databases.createDocument(DATABASE_ID, USERS_COLLECTION_ID, user.$id, userData)
@@ -406,11 +406,11 @@ export const usersService = {
               occupation: (data as InnovatorData).occupation,
             }
           : {
-              companyName: (data as RequestorData).companyName,
-              companySize: (data as RequestorData).companySize,
+              companyName: (data as RequesterData).companyName,
+              companySize: (data as RequesterData).companySize,
             }
       const userData: UserData = {
-        email: data.email || '',
+        email: userDoc.email,
         name: data.name || '',
         surname: data.surname || '',
         country: data.country || '',

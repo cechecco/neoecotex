@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from 'next/server'
 
 import { createAdminClient } from '@/lib/server/appwrite'
 
-import { createUser } from '../actions/users'
+import { createUser, getUser } from '../actions/users'
 
 export async function GET(request: NextRequest) {
   const userId = request.nextUrl.searchParams.get('userId')
@@ -23,7 +23,7 @@ export async function GET(request: NextRequest) {
     secure: true,
   })
 
-  await createUser(type as string)
+  if (!(await getUser())) await createUser(type as string)
 
   return NextResponse.redirect(`${request.nextUrl.origin}/account/edit`)
 }
