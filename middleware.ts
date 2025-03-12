@@ -29,7 +29,7 @@ export async function middleware(request: NextRequest) {
   return response
 }
 export const config = {
-  runtime: 'nodejs',
+  // runtime: 'nodejs',
   matcher: [
     /*
      * Match all request paths except for the ones starting with:

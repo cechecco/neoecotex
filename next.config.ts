@@ -3,7 +3,7 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   experimental: {
     ppr: 'incremental',
-    nodeMiddleware: true,
+    // nodeMiddleware: true,
   },
   images: {
     remotePatterns: [
