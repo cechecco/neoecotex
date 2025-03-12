@@ -45,7 +45,7 @@ export default function HomePage() {
           <div className='flex justify-center'>
             <div className='relative w-full max-w-4xl aspect-[4/3]'>
               <Image
-                src='/how-it-works.png'
+                src='/how-it-works.svg'
                 alt='Platform workflow showing how Innovation Requestors connect with Innovators'
                 fill
                 className='object-contain'
