@@ -22,9 +22,14 @@ export default function Breadcrumb() {
 
   useEffect(() => {
     // Extract IDs from pathname inside the useEffect
-    const id = pathname?.match(/\/innovations\/requests\/([^\/]+)/)?.[1]
+    let id = pathname?.match(/\/innovations\/requests\/([^\/]+)/)?.[1]
     const submissionId = pathname?.match(/\/innovations\/requests\/([^\/]+)\/submissions\/([^\/]+)/)?.[2]
 
+    if (id === 'dashboard') {
+      id = undefined
+    } else if (id === 'new') {
+      id = undefined
+    }
     // Fetch request data if ID is available and changed
     if (id && id !== prevRequestId.current) {
       setIsLoadingRequest(true)

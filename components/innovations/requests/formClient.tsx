@@ -95,6 +95,7 @@ export default function FormClient({ requestId, initialRequest }: { requestId: s
     })
 
     const result = await updateRequest(requestId, formData)
+    console.log('result', result)
     if (result.error) {
       setFetchError(result.error)
     } else if (result.request) {

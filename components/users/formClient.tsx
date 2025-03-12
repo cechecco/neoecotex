@@ -4,12 +4,14 @@
 
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { useState, FormEvent } from 'react'
+import { useState, FormEvent, useEffect } from 'react'
 
 import { updateUser } from '@/app/actions/users'
 import FormField from '@/components/innovations/FormField'
+import ImageUploader from '@/components/innovations/ImageUploader'
 import { Button } from '@/components/ui/button'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
+import { getImagesUrl } from '@/lib/client/appwrite'
 import { User } from '@/lib/types'
 interface Props {
   user: User
@@ -20,20 +22,75 @@ export default function FormClient({ user }: Props) {
   const [pending, setPending] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [validationErrors, setValidationError] = useState<Partial<Record<keyof User, string[]>> | false>(false)
+  const [imagesValidationErrors, setImagesValidationErrors] = useState<Partial<Record<keyof User, string[]>> | false>(false)
+  const [imagesUrl, setImagesUrl] = useState<Record<string, string>>({})
+  const [newImages, setNewImages] = useState<{ file: File; preview: string }[]>([])
   const router = useRouter()
+
+  const maxImages = 1
+
+  useEffect(() => {
+    const fetchImagesUrl = async () => {
+      if (userState.imagesIds && userState.imagesIds.length > 0) {
+        const imagesUrl = await getImagesUrl(userState.imagesIds)
+        setImagesUrl(imagesUrl)
+      }
+    }
+    fetchImagesUrl()
+  }, [userState.imagesIds])
+
+  useEffect(() => {
+    return () => {
+      newImages.forEach((image) => URL.revokeObjectURL(image.preview))
+    }
+  }, [newImages])
+
+  const handleImageRemove = (imageId: string | undefined) => {
+    if (!imageId) return
+    setUserState({
+      ...userState,
+      imagesIds: userState.imagesIds ? userState.imagesIds.filter((id) => id !== imageId) : [],
+    })
+  }
+
+  const handleNewImageRemove = (index: number) => {
+    setNewImages((prev) => prev.filter((_, i) => i !== index))
+  }
+
+  const handleImagesAdd = (files: File[]) => {
+    const _newImages = files.map((file) => ({
+      file,
+      preview: URL.createObjectURL(file),
+    }))
+
+    setNewImages((prev) => [...prev, ..._newImages])
+  }
 
   async function handleSubmit(e: FormEvent) {
     console.log('handleSubmit')
     e.preventDefault()
     setPending(true)
     setError(null)
+    setValidationError(false)
+    setImagesValidationErrors(false)
+
     const wasAlreadyActive = userState.active
-    const result = await updateUser(userState)
+
+    const formData = new FormData(e.target as HTMLFormElement)
+
+    newImages.forEach((image) => {
+      formData.append('images', image.file)
+    })
+
+    const result = await updateUser(formData)
     console.log(result)
+
     if (result.error) {
       setError(result.message)
     } else if (result.validationErrors) {
       setValidationError(result.validationErrors)
+    } else if (result.imagesValidationErrors) {
+      setImagesValidationErrors(result.imagesValidationErrors)
     } else {
       if (wasAlreadyActive) {
         router.push(`/account`)
@@ -96,36 +153,47 @@ export default function FormClient({ user }: Props) {
               validationError={validationErrors}
               onChange={(e) => setUserState({ ...userState, name: 'target' in e ? e.target.value : e.value })}
             />
+            <FormField<User>
+              id='surname'
+              label='Surname'
+              type='text'
+              value={userState.surname}
+              pending={pending}
+              validationError={validationErrors}
+              onChange={(e) => setUserState({ ...userState, surname: 'target' in e ? e.target.value : e.value })}
+            />
+            <ImageUploader
+              maxImages={maxImages}
+              imagesIds={userState.imagesIds || []}
+              imagesUrl={imagesUrl}
+              pending={pending}
+              imagesValidationErrors={imagesValidationErrors}
+              onImageRemove={handleImageRemove}
+              onNewImageRemove={handleNewImageRemove}
+              onImagesAdd={handleImagesAdd}
+              newImages={newImages}
+            />
 
+            <FormField<User>
+              id='country'
+              label='Country'
+              type='text'
+              value={userState.country}
+              pending={pending}
+              validationError={validationErrors}
+              onChange={(e) => setUserState({ ...userState, country: 'target' in e ? e.target.value : e.value })}
+            />
+            <FormField<User>
+              id='city'
+              label='City'
+              type='text'
+              value={userState.city}
+              pending={pending}
+              validationError={validationErrors}
+              onChange={(e) => setUserState({ ...userState, city: 'target' in e ? e.target.value : e.value })}
+            />
             {userState.type === 'innovator' && (
               <>
-                <FormField<User>
-                  id='surname'
-                  label='Surname'
-                  type='text'
-                  value={userState.surname}
-                  pending={pending}
-                  validationError={validationErrors}
-                  onChange={(e) => setUserState({ ...userState, surname: 'target' in e ? e.target.value : e.value })}
-                />
-                <FormField<User>
-                  id='country'
-                  label='Country'
-                  type='text'
-                  value={userState.country}
-                  pending={pending}
-                  validationError={validationErrors}
-                  onChange={(e) => setUserState({ ...userState, country: 'target' in e ? e.target.value : e.value })}
-                />
-                <FormField<User>
-                  id='city'
-                  label='City'
-                  type='text'
-                  value={userState.city}
-                  pending={pending}
-                  validationError={validationErrors}
-                  onChange={(e) => setUserState({ ...userState, city: 'target' in e ? e.target.value : e.value })}
-                />
                 <FormField<User>
                   id='occupation'
                   label='Occupation'
@@ -140,33 +208,6 @@ export default function FormClient({ user }: Props) {
 
             {userState.type === 'requester' && (
               <>
-                <FormField<User>
-                  id='surname'
-                  label='Surname'
-                  type='text'
-                  value={userState.surname}
-                  pending={pending}
-                  validationError={validationErrors}
-                  onChange={(e) => setUserState({ ...userState, surname: 'target' in e ? e.target.value : e.value })}
-                />
-                <FormField<User>
-                  id='country'
-                  label='Country'
-                  type='text'
-                  value={userState.country}
-                  pending={pending}
-                  validationError={validationErrors}
-                  onChange={(e) => setUserState({ ...userState, country: 'target' in e ? e.target.value : e.value })}
-                />
-                <FormField<User>
-                  id='city'
-                  label='City'
-                  type='text'
-                  value={userState.city}
-                  pending={pending}
-                  validationError={validationErrors}
-                  onChange={(e) => setUserState({ ...userState, city: 'target' in e ? e.target.value : e.value })}
-                />
                 <FormField<User>
                   id='companyName'
                   label='Company Name'
