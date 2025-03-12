@@ -107,7 +107,7 @@ export async function updateUser(data: FormData) {
     }
 
     const oldImagesIds = await usersService.get()
-    const imagesToRemove = oldImagesIds.imagesIds.filter((imageId: string) => !userData.imagesIds.includes(imageId))
+    const imagesToRemove = oldImagesIds ? oldImagesIds.imagesIds.filter((imageId: string) => !userData.imagesIds.includes(imageId)) : []
     await Promise.all(
       imagesToRemove.map(async (imageId: string) => {
         await storageService.deleteImage(imageId).catch(console.error)

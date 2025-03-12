@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import { redirect } from 'next/navigation'
 
 import { signUpWithGoogle, signUpWithEmail, getLoggedInUser } from '@/app/actions/auth'
@@ -105,6 +106,17 @@ export default async function SignUpPage(props: Props) {
             </Button>
           </form>
         </CardContent>
+        <div className='text-center mt-4'>
+          <p className='text-sm text-muted-foreground'>
+            Already have an account?{' '}
+            <Link
+              href='/login'
+              className='text-primary hover:underline'
+            >
+              Sign in
+            </Link>
+          </p>
+        </div>
       </Card>
     </div>
   )

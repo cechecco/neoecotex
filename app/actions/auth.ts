@@ -51,6 +51,28 @@ export async function signUpWithEmail(formData: FormData) {
   redirect('/account/edit')
 }
 
+export async function signInWithEmail(formData: FormData) {
+  const email = formData.get('email') as string
+  const password = formData.get('password') as string
+  const { account } = await createAdminClient()
+
+  try {
+    const session = await account.createEmailPasswordSession(email, password)
+
+    ;(await cookies()).set('user-session', session.secret, {
+      path: '/',
+      httpOnly: true,
+      sameSite: 'strict',
+      secure: true,
+    })
+
+    redirect('/innovations/requests') // Redirect to dashboard or home page after login
+  } catch (error) {
+    console.error('Sign in error:', error)
+    throw new Error('Failed to sign in. Please check your credentials and try again.')
+  }
+}
+
 export async function getLoggedInUser() {
   try {
     const { account } = await createSessionClient()

@@ -369,6 +369,7 @@ export const usersService = {
   async get() {
     const { databases } = await createDatabaseAdminClient()
     const user = await getCurrentUser()
+    if (!user) return null
     const doc = await databases.getDocument(DATABASE_ID, USERS_COLLECTION_ID, user.$id)
     return doc as User
   },

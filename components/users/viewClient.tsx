@@ -37,7 +37,7 @@ export default function ViewClient({ user }: { user: User }) {
       <Card className='min-h-screen'>
         <CardHeader className='flex flex-col items-left gap-2'>
           <CardTitle>
-            {userState.name} {userState.surname}
+            {userState.name} {userState.surname} - {userState.type}
           </CardTitle>
         </CardHeader>
         <CardContent className='flex gap-2'>
