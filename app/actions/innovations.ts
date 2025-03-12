@@ -173,8 +173,13 @@ const getSubmissionData = (formData: FormData) => {
   const data: SubmissionData = {
     title: formData.get('title') as string,
     briefDescription: formData.get('briefDescription') as string,
+    detailedDescription: formData.get('detailedDescription') as string,
+    expertisePreferences: formData.get('expertisePreferences') as string,
+    timelineScope: formData.get('timelineScope') as string,
     requestId: formData.get('requestId') as string,
     imagesIds: formData.getAll('imagesIds').map((entry) => entry.toString()),
+    marketingConsent: !!formData.get('marketingConsent'),
+    ecologyConsent: !!formData.get('ecologyConsent'),
   }
   return data
 }

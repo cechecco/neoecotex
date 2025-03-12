@@ -11,8 +11,13 @@ const getDefaultSubmission = (requestId: string): SubmissionData => {
   return {
     title: '',
     briefDescription: '',
+    detailedDescription: '',
+    expertisePreferences: '',
+    timelineScope: '',
     requestId: requestId,
     imagesIds: [],
+    marketingConsent: false,
+    ecologyConsent: false,
   }
 }
 

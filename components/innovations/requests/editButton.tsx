@@ -10,7 +10,7 @@ interface EditRequestButtonProps {
 }
 
 export default function EditButton({ requestId, check }: EditRequestButtonProps) {
-  return (
+  return check.iAmOwner ? (
     <LoadingLink
       href={`/innovations/requests/${requestId}/edit`}
       className='flex items-center gap-2'
@@ -23,5 +23,5 @@ export default function EditButton({ requestId, check }: EditRequestButtonProps)
         Edit
       </Button>
     </LoadingLink>
-  )
+  ) : null
 }

@@ -76,13 +76,15 @@ export default function SelectWinnerButton({ submissionId, check }: SelectWinner
         </div>
       )}
 
-      <Button
-        size='sm'
-        disabled={check.thereIsWinner}
-        onClick={() => setOpen(true)}
-      >
-        <p>Select Winner</p>
-      </Button>
+      {check.iAmOwner ? (
+        <Button
+          size='sm'
+          disabled={check.thereIsWinner}
+          onClick={() => setOpen(true)}
+        >
+          <p>Select Winner</p>
+        </Button>
+      ) : null}
 
       <Dialog
         open={open}

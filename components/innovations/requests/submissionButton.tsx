@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button'
 import { RequestCheck } from '@/lib/types'
 
 export default function SubmitSolutionButton({ check }: { check: RequestCheck }) {
-  return (
+  return check.userType === 'innovator' ? (
     <Link
       href={`/innovations/requests/${check.requestId}/submissions/new/edit`}
       className='flex items-center gap-2'
@@ -18,5 +18,5 @@ export default function SubmitSolutionButton({ check }: { check: RequestCheck })
         Submit Solution
       </Button>
     </Link>
-  )
+  ) : null
 }

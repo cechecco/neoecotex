@@ -28,7 +28,10 @@ export default async function InnovationRequestPage(props: Props) {
         requestId={requestId}
       >
         <SubmitSolutionButton check={check} />
-        <OpenListButton requestId={requestId} />
+        <OpenListButton
+          requestId={requestId}
+          check={check}
+        />
         <EditButton
           requestId={requestId}
           check={check}

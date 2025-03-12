@@ -26,7 +26,10 @@ export default async function SubmissionPage(props: Props) {
         title={`Submission - ${check?.submissionsTitles[submissionId]}`}
         requestId={requestId}
       >
-        <OpenListButton requestId={requestId} />
+        <OpenListButton
+          requestId={requestId}
+          check={check}
+        />
         <SelectWinnerButton
           submissionId={submissionId}
           check={check}
@@ -34,6 +37,7 @@ export default async function SubmissionPage(props: Props) {
         <EditButton
           requestId={requestId}
           submissionId={submissionId}
+          check={check}
         />
       </Header>
       <Suspense fallback={<RequestSkeleton />}>

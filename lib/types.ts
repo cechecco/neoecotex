@@ -74,8 +74,13 @@ export const submissionSchema = z
   .object({
     title: z.string().min(1, 'Title is required').max(64, 'Title must be less than 64 characters'),
     briefDescription: z.string().min(1, 'Brief description is required').max(140, 'Brief description must be less than 140 characters'),
+    detailedDescription: z.string().min(1, 'Detailed description is required').max(1500, 'Detailed description must be less than 1500 characters'),
+    expertisePreferences: z.string().min(1, 'Expertise preferences is required').max(1500, 'Expertise preferences must be less than 1500 characters'),
+    timelineScope: z.string().min(1, 'Timeline scope is required').max(1500, 'Timeline scope must be less than 1500 characters'),
     requestId: z.string().min(1, 'Request ID is required'),
     imagesIds: z.array(z.string()),
+    marketingConsent: z.boolean().default(false),
+    ecologyConsent: z.boolean().default(false),
   })
   .strict()
 
@@ -98,6 +103,7 @@ export type RequestCheck = {
   requestId: string
   requestTitle: string
   submissionsTitles: Record<string, string>
+  userType: string | undefined
 }
 
 export type RequestChecksMap = Record<string, RequestCheck>

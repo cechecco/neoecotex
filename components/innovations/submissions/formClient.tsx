@@ -199,6 +199,54 @@ export default function FormClient({ initialSubmission, submissionId, requestId 
                 }}
               />
 
+              <FormField<Submission>
+                id='detailedDescription'
+                label='Detailed Description of Innovation Solution'
+                type='textarea'
+                maxLength={1500}
+                value={submission?.detailedDescription}
+                pending={pending}
+                validationError={validationError}
+                onChange={(e) => {
+                  setSubmission({
+                    ...submission,
+                    detailedDescription: 'target' in e ? e.target.value : e.value,
+                  })
+                }}
+              />
+
+              <FormField<Submission>
+                id='expertisePreferences'
+                label='Expertise Preferences'
+                type='textarea'
+                maxLength={1500}
+                value={submission?.expertisePreferences}
+                pending={pending}
+                validationError={validationError}
+                onChange={(e) => {
+                  setSubmission({
+                    ...submission,
+                    expertisePreferences: 'target' in e ? e.target.value : e.value,
+                  })
+                }}
+              />
+
+              <FormField<Submission>
+                id='timelineScope'
+                label='Timeline Scope'
+                type='textarea'
+                maxLength={1500}
+                value={submission?.timelineScope}
+                pending={pending}
+                validationError={validationError}
+                onChange={(e) => {
+                  setSubmission({
+                    ...submission,
+                    timelineScope: 'target' in e ? e.target.value : e.value,
+                  })
+                }}
+              />
+
               <ImageUploader
                 maxImages={maxImages}
                 imagesIds={submission.imagesIds || []}
@@ -210,6 +258,40 @@ export default function FormClient({ initialSubmission, submissionId, requestId 
                 onImagesAdd={handleImagesAdd}
                 newImages={newImages}
               />
+
+              <div className='mt-4'>
+                <p className='text-sm text-muted-foreground mb-2'>Max file size is 1mb</p>
+
+                <FormField<Submission>
+                  id='marketingConsent'
+                  label='I want to stay in the loop on the latest and receive marketing communications.'
+                  type='checkbox'
+                  value={submission?.marketingConsent}
+                  pending={pending}
+                  validationError={validationError}
+                  onChange={(e) => {
+                    setSubmission({
+                      ...submission,
+                      marketingConsent: 'target' in e && typeof e.target === 'object' && 'checked' in e.target ? !!e.target.checked : false,
+                    })
+                  }}
+                />
+
+                <FormField<Submission>
+                  id='ecologyConsent'
+                  label='I accept my innovation does not harm ecology and humans.'
+                  type='checkbox'
+                  value={submission?.ecologyConsent}
+                  pending={pending}
+                  validationError={validationError}
+                  onChange={(e) => {
+                    setSubmission({
+                      ...submission,
+                      ecologyConsent: 'target' in e && typeof e.target === 'object' && 'checked' in e.target ? !!e.target.checked : false,
+                    })
+                  }}
+                />
+              </div>
             </div>
           </form>
         </CardHeader>

@@ -289,20 +289,20 @@ async function getRequestsByIds(ids: string[]) {
 }
 
 export async function computeRequestChecks(requestIds: string[]) {
-  const user = await getCurrentUser()
+  const user = await usersService.get()
   const docs = await getRequestsByIds(requestIds)
 
   const checksMap: RequestChecksMap = {}
 
   await Promise.all(
     docs.map(async (reqDoc) => {
-      const iAmOwner = reqDoc.owner === user.$id
+      const iAmOwner = !!(user && reqDoc.owner === user.$id)
       let iAmWinner = false
       let winnerEmail = ''
 
       if (reqDoc.winner) {
         const winnerSub = await submissionsService.getOne(reqDoc.winner)
-        if (winnerSub.owner === user.$id) {
+        if (user && winnerSub.owner === user.$id) {
           iAmWinner = true
         }
         if (winnerSub.owner) {
@@ -312,7 +312,7 @@ export async function computeRequestChecks(requestIds: string[]) {
 
       const requestSubmissions = await submissionsService.listByRequest(reqDoc.$id)
 
-      const iHaveSubmitted = requestSubmissions.documents.some((sub) => sub.owner === user.$id)
+      const iHaveSubmitted = requestSubmissions.documents.some((sub) => user && sub.owner === user.$id)
       const thereIsWinner = !!reqDoc.winner
 
       const submissionsTitles: Record<string, string> = {}
@@ -329,6 +329,7 @@ export async function computeRequestChecks(requestIds: string[]) {
         requestId: reqDoc.$id,
         requestTitle: reqDoc.title,
         submissionsTitles,
+        userType: user?.type,
       }
     })
   )
