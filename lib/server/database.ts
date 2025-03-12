@@ -245,6 +245,18 @@ export const submissionsService = {
     }
   },
 
+  async listByUser() {
+    const user = await getCurrentUser()
+    const { databases } = await createDatabaseAdminClient()
+    try {
+      const list = await databases.listDocuments(DATABASE_ID, SUBMISSIONS_COLLECTION_ID, [Query.equal('owner', user.$id)])
+      return list as Models.DocumentList<Submission>
+    } catch (error) {
+      console.error(error)
+      throw new Error('Failed to list submissions by user')
+    }
+  },
+
   async deleteOne(id: string) {
     const { databases } = await createDatabaseAdminClient()
     await getCurrentUser()

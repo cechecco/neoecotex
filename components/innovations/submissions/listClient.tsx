@@ -6,15 +6,15 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Submission, RequestChecksMap } from '@/lib/types'
 
+import StatusBadges from '../requests/statusBadges'
+
 interface Props {
-  requestId: string
   submissions: Submission[]
   checks: RequestChecksMap
+  userType: string
 }
 
-export default function ListClient({ requestId, submissions, checks }: Props) {
-  const check = checks[requestId]
-
+export default function ListClient({ submissions, checks, userType }: Props) {
   return (
     <Card>
       <CardContent>
@@ -34,10 +34,14 @@ export default function ListClient({ requestId, submissions, checks }: Props) {
                     submissionId={submission.$id}
                     requestId={submission.requestId}
                   />
-                  <SelectWinnerButton
-                    submissionId={submission.$id}
-                    check={check}
-                  />
+                  {userType === 'requester' ? (
+                    <SelectWinnerButton
+                      submissionId={submission.$id}
+                      check={checks[submission.requestId]}
+                    />
+                  ) : (
+                    <StatusBadges check={checks[submission.requestId]} />
+                  )}
                 </TableCell>
               </TableRow>
             ))}

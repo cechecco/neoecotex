@@ -143,6 +143,15 @@ export async function listSubmissions(requestId: string) {
   }
 }
 
+export async function listSubmissionsByUser() {
+  try {
+    return await submissionsService.listByUser()
+  } catch (error) {
+    console.error(error)
+    return { error: true, message: String(error) }
+  }
+}
+
 export async function getOneSubmission(submissionId: string) {
   try {
     return await submissionsService.getOne(submissionId)
